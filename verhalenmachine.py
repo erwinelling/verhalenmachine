@@ -1,3 +1,30 @@
+# python-mpd2
+
+
+# from mpd import MPDClient
+# client = MPDClient()
+# # #to connect to MPD you need to know the IP address and port
+# client.connect("localhost", 6600)
+
+# #set the volume between 0 and 100
+# client.setvol(100)
+#
+# #play song at certain position
+# client.play(1)
+#
+# #pause and resume playback
+# client.pause(0)
+# client.pause(1)
+#
+# #skip to the next or previous track
+# client.next()
+# client.previous()
+#
+# #clear current playlist and load a new one
+# client.playlistclear()
+# client.load("nameofyourplaylist")
+
+
 # class Employee:
 #    'Common base class for all employees'
 #    empCount = 0
@@ -20,6 +47,10 @@ class Player:
 
     def __init__(self):
         pass
+        # from mpd import MPDClient
+        # self.client = MPDClient()
+        # self.client.connect("localhost", 6600)
+
 
     # def is_playing(self):
     #     pass
@@ -88,8 +119,12 @@ class Cleaner:
     def __init__(self):
         pass
 
-    # check things for what needs to be cleaned
-
+    # what needs to be cleaned:
+    # skip 0 byte wave files
+    # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
+    # Te grote bestanden verwijderen apparaat
+    # Opname stoppen na een uur?
+    # Te grote files negeren
 
 class Uploader:
     def __init__(self):
