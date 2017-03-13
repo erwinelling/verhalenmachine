@@ -6,6 +6,9 @@ import os
 import RPi.GPIO as GPIO
 import time
 
+
+# TODO: Add configfile
+
 # python-mpd2asdf
 
 
@@ -74,6 +77,8 @@ class Player:
     # empCount = 0
     playing = False
 
+    # TODO: Load local playlist
+
     def __init__(self):
         # pass
         from mpd import MPDClient
@@ -126,6 +131,8 @@ class Recorder:
     recording = False
     last_recording_starttime = ""
 
+    # TODO: Implement recording
+
     def __init__(self):
         pass
 
@@ -141,6 +148,8 @@ class Recorder:
 
 class Buttons:
     #TODO: set button numbers?
+    #TODO: save button state
+    #TODO: control lights
     but1 = False
     but2 = False
     but3 = False
@@ -150,6 +159,7 @@ class Buttons:
 
     def __init__(self):
         # Pin Setup:
+        GPIO.cleanup()
         GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         self.LED1PIN = 35
         self.BUT1PIN = 38
@@ -200,6 +210,7 @@ class Buttons:
         pass
 
 class Cleaner:
+    # TODO: Implement cleaning
     def __init__(self):
         pass
 
@@ -211,6 +222,7 @@ class Cleaner:
     # Te grote files negeren
 
 class Uploader:
+    # TODO: Implement uploading
     def __init__(self):
         pass
 
@@ -227,9 +239,6 @@ try:
     player = Player()
     recorder = Recorder()
     buttons = Buttons()
-
-    player.play()
-
 
     while True:
 
@@ -255,8 +264,6 @@ try:
         time.sleep(0.5)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
-    pass
-    # GPIO.cleanup()  # cleanup all GPIO
+    GPIO.cleanup()  # cleanup all GPIO
 except Exception, e:
-    raise
-    # logging.error(e, exc_info=True)
+    logging.error(e, exc_info=True)
