@@ -141,9 +141,54 @@ class Recorder:
 
 class Buttons:
     #TODO: set button numbers?
+    but1 = False
+    but2 = False
+    but3 = False
+    but4 = False
+    but5 = False
+    but6 = False
 
     def __init__(self):
-        pass
+        # Pin Setup:
+        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
+        self.LED1PIN = 35
+        self.BUT1PIN = 38
+        self.BUT2PIN = 37
+        self.BUT3PIN = 36
+        self.BUT4PIN = 32
+        self.BUT5PIN = 31
+        self.BUT6PIN = 33
+
+        # Initiate LEDs:
+        if self.LED1PIN:
+            GPIO.setup(self.LED1PIN, GPIO.OUT)
+            GPIO.output(self.LED1PIN, GPIO.LOW)
+
+        # Initiate buttons:
+        if self.BUT1PIN:
+            # Button pin set as input w/ pull-up
+            GPIO.setup(self.BUT1PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.BUT1PIN, GPIO.FALLING, bouncetime=200)
+        if self.BUT2PIN:
+            # Button pin set as input w/ pull-up
+            GPIO.setup(self.BUT2PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.BUT2PIN, GPIO.FALLING, bouncetime=200)
+        if self.BUT3PIN:
+            # Button pin set as input w/ pull-up
+            GPIO.setup(self.BUT3PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.BUT3PIN, GPIO.FALLING, bouncetime=200)
+        if self.BUT4PIN:
+            # Button pin set as input w/ pull-up
+            GPIO.setup(self.BUT4PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.BUT4PIN, GPIO.FALLING, bouncetime=200)
+        if self.BUT5PIN:
+            # Button pin set as input w/ pull-up
+            GPIO.setup(self.BUT5PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.BUT5PIN, GPIO.FALLING, bouncetime=200)
+        if self.BUT6PIN:
+            # Button pin set as input w/ pull-up
+            GPIO.setup(self.BUT6PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.BUT6PIN, GPIO.FALLING, bouncetime=200)
 
     def check_pressed(self, number):
         pass
@@ -181,24 +226,31 @@ class Uploader:
 try:
     player = Player()
     recorder = Recorder()
+    buttons = Buttons()
 
     player.play()
 
 
     while True:
 
-        # if BUT1PIN and GPIO.event_detected(BUT1PIN):
-        #         button_rec()
-        # if BUT2PIN and GPIO.event_detected(BUT2PIN):
-        #         button_prev()
-        # if BUT3PIN and GPIO.event_detected(BUT3PIN):
-        #         button_next()
-        # if BUT4PIN and GPIO.event_detected(BUT4PIN):
-        #         button_stop()
-        # if BUT5PIN and GPIO.event_detected(BUT5PIN):
-        #         button_play()
-        # if BUT6PIN and GPIO.event_detected(BUT6PIN):
-        #         button_pause()
+        if buttons.BUT1PIN and GPIO.event_detected(buttons.BUT1PIN):
+                # button_rec()
+                pass
+        if buttons.BUT2PIN and GPIO.event_detected(buttons.BUT2PIN):
+                # button_prev()
+                pass
+        if buttons.BUT3PIN and GPIO.event_detected(buttons.BUT3PIN):
+                # button_next()
+                player.next()
+        if buttons.BUT4PIN and GPIO.event_detected(buttons.BUT4PIN):
+                # button_stop()
+                player.stop()
+        if buttons.BUT5PIN and GPIO.event_detected(buttons.BUT5PIN):
+                # button_play()
+                player.play()
+        if buttons.BUT6PIN and GPIO.event_detected(buttons.BUT6PIN):
+                # button_pause()
+                player.pause()
 
         time.sleep(0.5)
 
