@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
-import logging
+import logging, logging.handlers
 import mpd
+import os
 import RPi.GPIO as GPIO
 import time
 
-# python-mpd2
+# python-mpd2asdf
 
 
 # from mpd import MPDClient
@@ -47,6 +48,27 @@ import time
 #    def displayEmployee(self):
 #       print "Name : ", self.name,  ", Salary: ", self.salary
 
+HOME_DIR = os.path.dirname(os.path.realpath(__file__))
+
+# LOGGING
+LOG_FILE = os.path.join(HOME_DIR, "verhalenmachine.log")
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+fh = logging.handlers.RotatingFileHandler(
+              LOG_FILE, maxBytes=5000000, backupCount=5)
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
 class Player:
     'Player'
     # empCount = 0
@@ -70,26 +92,21 @@ class Player:
 
     def play(self):
         # RESEARCH: how to control meter with audio input
-        print "play"
         self.client.play()
 
     def pause(self):
-        print "pause"
         self.client.pause(1)
 
     def next(self):
-        print "next"
         self.client.next()
 
     def stop(self):
-        print "stop"
         self.client.stop()
 
     def set_volume(self, volume):
-        print "volume %s" % (str(volume))
         self.client.setvol(volume)
 
-    def volume_change(self, increase=10)
+    def volume_change(self, increase=10):
         current_volume = int(client.status().get('volume'))
         new_volume = current_volume+increase
         if new_volume > 100:
