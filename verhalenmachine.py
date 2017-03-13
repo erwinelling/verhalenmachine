@@ -1,3 +1,9 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
+import logging
+import mpd
+import RPi.GPIO as GPIO
+
 # python-mpd2
 
 
@@ -138,3 +144,29 @@ class Uploader:
 
     def upload_tracklist(self, tracklist):
         pass
+
+try:
+    player = Player()
+    recorder = Recorder()
+    while True:
+
+        # if BUT1PIN and GPIO.event_detected(BUT1PIN):
+        #         button_rec()
+        # if BUT2PIN and GPIO.event_detected(BUT2PIN):
+        #         button_prev()
+        # if BUT3PIN and GPIO.event_detected(BUT3PIN):
+        #         button_next()
+        # if BUT4PIN and GPIO.event_detected(BUT4PIN):
+        #         button_stop()
+        # if BUT5PIN and GPIO.event_detected(BUT5PIN):
+        #         button_play()
+        # if BUT6PIN and GPIO.event_detected(BUT6PIN):
+        #         button_pause()
+
+        time.sleep(0.5)
+
+except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
+    pass
+    # GPIO.cleanup()  # cleanup all GPIO
+except Exception, e:
+    logging.error(e, exc_info=True)

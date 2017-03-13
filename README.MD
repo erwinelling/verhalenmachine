@@ -41,7 +41,23 @@ Connect to <http://volumio.local/>.
 * Change Hotspot Name & Password
 <http://volumio.local/plugin/system_controller-network>
 
-### 3. Install Python dependencies
+### 3. Checkout this script
+
+Do this <https://help.github.com/articles/generating-an-ssh-key/>
+
+```
+cd /home/pi/
+git clone git@github.com:erwinelling/stormy.git
+```
+
+To update:
+
+```
+cd /home/pi/stormy
+git pull
+```
+
+### 4. Install (Python) dependencies
 
 First install pip
 
@@ -66,6 +82,16 @@ Install GPIO stuff
 ```
 sudo apt-get install rpi.gpio
 ```
+
+
+### Remot3.it
+
+For remote SSH/ web access setup Remot3.it
+
+<http://forum.weaved.com/t/how-to-get-started-with-remot3-it-for-pi/1029>
+
+sudo apt-get install weavedconnectd
+
 
 ### Change default password?
 
