@@ -53,11 +53,14 @@ class Player:
     playing = False
 
     def __init__(self):
-        pass
-        # from mpd import MPDClient
-        # self.client = MPDClient()
-        # self.client.connect("localhost", 6600)
+        # pass
+        from mpd import MPDClient
+        self.client = MPDClient()
+        self.client.connect("localhost", 6600)
 
+        # TODO: Check whether this works
+        self.client.repeat(1)
+        self.client.random(1)
 
     # def is_playing(self):
     #     pass
@@ -67,21 +70,33 @@ class Player:
 
     def play(self):
         # RESEARCH: how to control meter with audio input
-        pass
+        print "play"
+        self.client.play()
 
     def pause(self):
-        pass
+        print "pause"
+        self.client.pause(1)
 
     def next(self):
-        pass
+        print "next"
+        self.client.next()
 
     def stop(self):
-        pass
+        print "stop"
+        self.client.stop()
 
     def set_volume(self, volume):
-        # RESEARCH: how to control volume
-        # RESEARCH: how to check slider value
-        pass
+        print "volume %s" % (str(volume))
+        self.client.setvol(volume)
+
+    def volume_change(self, increase=10)
+        current_volume = int(client.status().get('volume'))
+        new_volume = current_volume+increase
+        if new_volume > 100:
+            new_volume = 100
+        if new_volume < 0:
+            new_volume = 0
+        self.set_volume(new_volume)
 
     def load_playlist(self):
         pass
@@ -149,6 +164,10 @@ class Uploader:
 try:
     player = Player()
     recorder = Recorder()
+
+    player.play()
+
+
     while True:
 
         # if BUT1PIN and GPIO.event_detected(BUT1PIN):
