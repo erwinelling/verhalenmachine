@@ -3,6 +3,7 @@
 import logging
 import mpd
 import RPi.GPIO as GPIO
+import time
 
 # python-mpd2
 
@@ -169,4 +170,5 @@ except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     pass
     # GPIO.cleanup()  # cleanup all GPIO
 except Exception, e:
-    logging.error(e, exc_info=True)
+    raise
+    # logging.error(e, exc_info=True)
