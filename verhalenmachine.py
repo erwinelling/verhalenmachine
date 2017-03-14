@@ -178,7 +178,7 @@ class Recorder:
         f.close()
         logger.debug("Stopping recording process by killing PID %s", str(pid))
         os.kill(pid, signal.SIGINT)
-        # TODO: Remove temp extension from recording
+        self.remove_temp_ext()
 
 class Buttons:
     #TODO: set button numbers?
