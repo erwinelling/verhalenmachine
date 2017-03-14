@@ -1,9 +1,12 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
+import datetime
 import logging, logging.handlers
 import mpd
 import os
 import RPi.GPIO as GPIO
+import signal
+import subprocess
 import time
 
 
@@ -96,7 +99,7 @@ class Player:
     #     pass
 
     def play(self):
-        # RESEARCH: how to control meter with audio input
+        # TODO: RESEARCH: how to control VU meter with audio input
         self.client.play()
 
     def pause(self):
@@ -121,6 +124,7 @@ class Player:
         self.set_volume(new_volume)
 
     def load_playlist(self):
+        #TODO: Load playlist
         pass
 
     # def update_playlist(self):
@@ -134,17 +138,47 @@ class Recorder:
     # TODO: Implement recording
 
     def __init__(self):
-        pass
+        self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0"
+        self.RECORDING_DIR = "/data/INTERNAL/"
+        self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
 
     # def is_recording(self):
     #     pass
 
-    def record(self):
-    # RESEARCH: how to control meter with mic input
-        pass
+    def record(self, filename):
+    # RESEARCH: how to control VU meter with mic input
+        filepath = os.path.join(self.RECORDING_DIR+filename)
+        args = [
+            'arecord',
+            '-D', self.SOUND_CARD_MIC,
+            '-f', 'S16_LE',
+            '-c1',
+            '-r22050',
+            '-V', 'mono',
+            '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
+            filepath+".temp"
+        ]
+        logger.debug(args)
+        proc = subprocess.Popen(args)
+
+    def remove_temp_ext(self):
+        #remove .temp extension files
+        for root, dirs, files in os.walk(self.RECORDING_DIR):
+            for filename in files:
+                if os.path.splitext(filename)[1] == ".temp":
+                    path_to_file = os.path.join(root, filename)
+                    os.rename(path_to_file, os.path.splitext(path_to_file)[0])
+                    logger.debug("Renamed temp file to %s", os.path.splitext(path_to_file)[0])
+
 
     def stop(self):
-        pass
+        pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
+        f = open(pidfile)
+        pid = int(f.readline().strip())
+        f.close()
+        logger.debug("Stopping recording process by killing PID %s", str(pid))
+        os.kill(pid, signal.SIGINT)
+        # TODO: Remove temp extension from recording
 
 class Buttons:
     #TODO: set button numbers?
@@ -244,10 +278,12 @@ try:
 
         if buttons.BUT1PIN and GPIO.event_detected(buttons.BUT1PIN):
                 # button_rec()
-                pass
+                current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
+                sound_file_name = "%s.wav" % (current_datetime)
+                recorder.record(sound_file_name)
         if buttons.BUT2PIN and GPIO.event_detected(buttons.BUT2PIN):
                 # button_prev()
-                pass
+                recorder.stop()
         if buttons.BUT3PIN and GPIO.event_detected(buttons.BUT3PIN):
                 # button_next()
                 player.next()
