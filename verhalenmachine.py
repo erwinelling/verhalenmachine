@@ -11,49 +11,6 @@ import time
 
 
 # TODO: Add configfile
-
-# python-mpd2asdf
-
-
-# from mpd import MPDClient
-# client = MPDClient()
-# # #to connect to MPD you need to know the IP address and port
-# client.connect("localhost", 6600)
-
-# #set the volume between 0 and 100
-# client.setvol(100)
-#
-# #play song at certain position
-# client.play(1)
-#
-# #pause and resume playback
-# client.pause(0)
-# client.pause(1)
-#
-# #skip to the next or previous track
-# client.next()
-# client.previous()
-#
-# #clear current playlist and load a new one
-# client.playlistclear()
-# client.load("nameofyourplaylist")
-
-
-# class Employee:
-#    'Common base class for all employees'
-#    empCount = 0
-#
-#    def __init__(self, name, salary):
-#       self.name = name
-#       self.salary = salary
-#       Employee.empCount += 1
-#
-#    def displayCount(self):
-#      print "Total Employee %d" % Employee.empCount
-#
-#    def displayEmployee(self):
-#       print "Name : ", self.name,  ", Salary: ", self.salary
-
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # LOGGING
@@ -75,6 +32,7 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
+# CLASSES
 class Player:
     'Player'
     # empCount = 0
@@ -142,11 +100,10 @@ class Recorder:
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
 
-    # def is_recording(self):
-    #     pass
-
     def record(self, filename):
-    # RESEARCH: how to control VU meter with mic input
+    # TODO RESEARCH: how to control VU meter with mic input
+    # TODO use python lib instead of subprocess if possible
+    # TODO Experiment with threading
         filepath = os.path.join(self.RECORDING_DIR+filename)
         args = [
             'arecord',
@@ -160,6 +117,7 @@ class Recorder:
         ]
         logger.debug(args)
         proc = subprocess.Popen(args)
+        self.recording = True
 
     def remove_temp_ext(self):
         #remove .temp extension files
@@ -178,6 +136,7 @@ class Recorder:
         f.close()
         logger.debug("Stopping recording process by killing PID %s", str(pid))
         os.kill(pid, signal.SIGINT)
+        self.recording = False
         self.remove_temp_ext()
 
 class Buttons:
@@ -269,13 +228,14 @@ class Uploader:
     def upload_tracklist(self, tracklist):
         pass
 
+# MAIN LOOP
 try:
     player = Player()
     recorder = Recorder()
     buttons = Buttons()
 
     while True:
-
+        # TODO Check state of recorder/ lights/ player
         if buttons.BUT1PIN and GPIO.event_detected(buttons.BUT1PIN):
                 # button_rec()
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
