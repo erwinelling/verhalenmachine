@@ -217,15 +217,94 @@ class Cleaner:
 class Uploader:
     # TODO: Implement uploading
     def __init__(self):
+        #     self.client = soundcloud.Client(
+        #     # TODO: try to get this to work with just a secret key
+        #     # TODO: add config
+        #     self.client_id = config.get("upload", "client_id"),
+        #     self.client_secret = config.get("upload", "client_secret"),
+        #     self.username = config.get("upload", "username"),
+        #     self.password = config.get("upload", "password"),
+        # )
         pass
 
     def check_files_to_upload(self):
+        # walk through all files in recording directory
+        # logger.debug("Checking contents of %s", RECORDING_DIR)
+        # from os.path import join, getsize
+        # count = 0
+        # # TODO: Replace with counter object
+        # uploaded_track = False
+        # for root, dirs, files in os.walk(RECORDING_DIR):
+        #     for filename in files:
+        #         # check whether it is a music file that can be uploaded to soundcloud
+        #         # http://uploadandmanage.help.soundcloud.com/customer/portal/articles/2162441-uploading-requirements
+        #         # AIFF, WAVE (WAV), FLAC, ALAC, OGG, MP2, MP3, AAC, AMR, and WMA
+        #         # and ignore hidden files
+        #         if filename.lower().endswith(('.aiff', '.wav', '.flac', '.alac', '.ogg', '.mp2', '.mp3', '.aac', '.amr', '.wma')) and not filename.startswith('.'):
+        #             path_to_file = os.path.join(root, filename)
+        #
+        #             # TODO: Change this to a check of the id in the filename
+        #             not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
+        #             img_file = os.path.splitext(path_to_file)[0]+".jpg"
+        #             # soundcloud_set_file = os.path.splitext(path_to_file)[0]+".setname"
+        #             if os.path.isfile(not_uploaded_file):
         pass
 
     def upload_track(self, track):
+        # get playlist
+        # set_id = os.path.basename(os.path.normpath(os.path.dirname(path_to_file)))
+        # logger.debug("Set id: %s", set_id)
+        # playlist = client.get("/playlists/"+set_id)
+        # logger.debug("Playlist: %s", playlist)
+        #
+        # # upload to soundcloud
+        # datetimenow = datetime.datetime.now()
+        # track_dict = {
+        #     # TODO: Set more track data, get input somewhere
+        #     'title': unicode(os.path.splitext(filename)[0]),
+        #     'asset_data': open(path_to_file, 'rb'),
+        #     'description': u'Dit is een van Jimmy\'s Verhalen. Opgenomen op %s om %s in de categorie "%s".' % (datetimenow.__format__("%e-%m-%Y"), datetimenow.__format__("%T"), playlist.title),
+        #     'track_type': 'spoken',
+        #     'purchase_url': "http://wijzijnjimmys.nl/verhalen/",
+        #     'license': "cc-by-nc",
+        #     'tag_list': "jimmys verhalen"
+        #     # 'genre': 'Electronic',
+        # }
+        # if os.path.isfile(img_file):
+        #     track_dict['artwork_data'] = open(img_file, 'rb')
+        #
+        # uploaded_track = client.post('/tracks', track=track_dict)
+        # logger.debug("Uploaded %s to Soundcloud: %s (%s).", filename, uploaded_track.permalink_url, uploaded_track.id)
+        #
+        # # add soundcloud id to filename
+        # filename_with_soundcloud_id = "%s.%s%s" % (os.path.splitext(path_to_file)[0], uploaded_track.id, os.path.splitext(path_to_file)[1])
+        # os.rename(path_to_file, filename_with_soundcloud_id)
+        #
+        # # Add Track to right Set
+        # # f = open(soundcloud_set_file)
+        # # set_id = f.readline().strip().split("&", 1)[0].replace("id=", "")
+        # # f.close()
+        # if uploaded_track:
+        # UPDATE_TRACKLIST
+        # # remove .notuploaded file
+        # os.remove(not_uploaded_file)
+        # count +=1
         pass
 
-    def upload_tracklist(self, tracklist):
+    def update_tracklist(self, tracklist):
+        #     # generate tracklist of current playlist
+        #     track_id_list = []
+        #     for track in playlist.tracks:
+        #         track_id_list.append(track['id'])
+        #     logger.debug("%s, %s", playlist.title, track_id_list)
+        #
+        #     # add uploaded track to list
+        #     track_id_list.append(uploaded_track.id)
+        #
+        #     updated_playlist = client.put("/playlists/"+set_id, playlist={
+        #         'tracks': map(lambda id: dict(id=id), track_id_list)
+        #     })
+        #     logger.debug("%s, %s", updated_playlist.title, track_id_list)
         pass
 
 # MAIN LOOP
@@ -257,7 +336,11 @@ try:
                 # button_pause()
                 player.pause()
 
-        time.sleep(0.5)
+        # TODO: CHECK SERIAL PORT FOR VOLUME SLIDER
+        # player.setvol(volume)
+
+        # TODO: PARALLEL PROCESS FOR VU METER
+        time.sleep(0.1)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
