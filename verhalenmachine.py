@@ -4,6 +4,7 @@ import datetime
 import logging, logging.handlers
 import mpd
 import os
+import psutil
 import re
 import RPi.GPIO as GPIO
 import serial
@@ -82,6 +83,7 @@ class Player:
 
     # TODO: Load local playlist
     # TODO: Set volume max and min
+    # TODO: Check status here instead of saving button states
 
     def __init__(self):
         # pass
@@ -96,11 +98,10 @@ class Player:
         # self.playing = False
         self.prev_volume = None
 
-    # def is_playing(self):
-    #     pass
-    #
-    # def is_paused(self):
-    #     pass
+    def is_playing(self):
+        if client.status().get('state') == "play":
+            return True
+        return False
 
     def play(self):
         # TODO: RESEARCH: how to control VU meter with audio input
@@ -149,21 +150,30 @@ class Player:
 
 class Recorder:
     'Recorder'
-    recording = False
-    last_recording_starttime = ""
 
     # TODO: Implement recording
+    # TODO: Check status here instead of saving button states
 
     def __init__(self):
         self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0"
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
 
-    # def is_recording(self):
-    #     pass
+    def get_pid(self):
+        pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
+        f = open(pidfile)
+        pid = int(f.readline().strip())
+        f.close()
+        return pid
+
+    def is_recording(self):
+        # TODO: Test
+        if psutil.pid_exists(self.get_pid()):
+            return True
+        return False
 
     def record(self, filename):
-    # RESEARCH: how to control VU meter with mic input
+    # TODO: RESEARCH: how to control VU meter with mic input
         filepath = os.path.join(self.RECORDING_DIR+filename)
         args = [
             'arecord',
@@ -189,70 +199,10 @@ class Recorder:
 
 
     def stop(self):
-        pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
-        f = open(pidfile)
-        pid = int(f.readline().strip())
-        f.close()
+        pid = self.get_pid()
         logger.debug("Stopping recording process by killing PID %s", str(pid))
         os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
-
-# class Buttons:
-#     #TODO: set button numbers?
-#     #TODO: save button state
-#     #TODO: control lights
-#
-#     def __init__(self):
-#         # Pin Setup:
-#         GPIO.cleanup()
-#         GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
-#         self.LED1PIN = 35
-#         self.BUT1PIN = 38
-#         self.BUT2PIN = 37
-#         self.BUT3PIN = 36
-#         self.BUT4PIN = 32
-#         self.BUT5PIN = 31
-#         self.BUT6PIN = 33
-#
-#         # Initiate LEDs:
-#         if self.LED1PIN:
-#             GPIO.setup(self.LED1PIN, GPIO.OUT)
-#             GPIO.output(self.LED1PIN, GPIO.LOW)
-#
-#         # Initiate buttons:
-#         if self.BUT1PIN:
-#             # Button pin set as input w/ pull-up
-#             GPIO.setup(self.BUT1PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#             GPIO.add_event_detect(self.BUT1PIN, GPIO.FALLING, bouncetime=200)
-#         if self.BUT2PIN:
-#             # Button pin set as input w/ pull-up
-#             GPIO.setup(self.BUT2PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#             GPIO.add_event_detect(self.BUT2PIN, GPIO.FALLING, bouncetime=200)
-#         if self.BUT3PIN:
-#             # Button pin set as input w/ pull-up
-#             GPIO.setup(self.BUT3PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#             GPIO.add_event_detect(self.BUT3PIN, GPIO.FALLING, bouncetime=200)
-#         if self.BUT4PIN:
-#             # Button pin set as input w/ pull-up
-#             GPIO.setup(self.BUT4PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#             GPIO.add_event_detect(self.BUT4PIN, GPIO.FALLING, bouncetime=200)
-#         if self.BUT5PIN:
-#             # Button pin set as input w/ pull-up
-#             GPIO.setup(self.BUT5PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#             GPIO.add_event_detect(self.BUT5PIN, GPIO.FALLING, bouncetime=200)
-#         if self.BUT6PIN:
-#             # Button pin set as input w/ pull-up
-#             GPIO.setup(self.BUT6PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#             GPIO.add_event_detect(self.BUT6PIN, GPIO.FALLING, bouncetime=200)
-#
-#     def check_pressed(self, number):
-#         pass
-#
-#     def turn_light_on(self, number):
-#         pass
-#
-#     def turn_light_off(self, number):
-#         pass
 
 class Led:
     'LED'
@@ -282,12 +232,10 @@ class Button:
     def __init__(self, pin):
         # Pin Setup:
         self.pin = pin
-        self.pressed = False
 
         # Initiate button as input w/ pull-up
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
-
 
 class Cleaner:
     # TODO: Implement cleaning
@@ -394,20 +342,9 @@ class Uploader:
         #     logger.debug("%s, %s", updated_playlist.title, track_id_list)
         pass
 
-
-# Serial port stuff
-# def readlineCR(port):
-#     rv = ""
-#     while True:
-#         ch = port.read()
-#         rv += ch
-#         if ch=='\r' or ch=='':
-#             return rv
-
 try:
     player = Player()
     recorder = Recorder()
-    # buttons = Buttons()
 
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
@@ -419,41 +356,29 @@ try:
     # led3 = Led(22)
     ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
     prev_input = None
+
     while True:
         if GPIO.event_detected(button1.pin):
-            current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
-            sound_file_name = "%s.wav" % (current_datetime)
-            recorder.record(sound_file_name)
-            # TODO: ADD PAUSE
-            # TODO: ADD LED CONTROL
+            if recorder.is_recording():
+                recorder.stop()
+                # led1.off()
+            else:
+                current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
+                sound_file_name = "%s.wav" % (current_datetime)
+                recorder.record(sound_file_name)
+                # led1.on()
+
         if GPIO.event_detected(button2.pin):
-            player.play()
-            # TODO: ADD STOP
-            # TODO: ADD LED CONTROL
+            if player.is_playing():
+                player.stop()
+                # led2.off()
+            else:
+                player.play()
+                # led2.on()
+
         if GPIO.event_detected(button3.pin):
             player.next()
-            # TODO: ADD LED CONTROL
-
-        # if buttons.BUT1PIN and GPIO.event_detected(button1.[BUT1PIN]):
-        #         # button_rec()
-        #         current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
-        #         sound_file_name = "%s.wav" % (current_datetime)
-        #         recorder.record(sound_file_name)
-        # if buttons.BUT2PIN and GPIO.event_detected(buttons.BUT2PIN):
-        #         # button_prev()
-        #         recorder.stop()
-        # if buttons.BUT3PIN and GPIO.event_detected(buttons.BUT3PIN):
-        #         # button_next()
-        #         player.next()
-        # if buttons.BUT4PIN and GPIO.event_detected(buttons.BUT4PIN):
-        #         # button_stop()
-        #         player.stop()
-        # if buttons.BUT5PIN and GPIO.event_detected(buttons.BUT5PIN):
-        #         # button_play()
-        #         player.play()
-        # if buttons.BUT6PIN and GPIO.event_detected(buttons.BUT6PIN):
-        #         # button_pause()
-        #         player.pause()
+            # led3.blink()
 
         # Read volume slider data
         ser.flushInput()
@@ -469,8 +394,6 @@ try:
         # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
         # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
         # ser.write('50')
-
-        # TODO:
 
         time.sleep(0.1)
 
