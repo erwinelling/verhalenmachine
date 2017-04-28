@@ -83,6 +83,11 @@ Install GPIO stuff
 sudo apt-get install rpi.gpio
 ```
 
+Install Serial port stuff
+
+```
+sudo apt-get install python-serial
+```
 
 ### Remot3.it
 
@@ -93,12 +98,4 @@ For remote SSH/ web access setup Remot3.it
 sudo apt-get install weavedconnectd
 
 
-### Change default password?
-
-### Do something with Dyndns
-
-## Elements
-## Dependencies
-
-python-mpd2
-soundcloud
+### TODO: Change default password?
