@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
 import datetime
+import io
 import logging, logging.handlers
 import mpd
 import os
 import RPi.GPIO as GPIO
+import serial
 import signal
 import subprocess
 import time
@@ -79,6 +81,8 @@ class Player:
     'Player'
     # empCount = 0
     playing = False
+    max_volume = 80
+    prev_volume = None
 
     # TODO: Load local playlist
 
@@ -111,17 +115,20 @@ class Player:
     def stop(self):
         self.client.stop()
 
-    def set_volume(self, volume):
-        self.client.setvol(volume)
+    def set_volume(self, volume_decimal):
+        new_volume = volume_decimal * max_volume
+        if new_volume != self.prev_volume:
+            self.client.setvol(volume)
+            self.prev_volume = new_volume
 
-    def volume_change(self, increase=10):
-        current_volume = int(client.status().get('volume'))
-        new_volume = current_volume+increase
-        if new_volume > 100:
-            new_volume = 100
-        if new_volume < 0:
-            new_volume = 0
-        self.set_volume(new_volume)
+    # def volume_change(self, increase=10):
+    #     current_volume = int(client.status().get('volume'))
+    #     new_volume = current_volume+increase
+    #     if new_volume > 100:
+    #         new_volume = 100
+    #     if new_volume < 0:
+    #         new_volume = 0
+    #     self.set_volume(new_volume)
 
     def load_playlist(self):
         #TODO: Load playlist
@@ -180,68 +187,76 @@ class Recorder:
         os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
 
-class Buttons:
-    #TODO: set button numbers?
-    #TODO: save button state
-    #TODO: control lights
-    but1 = False
-    but2 = False
-    but3 = False
-    but4 = False
-    but5 = False
-    but6 = False
+# class Buttons:
+#     #TODO: set button numbers?
+#     #TODO: save button state
+#     #TODO: control lights
+#
+#     def __init__(self):
+#         # Pin Setup:
+#         GPIO.cleanup()
+#         GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
+#         self.LED1PIN = 35
+#         self.BUT1PIN = 38
+#         self.BUT2PIN = 37
+#         self.BUT3PIN = 36
+#         self.BUT4PIN = 32
+#         self.BUT5PIN = 31
+#         self.BUT6PIN = 33
+#
+#         # Initiate LEDs:
+#         if self.LED1PIN:
+#             GPIO.setup(self.LED1PIN, GPIO.OUT)
+#             GPIO.output(self.LED1PIN, GPIO.LOW)
+#
+#         # Initiate buttons:
+#         if self.BUT1PIN:
+#             # Button pin set as input w/ pull-up
+#             GPIO.setup(self.BUT1PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#             GPIO.add_event_detect(self.BUT1PIN, GPIO.FALLING, bouncetime=200)
+#         if self.BUT2PIN:
+#             # Button pin set as input w/ pull-up
+#             GPIO.setup(self.BUT2PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#             GPIO.add_event_detect(self.BUT2PIN, GPIO.FALLING, bouncetime=200)
+#         if self.BUT3PIN:
+#             # Button pin set as input w/ pull-up
+#             GPIO.setup(self.BUT3PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#             GPIO.add_event_detect(self.BUT3PIN, GPIO.FALLING, bouncetime=200)
+#         if self.BUT4PIN:
+#             # Button pin set as input w/ pull-up
+#             GPIO.setup(self.BUT4PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#             GPIO.add_event_detect(self.BUT4PIN, GPIO.FALLING, bouncetime=200)
+#         if self.BUT5PIN:
+#             # Button pin set as input w/ pull-up
+#             GPIO.setup(self.BUT5PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#             GPIO.add_event_detect(self.BUT5PIN, GPIO.FALLING, bouncetime=200)
+#         if self.BUT6PIN:
+#             # Button pin set as input w/ pull-up
+#             GPIO.setup(self.BUT6PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#             GPIO.add_event_detect(self.BUT6PIN, GPIO.FALLING, bouncetime=200)
+#
+#     def check_pressed(self, number):
+#         pass
+#
+#     def turn_light_on(self, number):
+#         pass
+#
+#     def turn_light_off(self, number):
+#         pass
 
-    def __init__(self):
+class Led:
+    pass
+
+class Button:
+    def __init__(self, pin):
         # Pin Setup:
-        GPIO.cleanup()
-        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
-        self.LED1PIN = 35
-        self.BUT1PIN = 38
-        self.BUT2PIN = 37
-        self.BUT3PIN = 36
-        self.BUT4PIN = 32
-        self.BUT5PIN = 31
-        self.BUT6PIN = 33
+        self.pin = pin
+        self.pressed = False
 
-        # Initiate LEDs:
-        if self.LED1PIN:
-            GPIO.setup(self.LED1PIN, GPIO.OUT)
-            GPIO.output(self.LED1PIN, GPIO.LOW)
+        # Initiate button as input w/ pull-up
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
 
-        # Initiate buttons:
-        if self.BUT1PIN:
-            # Button pin set as input w/ pull-up
-            GPIO.setup(self.BUT1PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.BUT1PIN, GPIO.FALLING, bouncetime=200)
-        if self.BUT2PIN:
-            # Button pin set as input w/ pull-up
-            GPIO.setup(self.BUT2PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.BUT2PIN, GPIO.FALLING, bouncetime=200)
-        if self.BUT3PIN:
-            # Button pin set as input w/ pull-up
-            GPIO.setup(self.BUT3PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.BUT3PIN, GPIO.FALLING, bouncetime=200)
-        if self.BUT4PIN:
-            # Button pin set as input w/ pull-up
-            GPIO.setup(self.BUT4PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.BUT4PIN, GPIO.FALLING, bouncetime=200)
-        if self.BUT5PIN:
-            # Button pin set as input w/ pull-up
-            GPIO.setup(self.BUT5PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.BUT5PIN, GPIO.FALLING, bouncetime=200)
-        if self.BUT6PIN:
-            # Button pin set as input w/ pull-up
-            GPIO.setup(self.BUT6PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.BUT6PIN, GPIO.FALLING, bouncetime=200)
-
-    def check_pressed(self, number):
-        pass
-
-    def turn_light_on(self, number):
-        pass
-
-    def turn_light_off(self, number):
-        pass
 
 class Cleaner:
     # TODO: Implement cleaning
@@ -348,38 +363,90 @@ class Uploader:
         #     logger.debug("%s, %s", updated_playlist.title, track_id_list)
         pass
 
+
+# Serial port stuff
+# def readlineCR(port):
+#     rv = ""
+#     while True:
+#         ch = port.read()
+#         rv += ch
+#         if ch=='\r' or ch=='':
+#             return rv
+
 try:
     player = Player()
     recorder = Recorder()
-    buttons = Buttons()
+    # buttons = Buttons()
+
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
+    button1 = Button(38)
+    button2 = Button(37)
+    button3 = Button(36)
+    ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
 
     while True:
+        if GPIO.event_detected(button1.pin):
+            current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
+            sound_file_name = "%s.wav" % (current_datetime)
+            recorder.record(sound_file_name)
+            # TODO: ADD PAUSE
+            # TODO: ADD LED CONTROL
+        if GPIO.event_detected(button2.pin):
+            player.play()
+            # TODO: ADD STOP
+            # TODO: ADD LED CONTROL
+        if GPIO.event_detected(button3.pin):
+            player.next()
+            # TODO: ADD LED CONTROL
 
-        if buttons.BUT1PIN and GPIO.event_detected(buttons.BUT1PIN):
-                # button_rec()
-                current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
-                sound_file_name = "%s.wav" % (current_datetime)
-                recorder.record(sound_file_name)
-        if buttons.BUT2PIN and GPIO.event_detected(buttons.BUT2PIN):
-                # button_prev()
-                recorder.stop()
-        if buttons.BUT3PIN and GPIO.event_detected(buttons.BUT3PIN):
-                # button_next()
-                player.next()
-        if buttons.BUT4PIN and GPIO.event_detected(buttons.BUT4PIN):
-                # button_stop()
-                player.stop()
-        if buttons.BUT5PIN and GPIO.event_detected(buttons.BUT5PIN):
-                # button_play()
-                player.play()
-        if buttons.BUT6PIN and GPIO.event_detected(buttons.BUT6PIN):
-                # button_pause()
-                player.pause()
+        # if buttons.BUT1PIN and GPIO.event_detected(button1.[BUT1PIN]):
+        #         # button_rec()
+        #         current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
+        #         sound_file_name = "%s.wav" % (current_datetime)
+        #         recorder.record(sound_file_name)
+        # if buttons.BUT2PIN and GPIO.event_detected(buttons.BUT2PIN):
+        #         # button_prev()
+        #         recorder.stop()
+        # if buttons.BUT3PIN and GPIO.event_detected(buttons.BUT3PIN):
+        #         # button_next()
+        #         player.next()
+        # if buttons.BUT4PIN and GPIO.event_detected(buttons.BUT4PIN):
+        #         # button_stop()
+        #         player.stop()
+        # if buttons.BUT5PIN and GPIO.event_detected(buttons.BUT5PIN):
+        #         # button_play()
+        #         player.play()
+        # if buttons.BUT6PIN and GPIO.event_detected(buttons.BUT6PIN):
+        #         # button_pause()
+        #         player.pause()
+
 
         # TODO: CHECK SERIAL PORT FOR VOLUME SLIDER
-        # player.setvol(volume)
+        # ik krijg hier een decimaal binnen (tussen 0 en 1)
+        # zelf omzetten naar 0-100 (of 0-80 of zo)
+        # en sanitizen dat alleen getallen mogen
+        # rcv = readlineCR(port)
+
+        # https://pythonhosted.org/pyserial/shortintro.html
+        # ser = serial.serial_for_url('loop://', timeout=1)
+
+        ser.flushInput()
+        serial_input = ser.readline()
+        logger.debug(serial_input)
+        #
+        # if isinstance(ser.readline(), float)
+        # logger.debug("volume: " + unicode(volume_decimal))
+        # player.setvol(volume_decimal)
 
         # TODO: PARALLEL PROCESS FOR VU METER
+        # SEND BETWEEN 1 and 100 to serial port:
+        # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
+        # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
+        # ser.write('50')
+
+        # TODO:
+
         time.sleep(0.1)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
