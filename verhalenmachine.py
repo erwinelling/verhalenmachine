@@ -297,7 +297,11 @@ try:
                 # button_pause()
                 player.pause()
 
-        time.sleep(0.5)
+        # TODO: CHECK SERIAL PORT FOR VOLUME SLIDER
+        # player.setvol(volume)
+
+        # TODO: PARALLEL PROCESS FOR VU METER
+        time.sleep(0.1)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
