@@ -118,10 +118,10 @@ class Player:
 
     def set_volume(self, new_volume):
         if new_volume != self.prev_volume:
-            # if new_volume > 100:
-            #     new_volume = 100
-            # if new_volume < 0:
-            #     new_volume = 0
+            if new_volume > 100:
+                new_volume = 100
+            if new_volume < 0:
+                new_volume = 0
             logger.debug("Changing volume from %s to %s" % (self.prev_volume, new_volume))
             self.client.setvol(new_volume)
             self.prev_volume = new_volume
@@ -131,15 +131,6 @@ class Player:
 
     def get_volume(self):
         return int(self.client.status().get('volume'))
-
-    # def volume_change(self, increase=10):
-    #     current_volume = int(client.status().get('volume'))
-    #     new_volume = current_volume+increase
-    #     if new_volume > 100:
-    #         new_volume = 100
-    #     if new_volume < 0:
-    #         new_volume = 0
-    #     self.set_volume(new_volume)
 
     def load_playlist(self):
         #TODO: Load playlist
@@ -152,7 +143,6 @@ class Recorder:
     'Recorder'
 
     # TODO: Implement recording
-    # TODO: Check status here instead of saving button states
 
     def __init__(self):
         self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0"
@@ -173,7 +163,13 @@ class Recorder:
         return False
 
     def record(self, filename):
+    # TODO: add soundcard
     # TODO: RESEARCH: how to control VU meter with mic input
+    # TODO: PARALLEL PROCESS FOR VU METER
+    # SEND BETWEEN 1 and 100 to serial port:
+    # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
+    # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
+    # ser.write('50')
         filepath = os.path.join(self.RECORDING_DIR+filename)
         args = [
             'arecord',
@@ -182,6 +178,7 @@ class Recorder:
             '-c1',
             '-r22050',
             '-V', 'mono',
+            '-vvv', # VU meter output?
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             filepath+".temp"
         ]
@@ -196,7 +193,6 @@ class Recorder:
                     path_to_file = os.path.join(root, filename)
                     os.rename(path_to_file, os.path.splitext(path_to_file)[0])
                     logger.debug("Renamed temp file to %s", os.path.splitext(path_to_file)[0])
-
 
     def stop(self):
         pid = self.get_pid()
@@ -227,6 +223,19 @@ class Led:
         self.on()
         time.sleep(sleep)
         self.off()
+
+class Kiku:
+    'Klik aan klik uit'
+    # TODO: Test!
+    # TODO: Kijk of het goed gaat met meerdere seriele connecties
+    def __init__(self):
+        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
+
+    def on(self):
+        self.ser.write("ka")
+
+    def off(self):
+        self.ser.write("ku")
 
 class Button:
     def __init__(self, pin):
@@ -345,12 +354,15 @@ class Uploader:
 try:
     player = Player()
     recorder = Recorder()
+    kiku = Kiku()
 
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
     button1 = Button(40)
+    # TODO: Add buttons
     button2 = Button(38)
     button3 = Button(36)
+    # TODO: Add leds
     # led1 = Led(26)
     # led2 = Led(24)
     # led3 = Led(22)
@@ -361,12 +373,15 @@ try:
         if GPIO.event_detected(button1.pin):
             if recorder.is_recording():
                 recorder.stop()
+                # TODO: Control leds separately from buttons
                 # led1.off()
+                # kiku.off()
             else:
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
                 # led1.on()
+                # kiku.on()
 
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
@@ -387,13 +402,6 @@ try:
         if len(ser_decimals) == 1 and ser_input != prev_input:
             player.set_volume_decimal(float(ser_input))
             prev_input = ser_input
-
-
-        # TODO: PARALLEL PROCESS FOR VU METER
-        # SEND BETWEEN 1 and 100 to serial port:
-        # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
-        # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
-        # ser.write('50')
 
         time.sleep(0.1)
 
