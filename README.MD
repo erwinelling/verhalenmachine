@@ -83,10 +83,20 @@ Install GPIO stuff
 sudo apt-get install rpi.gpio
 ```
 
-Install Serial port stuff
+Install Serial port stuff (also available through pip)
 
 ```
 sudo apt-get install python-serial
+```
+
+Install python development headers
+```
+sudo apt-get install python-dev
+```
+
+Install psutil
+```
+pip install psutil
 ```
 
 ### Remot3.it
@@ -99,3 +109,7 @@ sudo apt-get install weavedconnectd
 
 
 ### TODO: Change default password?
+
+### Handig
+python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
+python -m serial.tools.list_ports
