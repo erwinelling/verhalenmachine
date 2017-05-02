@@ -41,22 +41,6 @@ import time
 # client.playlistclear()
 # client.load("nameofyourplaylist")
 
-
-# class Employee:
-#    'Common base class for all employees'
-#    empCount = 0
-#
-#    def __init__(self, name, salary):
-#       self.name = name
-#       self.salary = salary
-#       Employee.empCount += 1
-#
-#    def displayCount(self):
-#      print "Total Employee %d" % Employee.empCount
-#
-#    def displayEmployee(self):
-#       print "Name : ", self.name,  ", Salary: ", self.salary
-
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # LOGGING
@@ -170,9 +154,9 @@ class Recorder:
         return False
 
     def record(self, filename):
-        # TODO: add soundcard
+        # TODO: add USB mic
         # TODO: RESEARCH: how to control VU meter with mic input
-        # TODO: PARALLEL PROCESS FOR VU METER
+        # TODO: PARALLEL PROCESS FOR VU METER?
         # SEND BETWEEN 1 and 100 to serial port:
         # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
         # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
@@ -185,7 +169,7 @@ class Recorder:
             '-c1',
             '-r22050',
             '-V', 'mono',
-            '-vvv', # for VU meter output, maybe use -vv of -v
+            '-v', # for VU meter output, maybe use -vv or -v or -vvv
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             filepath+".temp"
         ]
@@ -217,7 +201,7 @@ class Led:
 
         # Initiate LED
         GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, GPIO.LOW)
+        self.blink()
 
     def on(self):
         GPIO.output(self.pin, GPIO.HIGH)
@@ -228,9 +212,14 @@ class Led:
         logger.debug("LED (pin %s) OFF." % self.pin)
 
     def blink(self, times=1, sleep=0.5):
-        self.on()
-        time.sleep(sleep)
-        self.off()
+        count = 0
+        while count<times:
+            self.on()
+            time.sleep(sleep)
+            self.off()
+            if count<times-1:
+                time.sleep(sleep)
+            count = count+1
 
 class Kiku:
     'Klik aan klik uit'
@@ -259,6 +248,7 @@ class Cleaner:
     def __init__(self):
         pass
 
+    # TODO: Maybe move to recorder?
     # what needs to be cleaned:
     # skip 0 byte wave files
     # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
@@ -367,13 +357,11 @@ try:
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
     button1 = Button(40)
-    # TODO: Add buttons
     button2 = Button(38)
     button3 = Button(36)
-    # TODO: Add leds
-    # led1 = Led(26)
-    # led2 = Led(24)
-    # led3 = Led(22)
+    led1 = Led(37)
+    led2 = Led(35)
+    led3 = Led(33)
     ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
     prev_input = None
 
@@ -382,7 +370,7 @@ try:
             if recorder.is_recording():
                 recorder.stop()
                 # TODO: Control leds separately from buttons
-                # led1.off()
+                led1.off()
                 # kiku.off()
             else:
                 if player.is_playing():
@@ -390,24 +378,24 @@ try:
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
-                # led1.on()
+                led1.on()
                 # kiku.on()
 
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
                 player.stop()
-                # led2.off()
+                led2.off()
             else:
                 player.play()
-                # led2.on()
+                led2.on()
 
         if GPIO.event_detected(button3.pin):
             player.next()
-            # led3.blink()
+            led3.blink(times=3, sleep=0.5)
 
         # Read volume slider data
         # check for length of serial input buffer
-        # seems to be a delay here?!
+        # TODO: Fix the delay here?!
         ser.flushInput()
         ser_input = ser.readline()
         ser_decimals = re.findall("\d+\.\d+", ser_input)
@@ -418,7 +406,7 @@ try:
             # ser.write(str(int(float(ser_decimals[0])*100)))
             prev_input = ser_input
 
-        time.sleep(0.05)
+        time.sleep(0.5)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
