@@ -99,12 +99,16 @@ class Player:
         self.prev_volume = None
 
     def is_playing(self):
-        if client.status().get('state') == "play":
+        logger.debug("MPD status: %s" % self.client.status())
+        if self.client.status().get('state') == "play":
             return True
         return False
 
     def play(self):
         # TODO: RESEARCH: how to control VU meter with audio input
+        # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
+        # https://github.com/project-owner/PeppyMeter
+        # https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
         self.client.play()
 
     def pause(self):
@@ -129,8 +133,8 @@ class Player:
     def set_volume_decimal(self, volume_decimal):
         self.set_volume(int(volume_decimal*100))
 
-    def get_volume(self):
-        return int(self.client.status().get('volume'))
+    # def get_volume(self):
+    #     return int(self.client.status().get('volume'))
 
     def load_playlist(self):
         #TODO: Load playlist
@@ -150,11 +154,14 @@ class Recorder:
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
 
     def get_pid(self):
-        pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
-        f = open(pidfile)
-        pid = int(f.readline().strip())
-        f.close()
-        return pid
+        try:
+            pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
+            f = open(pidfile)
+            pid = int(f.readline().strip())
+            f.close()
+            return pid
+        except:
+            return False
 
     def is_recording(self):
         # TODO: Test
@@ -163,13 +170,13 @@ class Recorder:
         return False
 
     def record(self, filename):
-    # TODO: add soundcard
-    # TODO: RESEARCH: how to control VU meter with mic input
-    # TODO: PARALLEL PROCESS FOR VU METER
-    # SEND BETWEEN 1 and 100 to serial port:
-    # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
-    # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
-    # ser.write('50')
+        # TODO: add soundcard
+        # TODO: RESEARCH: how to control VU meter with mic input
+        # TODO: PARALLEL PROCESS FOR VU METER
+        # SEND BETWEEN 1 and 100 to serial port:
+        # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
+        # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
+        # ser.write('50')
         filepath = os.path.join(self.RECORDING_DIR+filename)
         args = [
             'arecord',
@@ -178,7 +185,7 @@ class Recorder:
             '-c1',
             '-r22050',
             '-V', 'mono',
-            '-vvv', # VU meter output?
+            '-vvv', # for VU meter output, maybe use -vv of -v
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             filepath+".temp"
         ]
@@ -196,8 +203,9 @@ class Recorder:
 
     def stop(self):
         pid = self.get_pid()
-        logger.debug("Stopping recording process by killing PID %s", str(pid))
-        os.kill(pid, signal.SIGINT)
+        if pid:
+            logger.debug("Stopping recording process by killing PID %s", str(pid))
+            os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
 
 class Led:
@@ -377,6 +385,8 @@ try:
                 # led1.off()
                 # kiku.off()
             else:
+                if player.is_playing():
+                    player.stop()
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
@@ -396,14 +406,19 @@ try:
             # led3.blink()
 
         # Read volume slider data
+        # check for length of serial input buffer
+        # seems to be a delay here?!
         ser.flushInput()
         ser_input = ser.readline()
         ser_decimals = re.findall("\d+\.\d+", ser_input)
         if len(ser_decimals) == 1 and ser_input != prev_input:
-            player.set_volume_decimal(float(ser_input))
+            logger.debug(ser_decimals)
+            # logger.debug(int(float(ser_decimals[0])*100))
+            player.set_volume_decimal(float(ser_decimals[0]))
+            # ser.write(str(int(float(ser_decimals[0])*100)))
             prev_input = ser_input
 
-        time.sleep(0.1)
+        time.sleep(0.05)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
