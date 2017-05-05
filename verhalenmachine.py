@@ -406,7 +406,12 @@ try:
             logger.debug(ser_decimals)
             # logger.debug(int(float(ser_decimals[0])*100))
             player.set_volume_decimal(float(ser_decimals[0]))
-            # ser.write(str(int(float(ser_decimals[0])*100)))
+
+            # ser_data = int(float(ser_decimals[0])*100)
+            # if ser_data == 0:
+            #     ser_data = 1
+            # ser.write(str(ser_data))
+            
             prev_input = ser_input
 
         time.sleep(0.5)
