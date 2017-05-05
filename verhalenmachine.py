@@ -67,7 +67,7 @@ class Player:
 
     # TODO: Load local playlist
     # TODO: Set volume max and min
-    # TODO: Check status here instead of saving button states
+    # TODO: Check status here instead of saving button states (or check status in while loop and change lights accordingly)
 
     def __init__(self):
         # pass
@@ -121,7 +121,10 @@ class Player:
     #     return int(self.client.status().get('volume'))
 
     def load_playlist(self):
-        #TODO: Load playlist
+        #TODO: Load playlist or load all mp3s
+        #TODO: Maybe shuffle playlist?
+        # self.client.playlistclear()
+        # self.client.load("nameofyourplaylist")
         pass
 
     # def update_playlist(self):
