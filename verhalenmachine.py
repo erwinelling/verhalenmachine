@@ -101,9 +101,10 @@ class Player:
         self.client.update()
 
 class Recorder:
-    'Recorder'
-
-    # TODO: Implement recording
+    '''
+    Recorder
+    arecord -D plughw:CARD=Device,DEV=0 -f S16_LE -c1 -r 22050 -V mono -v bla.wav
+    '''
 
     def __init__(self):
         self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0"
@@ -128,12 +129,7 @@ class Recorder:
 
     def record(self, filename):
         # TODO: add USB mic
-        # TODO: RESEARCH: how to control VU meter with mic input
-        # TODO: PARALLEL PROCESS FOR VU METER?
-        # SEND BETWEEN 1 and 100 to serial port:
-        # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
-        # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
-        # ser.write('50')
+        # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
         filepath = os.path.join(self.RECORDING_DIR+filename)
         args = [
             'arecord',
@@ -147,7 +143,13 @@ class Recorder:
             filepath+".temp"
         ]
         logger.debug(args)
-        proc = subprocess.Popen(args)
+        proc = subprocess.Popen(args, stdout=subprocess.PIPE)
+        # TODO: PARALLEL PROCESS FOR VU METER?
+        # SEND BETWEEN 1 and 100 to serial port:
+        # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
+        # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
+        # ser.write('50')
+        # p2 = subprocess.Popen(/home/volumio/verhalenmachine/vumeter_input.py, stdin=proc.stdout)
 
     def remove_temp_ext(self):
         #remove .temp extension files
@@ -165,9 +167,18 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
 
+    def clean(self):
+        # TODO: Implement cleaning
+        # skip 0 byte wave files
+        # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
+        # Te grote bestanden verwijderen apparaat
+        # Opname stoppen na een uur? (pid file leeftijd)
+        # Te grote files negeren
+
 class Led:
-    'LED'
-    # TODO: Test!
+    '''
+    LED
+    '''
     def __init__(self, pin):
         # Pin Setup:
         self.pin = pin
@@ -195,17 +206,19 @@ class Led:
             count = count+1
 
 class Kiku:
-    'Klik aan klik uit'
+    '''
+    Klik aan klik uit
+    '''
     # TODO: Test!
     # TODO: Kijk of het goed gaat met meerdere seriele connecties
     def __init__(self):
         self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
 
     def on(self):
-        self.ser.write("ka")
+        self.ser.write("ka\r")
 
     def off(self):
-        self.ser.write("ku")
+        self.ser.write("ku\r")
 
 class Button:
     def __init__(self, pin):
@@ -215,19 +228,6 @@ class Button:
         # Initiate button as input w/ pull-up
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
-
-class Cleaner:
-    # TODO: Implement cleaning
-    def __init__(self):
-        pass
-
-    # TODO: Maybe move to recorder?
-    # what needs to be cleaned:
-    # skip 0 byte wave files
-    # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
-    # Te grote bestanden verwijderen apparaat
-    # Opname stoppen na een uur?
-    # Te grote files negeren
 
 class Uploader:
     # TODO: Implement uploading
@@ -370,9 +370,17 @@ try:
             player.next()
             led3.blink(times=3, sleep=0.5)
 
-        # Read volume slider data
-        # check for length of serial input buffer
-        # TODO: Fix the delay here?!
+        # Control player led also when play/ stop has been used externally
+        if player.is_playing():
+            led2.on()
+        else:
+            led2.off()
+
+        # Control recorder led also when recordering has been stopped externally
+        if not recorder.is_recording():
+            led1.off()
+
+        # Read volume slider data from serial port
         ser.flushInput()
         ser_input = ser.readline()
         ser_decimals = re.findall("\d+\.\d+", ser_input)
@@ -384,7 +392,7 @@ try:
             # ser_data = int(float(ser_decimals[0])*100)
             # if ser_data == 0:
             #     ser_data = 1
-            # ser.write(str(ser_data))
+            # ser.write(str(ser_data)+"\r")
 
             prev_input = ser_input
 
