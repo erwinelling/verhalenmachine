@@ -46,14 +46,14 @@ Connect to <http://volumio.local/>.
 Do this <https://help.github.com/articles/generating-an-ssh-key/>
 
 ```
-cd /home/pi/
-git clone git@github.com:erwinelling/stormy.git
+cd /home/volumio/
+git clone git@github.com:erwinelling/verhalenmachine.git
 ```
 
 To update:
 
 ```
-cd /home/pi/stormy
+cd /home/volumio/verhalenmachine
 git pull
 ```
 
