@@ -14,33 +14,6 @@ import time
 
 
 # TODO: Add configfile
-
-# python-mpd2asdf
-
-
-# from mpd import MPDClient
-# client = MPDClient()
-# # #to connect to MPD you need to know the IP address and port
-# client.connect("localhost", 6600)
-
-# #set the volume between 0 and 100
-# client.setvol(100)
-#
-# #play song at certain position
-# client.play(1)
-#
-# #pause and resume playback
-# client.pause(0)
-# client.pause(1)
-#
-# #skip to the next or previous track
-# client.next()
-# client.previous()
-#
-# #clear current playlist and load a new one
-# client.playlistclear()
-# client.load("nameofyourplaylist")
-
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # LOGGING
@@ -92,6 +65,7 @@ class Player:
         # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
         # https://github.com/project-owner/PeppyMeter
         # https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
+        # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
         self.client.play()
 
     def pause(self):
@@ -411,7 +385,7 @@ try:
             # if ser_data == 0:
             #     ser_data = 1
             # ser.write(str(ser_data))
-            
+
             prev_input = ser_input
 
         time.sleep(0.5)
