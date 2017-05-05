@@ -65,7 +65,6 @@ logger.addHandler(ch)
 class Player:
     'Player'
 
-    # TODO: Load local playlist
     # TODO: Set volume max and min
     # TODO: Check status here instead of saving button states (or check status in while loop and change lights accordingly)
 
@@ -121,14 +120,11 @@ class Player:
     #     return int(self.client.status().get('volume'))
 
     def load_playlist(self):
-        #TODO: Load playlist or load all mp3s
-        #TODO: Maybe shuffle playlist?
-        # self.client.playlistclear()
-        # self.client.load("nameofyourplaylist")
-        pass
+        self.client.clear()
+        self.client.add('INTERNAL')
 
-    # def update_playlist(self):
-    #     pass
+    def update_database(self):
+        self.client.update()
 
 class Recorder:
     'Recorder'
@@ -354,7 +350,11 @@ class Uploader:
 
 try:
     player = Player()
+    player.update_database()
+    player.load_playlist()
+
     recorder = Recorder()
+
     kiku = Kiku()
 
     GPIO.cleanup()
