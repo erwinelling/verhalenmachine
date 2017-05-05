@@ -47,7 +47,7 @@ class Player:
         self.client = MPDClient()
         self.client.connect("localhost", 6600)
 
-        # TODO: Check whether this works
+        # TODO: Check whether this works. It seems not.
         self.client.repeat(1)
         self.client.random(1)
 
@@ -174,6 +174,7 @@ class Recorder:
         # Te grote bestanden verwijderen apparaat
         # Opname stoppen na een uur? (pid file leeftijd)
         # Te grote files negeren
+        pass
 
 class Led:
     '''
