@@ -13,10 +13,17 @@ import subprocess
 import time
 
 
-# TODO: Add configfile
+
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
+# TODO: Test configfile
+# TODO: Add shit to configfile
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(HOME_DIR, "verhalenmachine.cfg"))
+
+
 # LOGGING
+# TODO: Cleanup logging
 LOG_FILE = os.path.join(HOME_DIR, "verhalenmachine.log")
 
 logger = logging.getLogger()
@@ -166,19 +173,6 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
 
-    def cleanrecordingdir(self):
-        # TODO: Move to uploader?
-        # TODO: Implement cleaning
-        # TODO: Test whether this works
-        # TODO: Do this periodically (cron?) or just before uploading
-        for root, dirs, files in os.walk(self.RECORDING_DIR):
-            for filename in files:
-                if os.path.getsize(filename) == 0: # or os.path.getsize(filename) > xxxx
-                    # Remove 0 byte files
-                    # Remove bigger than x GB?
-                    # TODO: Add max size
-                    os.remove(filename)
-
     def dontplayfortoolong(self):
         # TODO: Give normal function name
         # TODO: Test whether this works
@@ -250,25 +244,42 @@ class Button:
 
 class Uploader:
     # TODO: Implement uploading
+    # TODO: Implement uploading to several playlists again?
+
     def __init__(self):
-        #     self.client = soundcloud.Client(
-        #     # TODO: try to get this to work with just a secret key
-        #     # TODO: add config
-        #     self.client_id = config.get("upload", "client_id"),
-        #     self.client_secret = config.get("upload", "client_secret"),
-        #     self.username = config.get("upload", "username"),
-        #     self.password = config.get("upload", "password"),
-        # )
-        pass
+        # TODO: Test
+        self.client = soundcloud.Client(
+            # TODO: try to get this to work with just a secret key
+            self.client_id = config.get("upload", "client_id"),
+            self.client_secret = config.get("upload", "client_secret"),
+            self.username = config.get("upload", "username"),
+            self.password = config.get("upload", "password"),
+        )
+        # TODO: Add to config
+        self.RECORDING_DIR = "/data/INTERNAL/"
+
+    def cleanrecordingdir(self):
+        # TODO: Move to uploader?
+        # TODO: Implement cleaning
+        # TODO: Test whether this works
+        # TODO: Do this periodically (cron?) or just before uploading
+        for root, dirs, files in os.walk(self.RECORDING_DIR):
+            for filename in files:
+                if os.path.getsize(filename) == 0: # or os.path.getsize(filename) > xxxx
+                    # Remove 0 byte files
+                    # Remove bigger than x GB?
+                    # TODO: Add max size
+                    path_to_file = os.path.join(root, filename)
+                    os.remove(path_to_file)
 
     def check_files_to_upload(self):
-        # walk through all files in recording directory
-        # logger.debug("Checking contents of %s", RECORDING_DIR)
+        # # walk through all files in recording directory
+        # logger.debug("Checking contents of %s", self.RECORDING_DIR)
         # from os.path import join, getsize
         # count = 0
         # # TODO: Replace with counter object
         # uploaded_track = False
-        # for root, dirs, files in os.walk(RECORDING_DIR):
+        # for root, dirs, files in os.walk(self.RECORDING_DIR):
         #     for filename in files:
         #         # check whether it is a music file that can be uploaded to soundcloud
         #         # http://uploadandmanage.help.soundcloud.com/customer/portal/articles/2162441-uploading-requirements
@@ -276,7 +287,7 @@ class Uploader:
         #         # and ignore hidden files
         #         if filename.lower().endswith(('.aiff', '.wav', '.flac', '.alac', '.ogg', '.mp2', '.mp3', '.aac', '.amr', '.wma')) and not filename.startswith('.'):
         #             path_to_file = os.path.join(root, filename)
-        #
+        # #
         #             # TODO: Change this to a check of the id in the filename
         #             not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
         #             img_file = os.path.splitext(path_to_file)[0]+".jpg"
