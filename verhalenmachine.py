@@ -38,11 +38,7 @@ logger.addHandler(ch)
 class Player:
     'Player'
 
-    # TODO: Set volume max and min
-    # TODO: Check status here instead of saving button states (or check status in while loop and change lights accordingly)
-
     def __init__(self):
-        # pass
         from mpd import MPDClient
         self.client = MPDClient()
         self.client.connect("localhost", 6600)
@@ -51,7 +47,9 @@ class Player:
         self.client.repeat(1)
         self.client.random(1)
 
-        # self.playing = False
+        # TODO: Check volume max and min
+        self.min_volume = 0
+        self.max_voume = 100
         self.prev_volume = None
 
     def is_playing(self):
@@ -61,11 +59,6 @@ class Player:
         return False
 
     def play(self):
-        # TODO: RESEARCH: how to control VU meter with audio input
-        # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
-        # https://github.com/project-owner/PeppyMeter
-        # https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
-        # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
         self.client.play()
 
     def pause(self):
@@ -79,10 +72,10 @@ class Player:
 
     def set_volume(self, new_volume):
         if new_volume != self.prev_volume:
-            if new_volume > 100:
-                new_volume = 100
-            if new_volume < 0:
-                new_volume = 0
+            if new_volume > self.max_volume:
+                new_volume = self.max_volume
+            if new_volume < self.min_volume:
+                new_volume = self.min_volume
             logger.debug("Changing volume from %s to %s" % (self.prev_volume, new_volume))
             self.client.setvol(new_volume)
             self.prev_volume = new_volume
@@ -152,7 +145,7 @@ class Recorder:
         # p2 = subprocess.Popen(/home/volumio/verhalenmachine/vumeter_input.py, stdin=proc.stdout)
 
     def remove_temp_ext(self):
-        #remove .temp extension files
+        # remove .temp extension files
         for root, dirs, files in os.walk(self.RECORDING_DIR):
             for filename in files:
                 if os.path.splitext(filename)[1] == ".temp":
@@ -380,6 +373,7 @@ try:
         # Control recorder led also when recordering has been stopped externally
         if not recorder.is_recording():
             led1.off()
+            # kiku.off()
 
         # Read volume slider data from serial port
         ser.flushInput()
