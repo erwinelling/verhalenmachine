@@ -120,6 +120,12 @@ class Recorder:
             return True
         return False
 
+        #  >>> import os.path
+        #  >>> os.path.exists("/proc/0")
+        #  False
+        #  >>> os.path.exists("/proc/12")
+        #  True
+
     def record(self, filename):
         # TODO: add USB mic
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
@@ -160,14 +166,33 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
 
-    def clean(self):
+    def cleanrecordingdir(self):
+        # TODO: Move to uploader?
         # TODO: Implement cleaning
-        # skip 0 byte wave files
+        # TODO: Test whether this works
+        # TODO: Do this periodically (cron?) or just before uploading
+        for root, dirs, files in os.walk(self.RECORDING_DIR):
+            for filename in files:
+                if os.path.getsize(filename) == 0: # or os.path.getsize(filename) > xxxx
+                    # Remove 0 byte files
+                    # Remove bigger than x GB?
+                    # TODO: Add max size
+                    os.remove(filename)
+
+    def dontplayfortoolong(self):
+        # TODO: Give normal function name
+        # TODO: Test whether this works
+        # TODO: Check this periodically, like every 15mins (cron?)
         # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
-        # Te grote bestanden verwijderen apparaat
         # Opname stoppen na een uur? (pid file leeftijd)
-        # Te grote files negeren
-        pass
+        import psutil, datetime, time
+        if self.is_recording():
+            p = psutil.Process(self.get_pid())
+            create_time = p.create_time()
+            current_time = time.time()
+            if current_time - create_time > 30 * 60:
+                # stop when recording longer than half an hour
+                self.stop()
 
 class Led:
     '''
@@ -373,6 +398,7 @@ try:
         # Control recorder led also when recordering has been stopped externally
         if not recorder.is_recording():
             led1.off()
+            # TODO: implement kiku
             # kiku.off()
 
         # Read volume slider data from serial port
