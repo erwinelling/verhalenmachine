@@ -5,8 +5,14 @@ import errno
 import math
 import serial
 
-#Open the FIFO that MPD has created for us
-#This represents the sample (44100:16:2) that MPD is currently "playing"
+# https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
+# https://github.com/project-owner/PeppyMeter
+# https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
+# https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
+
+
+# Open the FIFO that MPD has created for us
+# This represents the sample (44100:16:2) that MPD is currently "playing"
 fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
 ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
 
@@ -53,6 +59,7 @@ while 1:
 #         i = 1
 #     i = i+1
 
+# TODO: Add output settings to mpd.conf (and restart) as Volumio deletes them when changes occur through the settings UI
 # /etc/mpd.conf
 #
 # audio_output {
@@ -62,7 +69,7 @@ while 1:
 # format  "44100:16:2"
 # }
 
-
+# e.g.
 # echo 'replaygain "album"' >> /etc/mpd.conf
 # echo 'replaygain_preamp "0"' >> /etc/mpd.conf
 # echo 'replaygain_limit "yes"' >> /etc/mpd.conf
