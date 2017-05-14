@@ -14,9 +14,6 @@ import time
 import pdb
 import ConfigParser
 
-# TODO: Laden van playlist veranderen
-
-
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # TODO: Test configfile
@@ -97,6 +94,7 @@ class Player:
     #     return int(self.client.status().get('volume'))
 
     def load_playlist(self):
+        # TODO: Laden van playlist veranderen, zodat dit samenwerkt met Volumio GUI
         self.client.clear()
         self.client.add('INTERNAL')
 
@@ -128,20 +126,13 @@ class Recorder:
             return False
 
     def is_recording(self):
-        # TODO: Test
         if psutil.pid_exists(self.get_pid()):
             return True
         return False
 
-        #  >>> import os.path
-        #  >>> os.path.exists("/proc/0")
-        #  False
-        #  >>> os.path.exists("/proc/12")
-        #  True
-
     def record(self, filename):
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
-        filepath = os.path.join(self.RECORDING_DIR+filename)
+        filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
         args = [
             'arecord',
             '-D', self.SOUND_CARD_MIC,
@@ -149,7 +140,7 @@ class Recorder:
             '-c1',
             '-r22050',
             '-V', 'mono',
-            '-v', # for VU meter output, maybe use -vv or -v or -vvv
+            # '-v', # for VU meter output, maybe use -vv or -v or -vvv
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             filepath+".temp"
         ]
@@ -172,18 +163,19 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
 
-    def dontplayfortoolong(self):
-        # TODO: Give normal function name
-        # TODO: Test whether this works
+    def dontrecordfortoolong(self):
         # TODO: Check this periodically, like every 15mins (cron? https://stackoverflow.com/questions/3987041/python-run-function-from-the-command-line)
-        # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
-        # Opname stoppen na een uur? (pid file leeftijd)
+        # TODO: Turn into class method?
+        # TODO: Fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
         import psutil, datetime, time
         if self.is_recording():
             p = psutil.Process(self.get_pid())
+            logger.debug("Recording: %s" % p)
             create_time = p.create_time()
             current_time = time.time()
-            if current_time - create_time > 30 * 60:
+            duration = (current_time - create_time)/60
+            logger.debug("Time: %s" % duration)
+            if duration > 30:
                 # stop when recording longer than half an hour
                 self.stop()
 
@@ -428,7 +420,7 @@ try:
             prev_input = ser_input
 
         time.sleep(0.5)
-        # pdb.set_trace()
+        pdb.set_trace()
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
