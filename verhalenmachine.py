@@ -59,8 +59,9 @@ class Player:
         self.prev_volume = None
 
     def is_playing(self):
-        logger.debug("MPD status: %s" % self.client.status())
-        if self.client.status().get('state') == "play":
+        status = self.client.status()
+        logger.debug("MPD status: %s" % status)
+        if status.get('state') == "play":
             return True
         return False
 
@@ -189,14 +190,17 @@ class Led:
 
         # Initiate LED
         GPIO.setup(self.pin, GPIO.OUT)
+        self.burning = False
         self.blink()
 
     def on(self):
         GPIO.output(self.pin, GPIO.HIGH)
+        self.burning = True
         logger.debug("LED (pin %s) ON." % self.pin)
 
     def off(self):
         GPIO.output(self.pin, GPIO.LOW)
+        self.burning = False
         logger.debug("LED (pin %s) OFF." % self.pin)
 
     def blink(self, times=1, sleep=0.5):
@@ -217,12 +221,15 @@ class Kiku:
     # TODO: Kijk of het goed gaat met meerdere seriele connecties
     def __init__(self):
         self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
+        self.burning = False
 
     def on(self):
         self.ser.write("ka\r")
+        self.burning = True
 
     def off(self):
         self.ser.write("ku\r")
+        self.burning = False
 
 class Button:
     def __init__(self, pin):
@@ -389,19 +396,23 @@ try:
 
         if GPIO.event_detected(button3.pin):
             player.next()
-            led3.blink(times=3, sleep=0.5)
+            led3.blink()
 
         # Control player led also when play/ stop has been used externally
-        if player.is_playing():
-            led2.on()
+        if not player.is_playing():
+            if led2.burning:
+                led2.off()
         else:
-            led2.off()
+            if not led2.burning:
+                led2.on()
 
         # Control recorder led also when recordering has been stopped externally
         if not recorder.is_recording():
-            led1.off()
-            # TODO: implement kiku
-            # kiku.off()
+            if led1.burning:
+                led1.off()
+            # if kiku.burning:
+                # kiku.off()
+                # TODO: implement kiku
 
         # Read volume slider data from serial port
         ser.flushInput()
@@ -420,7 +431,7 @@ try:
             prev_input = ser_input
 
         time.sleep(0.5)
-        pdb.set_trace()
+        # pdb.set_trace()
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
