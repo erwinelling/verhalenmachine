@@ -13,8 +13,11 @@ import subprocess
 import time
 import pdb
 import ConfigParser
+import soundcloud
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
+
+# TODO: Move classes to separate file(s)
 
 # TODO: Test configfile
 # TODO: Add shit to configfile
@@ -115,7 +118,7 @@ class Recorder:
         self.SOUND_CARD_MIC = "plughw:CARD=E205U,DEV=0" # Superlux USB mic
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
-
+        self.filepath = ""
     def get_pid(self):
         try:
             pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
@@ -157,12 +160,20 @@ class Recorder:
                     os.rename(path_to_file, os.path.splitext(path_to_file)[0])
                     logger.debug("Renamed temp file to %s", os.path.splitext(path_to_file)[0])
 
+    def add_not_uploaded_file(self):
+        # TODO: TEST
+        if self.filepath:
+            not_uploaded_file = os.path.splitext(self.filepath)[0] + ".notuploaded"
+            f = open(not_uploaded_file, 'w')
+            f.close()
+
     def stop(self):
         pid = self.get_pid()
         if pid:
             logger.debug("Stopping recording process by killing PID %s", str(pid))
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
+        self.add_not_uploaded_file()
 
     def dontrecordfortoolong(self):
         # TODO: Check this periodically, like every 15mins (cron? https://stackoverflow.com/questions/3987041/python-run-function-from-the-command-line)
@@ -226,10 +237,12 @@ class Kiku:
     def on(self):
         self.ser.write("ka\r")
         self.burning = True
+        logger.debug("KIKU ON")
 
     def off(self):
         self.ser.write("ku\r")
         self.burning = False
+        logger.debug("KIKU OFF")
 
 class Button:
     def __init__(self, pin):
@@ -245,53 +258,54 @@ class Uploader:
     # TODO: Implement uploading to several playlists again?
 
     def __init__(self):
-        # TODO: Test
-        self.client = soundcloud.Client(
-            # TODO: try to get this to work with just a secret key
-            client_id = config.get("upload", "client_id"),
-            client_secret = config.get("upload", "client_secret"),
-            username = config.get("upload", "username"),
-            password = config.get("upload", "password"),
-        )
+        # TODO: Add to config
+        self.client = soundcloud.Client(client_id="2afa000b9c16670dd62c83700567487f", client_secret="dbf7e4b8b8140f142b62c8e93b4d0ab8", username="erwin@uptous.nl", password="ell82SOU!")
+        logger.debug("SOUNDCLOUD connected to %s " % self.client.get('/me').username)
+
+        # self.client = soundcloud.Client(
+        #     # TODO: try to get this to work with just a secret key
+        #     client_id = config.get("upload", "client_id"),
+        #     client_secret = config.get("upload", "client_secret"),
+        #     username = config.get("upload", "username"),
+        #     password = config.get("upload", "password"),
+        # )
+
         # TODO: Add to config
         self.RECORDING_DIR = "/data/INTERNAL/"
 
     def cleanrecordingdir(self):
-        # TODO: Move to uploader?
-        # TODO: Implement cleaning
-        # TODO: Test whether this works
         # TODO: Do this periodically (cron?) or just before uploading
         for root, dirs, files in os.walk(self.RECORDING_DIR):
             for filename in files:
-                if os.path.getsize(filename) == 0: # or os.path.getsize(filename) > xxxx
-                    # Remove 0 byte files
-                    # Remove bigger than x GB?
-                    # TODO: Add max size
-                    path_to_file = os.path.join(root, filename)
-                    os.remove(path_to_file)
+                # logger.debug("FILESIZE %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
+                # Remove 0 byte files
+                # TODO: Maybe add max size, i.e. Remove bigger than x GB? (x 1000 000 000 bytes)
+                if filename.lower().endswith(('.aiff', '.wav', '.flac', '.alac', '.ogg', '.mp2', '.mp3', '.aac', '.amr', '.wma')) and not filename.startswith('.'):
+                    if os.path.getsize(os.path.join(root, filename)) == 0: # or os.path.getsize(filename) > xxxx
+                        path_to_file = os.path.join(root, filename)
+                        logger.debug("REMOVING %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
+                        os.remove(path_to_file)
 
     def check_files_to_upload(self):
         # # walk through all files in recording directory
-        # logger.debug("Checking contents of %s", self.RECORDING_DIR)
-        # from os.path import join, getsize
-        # count = 0
-        # # TODO: Replace with counter object
+        logger.debug("Checking contents of %s", self.RECORDING_DIR)
+        count = 0
+        # TODO: Replace with counter object
         # uploaded_track = False
-        # for root, dirs, files in os.walk(self.RECORDING_DIR):
-        #     for filename in files:
-        #         # check whether it is a music file that can be uploaded to soundcloud
-        #         # http://uploadandmanage.help.soundcloud.com/customer/portal/articles/2162441-uploading-requirements
-        #         # AIFF, WAVE (WAV), FLAC, ALAC, OGG, MP2, MP3, AAC, AMR, and WMA
-        #         # and ignore hidden files
-        #         if filename.lower().endswith(('.aiff', '.wav', '.flac', '.alac', '.ogg', '.mp2', '.mp3', '.aac', '.amr', '.wma')) and not filename.startswith('.'):
-        #             path_to_file = os.path.join(root, filename)
-        # #
-        #             # TODO: Change this to a check of the id in the filename
-        #             not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
-        #             img_file = os.path.splitext(path_to_file)[0]+".jpg"
-        #             # soundcloud_set_file = os.path.splitext(path_to_file)[0]+".setname"
-        #             if os.path.isfile(not_uploaded_file):
-        pass
+        for root, dirs, files in os.walk(self.RECORDING_DIR):
+            for filename in files:
+                # check whether it is a music file that can be uploaded to soundcloud
+                # http://uploadandmanage.help.soundcloud.com/customer/portal/articles/2162441-uploading-requirements
+                # AIFF, WAVE (WAV), FLAC, ALAC, OGG, MP2, MP3, AAC, AMR, and WMA
+                # and ignore hidden files
+                if filename.lower().endswith(('.aiff', '.wav', '.flac', '.alac', '.ogg', '.mp2', '.mp3', '.aac', '.amr', '.wma')) and not filename.startswith('.'):
+                    path_to_file = os.path.join(root, filename)
+                    logger.debug(path_to_file)
+                    not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
+                    logger.debug(not_uploaded_file)
+                    if os.path.isfile(not_uploaded_file):
+                        logger.debug("EXISTs")
+                        self.upload_track(path_to_file)
 
     def upload_track(self, track):
         # get playlist
@@ -332,6 +346,7 @@ class Uploader:
         # # remove .notuploaded file
         # os.remove(not_uploaded_file)
         # count +=1
+        logger.debug("I could upload %s" % track)
         pass
 
     def update_tracklist(self, tracklist):
@@ -356,6 +371,7 @@ try:
     player.load_playlist()
 
     recorder = Recorder()
+    uploader = Uploader()
 
     kiku = Kiku()
 
@@ -371,10 +387,11 @@ try:
     prev_input = None
 
     while True:
+        # Check GPIO for button events
         if GPIO.event_detected(button1.pin):
             if recorder.is_recording():
                 recorder.stop()
-                # TODO: Control leds separately from buttons
+                # TODO: Maybe control leds totally separate from buttons
                 led1.off()
                 # kiku.off()
             else:
@@ -419,8 +436,7 @@ try:
         ser_input = ser.readline()
         ser_decimals = re.findall("\d+\.\d+", ser_input)
         if len(ser_decimals) == 1 and ser_input != prev_input:
-            logger.debug(ser_decimals)
-            # logger.debug(int(float(ser_decimals[0])*100))
+            logger.debug("VOLUME SLIDER: %s" % ser_decimals)
             player.set_volume_decimal(float(ser_decimals[0]))
 
             # ser_data = int(float(ser_decimals[0])*100)
@@ -431,7 +447,7 @@ try:
             prev_input = ser_input
 
         time.sleep(0.5)
-        # pdb.set_trace()
+        pdb.set_trace()
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
