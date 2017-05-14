@@ -12,6 +12,7 @@ import signal
 import subprocess
 import time
 import pdb
+import ConfigParser
 
 # TODO: Laden van playlist veranderen
 
@@ -56,10 +57,8 @@ class Player:
         self.client.repeat(1)
         self.client.random(1)
 
-        # TODO: Check volume max and min
-        # TODO: Map slider to volume range
-        self.min_volume = 0
-        self.max_voume = 100
+        self.min_volume = 10
+        self.max_volume = 90
         self.prev_volume = None
 
     def is_playing(self):
@@ -91,7 +90,8 @@ class Player:
             self.prev_volume = new_volume
 
     def set_volume_decimal(self, volume_decimal):
-        self.set_volume(int(volume_decimal*100))
+        volume = self.min_volume + volume_decimal*(self.max_volume-self.min_volume)
+        self.set_volume(int(volume))
 
     # def get_volume(self):
     #     return int(self.client.status().get('volume'))
@@ -249,10 +249,10 @@ class Uploader:
         # TODO: Test
         self.client = soundcloud.Client(
             # TODO: try to get this to work with just a secret key
-            self.client_id = config.get("upload", "client_id"),
-            self.client_secret = config.get("upload", "client_secret"),
-            self.username = config.get("upload", "username"),
-            self.password = config.get("upload", "password"),
+            client_id = config.get("upload", "client_id"),
+            client_secret = config.get("upload", "client_secret"),
+            username = config.get("upload", "username"),
+            password = config.get("upload", "password"),
         )
         # TODO: Add to config
         self.RECORDING_DIR = "/data/INTERNAL/"
@@ -428,6 +428,7 @@ try:
             prev_input = ser_input
 
         time.sleep(0.5)
+        # pdb.set_trace()
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
