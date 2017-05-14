@@ -11,7 +11,9 @@ import serial
 import signal
 import subprocess
 import time
+import pdb
 
+# TODO: Laden van playlist veranderen
 
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -55,6 +57,7 @@ class Player:
         self.client.random(1)
 
         # TODO: Check volume max and min
+        # TODO: Map slider to volume range
         self.min_volume = 0
         self.max_voume = 100
         self.prev_volume = None
@@ -103,11 +106,14 @@ class Player:
 class Recorder:
     '''
     Recorder
+    arecord -D plughw:CARD=E205U,DEV=0 -f S16_LE -c1 -r 22050 -V mono -v bla.wav
     arecord -D plughw:CARD=Device,DEV=0 -f S16_LE -c1 -r 22050 -V mono -v bla.wav
     '''
 
     def __init__(self):
-        self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0"
+        # TODO: Throw exception when mic does not exist
+        # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
+        self.SOUND_CARD_MIC = "plughw:CARD=E205U,DEV=0" # Superlux USB mic
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
 
@@ -134,7 +140,6 @@ class Recorder:
         #  True
 
     def record(self, filename):
-        # TODO: add USB mic
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
         filepath = os.path.join(self.RECORDING_DIR+filename)
         args = [
@@ -150,12 +155,6 @@ class Recorder:
         ]
         logger.debug(args)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
-        # TODO: PARALLEL PROCESS FOR VU METER?
-        # SEND BETWEEN 1 and 100 to serial port:
-        # ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
-        # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
-        # ser.write('50')
-        # p2 = subprocess.Popen(/home/volumio/verhalenmachine/vumeter_input.py, stdin=proc.stdout)
 
     def remove_temp_ext(self):
         # remove .temp extension files
@@ -176,7 +175,7 @@ class Recorder:
     def dontplayfortoolong(self):
         # TODO: Give normal function name
         # TODO: Test whether this works
-        # TODO: Check this periodically, like every 15mins (cron?)
+        # TODO: Check this periodically, like every 15mins (cron? https://stackoverflow.com/questions/3987041/python-run-function-from-the-command-line)
         # Fixen als hij te lang opneemt wav-01, wav-02, wav-03
         # Opname stoppen na een uur? (pid file leeftijd)
         import psutil, datetime, time

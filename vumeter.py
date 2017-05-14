@@ -10,6 +10,13 @@ import serial
 # https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
 # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
 
+# TODO: PARALLEL PROCESS FOR VU METER?
+# SEND BETWEEN 1 and 100 to serial port:
+# ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
+# python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
+# ser.write('50')
+# p2 = subprocess.Popen(/home/volumio/verhalenmachine/vumeter_input.py, stdin=proc.stdout)
+
 
 # Open the FIFO that MPD has created for us
 # This represents the sample (44100:16:2) that MPD is currently "playing"
