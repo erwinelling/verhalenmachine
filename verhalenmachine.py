@@ -177,9 +177,7 @@ class Recorder:
         self.add_not_uploaded_file()
 
     def dontrecordfortoolong(self):
-        # TODO: Turn into class method?
         # TODO: Fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
-        import psutil, datetime, time
         if self.is_recording():
             p = psutil.Process(self.get_pid())
             logger.debug("Recording: %s" % p)

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 import os
 import audioop
 import time
@@ -5,25 +7,17 @@ import errno
 import math
 import serial
 
-# https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
-# https://github.com/project-owner/PeppyMeter
-# https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
-# https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
-
-# TODO: PARALLEL PROCESS FOR VU METER?
 # SEND BETWEEN 1 and 100 to serial port:
-# ser = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1.0)
 # python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
 # ser.write('50')
 # p2 = subprocess.Popen(/home/volumio/verhalenmachine/vumeter_input.py, stdin=proc.stdout)
-
 
 # Open the FIFO that MPD has created for us
 # This represents the sample (44100:16:2) that MPD is currently "playing"
 fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
 ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
 
-while 1:
+while True:
     try:
         rawStream = os.read(fifo, 4096)
     except OSError as err:
@@ -55,18 +49,11 @@ while 1:
             ser.write(str(out)+"\r")
             time.sleep(0.05)
 
-# import serial
-#
-# ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-#
-# i=1
-# while i<101:
-#     ser.write(i)
-#     if i == 100:
-#         i = 1
-#     i = i+1
 
-# TODO: Add output settings to mpd.conf (and restart) as Volumio deletes them when changes occur through the settings UI
+# https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
+# https://github.com/project-owner/PeppyMeter
+# https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
+# https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
 # /etc/mpd.conf
 #
 # audio_output {
@@ -75,10 +62,5 @@ while 1:
 # path    "/tmp/mpd.fifo"
 # format  "44100:16:2"
 # }
-
-# e.g.
-# echo 'replaygain "album"' >> /etc/mpd.conf
-# echo 'replaygain_preamp "0"' >> /etc/mpd.conf
-# echo 'replaygain_limit "yes"' >> /etc/mpd.conf
 #
 # /etc/init.d/mpd restart

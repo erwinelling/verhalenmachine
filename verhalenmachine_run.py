@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 import logging
 import RPi.GPIO as GPIO
 import serial
