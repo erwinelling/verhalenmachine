@@ -99,6 +99,7 @@ class Player:
 
     def load_playlist(self):
         # TODO: Laden van playlist veranderen, zodat dit samenwerkt met Volumio GUI
+        # TODO: Echt een playlist van maken, zelfde naamgeving als bij uploaden
         self.client.clear()
         self.client.add('INTERNAL')
 
@@ -175,6 +176,7 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
         self.add_not_uploaded_file()
+        # TODO: Aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
         # TODO: Fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
@@ -248,7 +250,6 @@ class Volumeslider:
     '''
     slider
     '''
-    # TODO: Test!
     # TODO: Kijk of het goed gaat met meerdere seriele connecties
     def __init__(self):
         self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)

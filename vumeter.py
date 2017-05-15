@@ -26,6 +26,7 @@ while True:
         else:
             raise
 
+    just_after_stream = False
     if rawStream:
         # TODO: Change to mono signal
         # TODO: Change dB scale to 0-100 scale
@@ -47,9 +48,13 @@ while True:
                 out = 1
             print out
             ser.write(str(out)+"\r")
+            just_after_stream = True
             time.sleep(0.05)
-
-
+    else:
+        # Turn meter down when stream stops
+        if just_after_stream:
+            ser.write("1\r")
+            just_after_stream = False
 # https://stackoverflow.com/questions/21762412/mpd-fifo-python-audioop-arduino-and-voltmeter-faking-a-vu-meter
 # https://github.com/project-owner/PeppyMeter
 # https://volumio.org/forum/volumio-with-mpd-pipe-out-and-brutefir-t3635.html
