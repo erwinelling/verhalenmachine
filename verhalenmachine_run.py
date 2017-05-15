@@ -4,6 +4,7 @@ import logging
 import RPi.GPIO as GPIO
 import serial
 import time
+import datetime
 from verhalenmachine import Player, Recorder, Kiku, Led, Button, Volumeslider
 
 try:
