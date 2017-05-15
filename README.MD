@@ -125,12 +125,20 @@ audio_output {
 ```
 Change something in Volumio settings
 
+```
+/etc/init.d/mpd restart
+```
+
+### Add services
+Todo
+Describe
+See below
+
 ### Add cronjobs
-<!--
-## Add cronjob for Soundcloud upload
 
 ```
-chmod a+x /home/pi/stormy/upload.py
+chmod a+x /home/volumio/verhalenmachine/cron_upload.py
+chmod a+x /home/volumio/verhalenmachine/cron_recordcheck.py
 crontab -e
 ```
 
@@ -139,7 +147,8 @@ Make sure to use crontab and not sudo, so the cronjob will run for user pi.
 Add:
 
 ```
-*/5 * * * * /usr/bin/python /home/pi/stormy/upload.py > /home/pi/stormy/upload.log
+*/15 * * * * /usr/bin/python /home/volumio/verhalenmachine/cron_upload.py > /home/volumio/verhalenmachine/cron_upload.log
+*/15 * * * * /usr/bin/python /home/volumio/verhalenmachine/cron_recordcheck.py > /home/volumio/verhalenmachine/cron_recordcheck.log
 ```
 
 ## Add logs for cron:
