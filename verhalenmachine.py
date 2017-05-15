@@ -119,6 +119,7 @@ class Recorder:
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
         self.filepath = ""
+        
     def get_pid(self):
         try:
             pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
