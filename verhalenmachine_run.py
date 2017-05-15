@@ -55,6 +55,9 @@ try:
                 led2.on()
 
         if GPIO.event_detected(button3.pin):
+            if not player.is_playing():
+                player.play()
+                led2.on()
             player.next()
             led3.blink()
 
@@ -68,8 +71,10 @@ try:
 
         # Control recorder led also when recordering has been stopped externally
         if not recorder.is_recording():
-            if led1.burning:
-                led1.off()
+            pass
+            # TODO: Fix this, not working correctly
+            # if led1.burning:
+                # led1.off()
             # if kiku.burning:
                 # kiku.off()
                 # TODO: implement kiku
