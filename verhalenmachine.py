@@ -119,7 +119,7 @@ class Recorder:
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
         self.filepath = ""
-        
+
     def get_pid(self):
         try:
             pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
@@ -177,7 +177,6 @@ class Recorder:
         self.add_not_uploaded_file()
 
     def dontrecordfortoolong(self):
-        # TODO: Check this periodically, like every 15mins (cron? https://stackoverflow.com/questions/3987041/python-run-function-from-the-command-line)
         # TODO: Turn into class method?
         # TODO: Fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
         import psutil, datetime, time
@@ -187,10 +186,12 @@ class Recorder:
             create_time = p.create_time()
             current_time = time.time()
             duration = (current_time - create_time)/60
-            logger.debug("Time: %s" % duration)
+            logger.debug("Recording for: %s" % duration)
             if duration > 30:
                 # stop when recording longer than half an hour
                 self.stop()
+        else:
+            logger.debug("Not recording")
 
 class Led:
     '''
