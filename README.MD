@@ -107,8 +107,86 @@ For remote SSH/ web access setup Remot3.it
 
 sudo apt-get install weavedconnectd
 
+### Add FIFO MPD output
+```
+cd /volumio/app/plugins/music_service/mpd
+cp mpd.conf.tmpl mpd.conf.tmpl.bak
+nano mpd.conf.tmpl
+```
+
+Add:
+```
+audio_output {
+  type    "fifo"
+  name    "my_fifo"
+  path    "/tmp/mpd.fifo"
+  format  "44100:16:2"
+}
+```
+Change something in Volumio settings
+
+### Add cronjobs
+<!--
+## Add cronjob for Soundcloud upload
+
+```
+chmod a+x /home/pi/stormy/upload.py
+crontab -e
+```
+
+Make sure to use crontab and not sudo, so the cronjob will run for user pi.
+
+Add:
+
+```
+*/5 * * * * /usr/bin/python /home/pi/stormy/upload.py > /home/pi/stormy/upload.log
+```
+
+## Add logs for cron:
+
+```
+sudo nano /etc/rsyslog.conf
+```
+
+and uncomment the line
+
+```
+# cron.*                          /var/log/cron.log
+```
+
+After that, you need to restart rsyslog via
+
+```
+$ sudo /etc/init.d/rsyslog restart
+```
+
+## Run player as a service
+
+As per <http://www.raspberrypi-spy.co.uk/2015/10/how-to-autorun-a-python-script-on-boot-using-systemd/> and Give it the right permissions and enable our unit file as service
+
+```
+sudo chmod 644 /home/pi/stormy/machine.service
+sudo systemctl enable /home/pi/stormy/machine.service
+```
+
+To control or check the service manually:
+
+```
+sudo systemctl start machine
+sudo systemctl stop machine
+sudo systemctl restart machine
+sudo systemctl status machine
+```
+
+To check logs:
+
+```
+cat /var/log/mopidy/mopidy.log
+``` -->
+
 
 ### TODO: Change default password?
+
 
 ### Handig
 python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
