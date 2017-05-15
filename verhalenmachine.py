@@ -254,8 +254,7 @@ class Button:
         GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
 
 class Uploader:
-    # TODO: Implement uploading
-    # TODO: Implement uploading to several playlists again?
+    # TODO: Implement uploading to several playlists again (settings or ip or wlan name or ...)
     # TODO: Add cronjob
 
     def __init__(self):
@@ -273,8 +272,10 @@ class Uploader:
         # TODO: Add to config
         self.RECORDING_DIR = "/data/INTERNAL/"
 
-    def clean_directory(self, directory=self.RECORDING_DIR):
+    def clean_directory(self, directory=""):
         # TODO: Do this periodically (cron?) or just before uploading
+        if directory == "":
+            directory = self.RECORDING_DIR
         for root, dirs, files in os.walk(directory):
             for filename in files:
                 # logger.debug("FILESIZE %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
@@ -286,12 +287,13 @@ class Uploader:
                         logger.debug("REMOVING %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
                         os.remove(path_to_file)
 
-    def upload_directory(self, directory=self.RECORDING_DIR):
-        # # walk through all files in recording directory
+    def upload_directory(self, directory=""):
+        if directory == "":
+            directory = self.RECORDING_DIR
+        # walk through all files in recording directory
         logger.debug("Checking contents of %s", directory)
         count = 0
         # TODO: Replace with counter object
-        # uploaded_track = False
         for root, dirs, files in os.walk(directory):
             for filename in files:
                 # check whether it is a music file that can be uploaded to soundcloud
@@ -302,9 +304,7 @@ class Uploader:
                     path_to_file = os.path.join(root, filename)
                     logger.debug(path_to_file)
                     not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
-                    logger.debug(not_uploaded_file)
                     if os.path.isfile(not_uploaded_file):
-                        logger.debug("NOT UPLOADED FILE EXISTs")
                         self.upload_track(path_to_file)
                         count = count+1
         logger.debug("UPLOADED %s files" % count)
@@ -315,16 +315,11 @@ class Uploader:
         # logger.debug("Set id: %s", set_id)
         # playlist = client.get("/playlists/"+set_id)
         # logger.debug("Playlist: %s", playlist)
-        #
-        # # upload to soundcloud
-        # datetimenow = datetime.datetime.now()
         track_dict = {
             # TODO: Set more track data, get input somewhere
-            # TODO: Test
-            # TODO: Hide file on soundcloud
-            'title': unicode(os.path.splitext(filename)[0]),
+            'title': unicode(os.path.splitext(path_to_file)[0]),
             'asset_data': open(path_to_file, 'rb'),
-            'description': u'Dit verhaal is opgenomen met de verhalenmachine op %s om %s.' % (datetimenow.__format__("%e-%m-%Y"), datetimenow.__format__("%T")),
+            'description': u'Dit verhaal is opgenomen met de verhalenmachine op %s om %s.' % (datetime.datetime.now().__format__("%e-%m-%Y"), datetime.datetime.now().__format__("%T")),
             'track_type': 'spoken',
             'license': "cc-by-nc",
             'sharing': "private",
@@ -336,7 +331,7 @@ class Uploader:
         #     track_dict['artwork_data'] = open(img_file, 'rb')
         #
         uploaded_track = self.client.post('/tracks', track=track_dict)
-        logger.debug("Uploaded %s to Soundcloud: %s (%s).", filename, uploaded_track.permalink_url, uploaded_track.id)
+        logger.debug("Uploaded %s to Soundcloud: %s (%s).", path_to_file, uploaded_track.permalink_url, uploaded_track.id)
 
         # remove .notuploaded file
         not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
@@ -355,11 +350,10 @@ class Uploader:
         # UPDATE_TRACKLIST
 
         # count +=1
-
-
         return uploaded_track
 
     def create_playlist(self, name):
+        # TODO: Implement
         # # create an array of track ids
         # tracks = map(lambda id: dict(id=id), [290, 291, 292])
         #
@@ -372,6 +366,7 @@ class Uploader:
         pass
 
     def update_playlist(self, tracklist):
+        # TODO: Implement
         #     # generate tracklist of current playlist
         #     track_id_list = []
         #     for track in playlist.tracks:
@@ -405,6 +400,7 @@ try:
     led1 = Led(37)
     led2 = Led(35)
     led3 = Led(33)
+
     ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
     prev_input = None
 
@@ -460,12 +456,6 @@ try:
         if len(ser_decimals) == 1 and ser_input != prev_input:
             logger.debug("VOLUME SLIDER: %s" % ser_decimals)
             player.set_volume_decimal(float(ser_decimals[0]))
-
-            # ser_data = int(float(ser_decimals[0])*100)
-            # if ser_data == 0:
-            #     ser_data = 1
-            # ser.write(str(ser_data)+"\r")
-
             prev_input = ser_input
 
         time.sleep(0.5)
