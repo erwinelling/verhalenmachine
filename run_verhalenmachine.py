@@ -1,7 +1,8 @@
 import logging
 import RPi.GPIO as GPIO
 import serial
-from verhalenmachine import Player, Recorder, Kiku, Button, Volumeslider
+import time
+from verhalenmachine import Player, Recorder, Kiku, Led, Button, Volumeslider
 
 try:
     player = Player()

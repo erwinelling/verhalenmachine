@@ -255,7 +255,7 @@ class Volumeslider:
         self.prev_input = None
 
     def read(self):
-        ser.flushInput()
+        self.ser.flushInput()
         ser_input = self.ser.readline()
         ser_decimals = re.findall("\d+\.\d+", ser_input)
         if len(ser_decimals) == 1:
