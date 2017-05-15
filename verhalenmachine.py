@@ -264,7 +264,6 @@ class Uploader:
         logger.debug("SOUNDCLOUD connected to %s " % self.client.get('/me').username)
 
         # self.client = soundcloud.Client(
-        #     # TODO: try to get this to work with just a secret key
         #     client_id = config.get("upload", "client_id"),
         #     client_secret = config.get("upload", "client_secret"),
         #     username = config.get("upload", "username"),
@@ -305,8 +304,10 @@ class Uploader:
                     not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
                     logger.debug(not_uploaded_file)
                     if os.path.isfile(not_uploaded_file):
-                        logger.debug("EXISTs")
+                        logger.debug("NOT UPLOADED FILE EXISTs")
                         self.upload_track(path_to_file)
+                        count = count+1
+        logger.debug("UPLOADED %s files" % count)
 
     def upload_track(self, path_to_file):
         # get playlist
@@ -320,13 +321,14 @@ class Uploader:
         track_dict = {
             # TODO: Set more track data, get input somewhere
             # TODO: Test
-            # TODO: Hide file
+            # TODO: Hide file on soundcloud
             'title': unicode(os.path.splitext(filename)[0]),
             'asset_data': open(path_to_file, 'rb'),
             'description': u'Dit verhaal is opgenomen met de verhalenmachine op %s om %s.' % (datetimenow.__format__("%e-%m-%Y"), datetimenow.__format__("%T")),
             'track_type': 'spoken',
-            # 'purchase_url': "http://wijzijnjimmys.nl/verhalen/",
             'license': "cc-by-nc",
+            'sharing': "private",
+            # 'purchase_url': "http://wijzijnjimmys.nl/verhalen/",
             # 'tag_list': "jimmys verhalen"
             # 'genre': 'Electronic',
         }
@@ -353,7 +355,20 @@ class Uploader:
         # UPDATE_TRACKLIST
 
         # count +=1
-        logger.debug("UPLOADED %s" % track)
+
+
+        return uploaded_track
+
+    def create_playlist(self, name):
+        # # create an array of track ids
+        # tracks = map(lambda id: dict(id=id), [290, 291, 292])
+        #
+        # # create the playlist
+        # client.post('/playlists', playlist={
+        #     'title': 'My new album',
+        #     'sharing': 'public',
+        #     'tracks': tracks
+        # })
         pass
 
     def update_playlist(self, tracklist):
