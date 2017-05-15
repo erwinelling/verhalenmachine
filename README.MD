@@ -1,5 +1,14 @@
 # Verhalenmachine (Story Machine)
 
+TODO: Make vumeter and verhalenmachine_run services
+TODO: Test cronjobs
+TODO: Add vumeter stuff for recorder
+TODO: Fix vumeter stuff for player
+TODO: Fix (lights for) recorder.is_recording() check
+TODO: Add kiku
+TODO: Check minor todo's across files
+TODO: Complete README
+
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
 
 The player part is implemented on top of Volumio. It controls Volumio via MPD and presumes a custom enclosure outfitted with:

@@ -14,10 +14,9 @@ import time
 import pdb
 import ConfigParser
 import soundcloud
+# TODO: Cleanup unnecessary imports
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
-
-# TODO: Move classes to separate file(s)
 
 # TODO: Test configfile
 # TODO: Add shit to configfile
@@ -166,7 +165,6 @@ class Recorder:
                     logger.debug("Renamed temp file to %s", os.path.splitext(path_to_file)[0])
 
     def add_not_uploaded_file(self):
-        # TODO: TEST
         if self.filepath:
             not_uploaded_file = os.path.splitext(self.filepath)[0] + ".notuploaded"
             f = open(not_uploaded_file, 'w')
@@ -179,10 +177,10 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
         self.add_not_uploaded_file()
-        # TODO: Aan playlist toevoegen?
+        # TODO: Misschien aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
-        # TODO: Fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
+        # TODO: Misschien fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
         if self.is_recording():
             p = psutil.Process(self.get_pid())
             logger.debug("Recording: %s" % p)
@@ -288,8 +286,7 @@ class Button:
         GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
 
 class Uploader:
-    # TODO: Implement uploading to several playlists again (settings or ip or wlan name or ...)
-    # TODO: Add cronjob
+    # TODO: Maybe implement uploading to several playlists again (settings or ip or wlan name or ...)
 
     def __init__(self):
         # TODO: Add to config
@@ -307,7 +304,6 @@ class Uploader:
         self.RECORDING_DIR = "/data/INTERNAL/"
 
     def clean_directory(self, directory=""):
-        # TODO: Do this periodically (cron?) or just before uploading
         if directory == "":
             directory = self.RECORDING_DIR
         for root, dirs, files in os.walk(directory):
