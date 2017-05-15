@@ -134,7 +134,10 @@ class Recorder:
     def is_recording(self):
         if psutil.pid_exists(self.get_pid()):
             return True
-        return False
+            logger.debug("RECORDING")
+        else:
+            return False
+            logger.debug("NOT RECORDING!")
 
     def record(self, filename):
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
