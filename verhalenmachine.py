@@ -256,6 +256,7 @@ class Button:
 class Uploader:
     # TODO: Implement uploading
     # TODO: Implement uploading to several playlists again?
+    # TODO: Add cronjob
 
     def __init__(self):
         # TODO: Add to config
@@ -273,9 +274,9 @@ class Uploader:
         # TODO: Add to config
         self.RECORDING_DIR = "/data/INTERNAL/"
 
-    def cleanrecordingdir(self):
+    def clean_directory(self, directory=self.RECORDING_DIR):
         # TODO: Do this periodically (cron?) or just before uploading
-        for root, dirs, files in os.walk(self.RECORDING_DIR):
+        for root, dirs, files in os.walk(directory):
             for filename in files:
                 # logger.debug("FILESIZE %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
                 # Remove 0 byte files
@@ -286,13 +287,13 @@ class Uploader:
                         logger.debug("REMOVING %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
                         os.remove(path_to_file)
 
-    def check_files_to_upload(self):
+    def upload_directory(self, directory=self.RECORDING_DIR):
         # # walk through all files in recording directory
-        logger.debug("Checking contents of %s", self.RECORDING_DIR)
+        logger.debug("Checking contents of %s", directory)
         count = 0
         # TODO: Replace with counter object
         # uploaded_track = False
-        for root, dirs, files in os.walk(self.RECORDING_DIR):
+        for root, dirs, files in os.walk(directory):
             for filename in files:
                 # check whether it is a music file that can be uploaded to soundcloud
                 # http://uploadandmanage.help.soundcloud.com/customer/portal/articles/2162441-uploading-requirements
@@ -307,7 +308,7 @@ class Uploader:
                         logger.debug("EXISTs")
                         self.upload_track(path_to_file)
 
-    def upload_track(self, track):
+    def upload_track(self, path_to_file):
         # get playlist
         # set_id = os.path.basename(os.path.normpath(os.path.dirname(path_to_file)))
         # logger.debug("Set id: %s", set_id)
@@ -316,22 +317,29 @@ class Uploader:
         #
         # # upload to soundcloud
         # datetimenow = datetime.datetime.now()
-        # track_dict = {
-        #     # TODO: Set more track data, get input somewhere
-        #     'title': unicode(os.path.splitext(filename)[0]),
-        #     'asset_data': open(path_to_file, 'rb'),
-        #     'description': u'Dit is een van Jimmy\'s Verhalen. Opgenomen op %s om %s in de categorie "%s".' % (datetimenow.__format__("%e-%m-%Y"), datetimenow.__format__("%T"), playlist.title),
-        #     'track_type': 'spoken',
-        #     'purchase_url': "http://wijzijnjimmys.nl/verhalen/",
-        #     'license': "cc-by-nc",
-        #     'tag_list': "jimmys verhalen"
-        #     # 'genre': 'Electronic',
-        # }
+        track_dict = {
+            # TODO: Set more track data, get input somewhere
+            # TODO: Test
+            # TODO: Hide file
+            'title': unicode(os.path.splitext(filename)[0]),
+            'asset_data': open(path_to_file, 'rb'),
+            'description': u'Dit verhaal is opgenomen met de verhalenmachine op %s om %s.' % (datetimenow.__format__("%e-%m-%Y"), datetimenow.__format__("%T")),
+            'track_type': 'spoken',
+            # 'purchase_url': "http://wijzijnjimmys.nl/verhalen/",
+            'license': "cc-by-nc",
+            # 'tag_list': "jimmys verhalen"
+            # 'genre': 'Electronic',
+        }
         # if os.path.isfile(img_file):
         #     track_dict['artwork_data'] = open(img_file, 'rb')
         #
-        # uploaded_track = client.post('/tracks', track=track_dict)
-        # logger.debug("Uploaded %s to Soundcloud: %s (%s).", filename, uploaded_track.permalink_url, uploaded_track.id)
+        uploaded_track = self.client.post('/tracks', track=track_dict)
+        logger.debug("Uploaded %s to Soundcloud: %s (%s).", filename, uploaded_track.permalink_url, uploaded_track.id)
+
+        # remove .notuploaded file
+        not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
+        os.remove(not_uploaded_file)
+
         #
         # # add soundcloud id to filename
         # filename_with_soundcloud_id = "%s.%s%s" % (os.path.splitext(path_to_file)[0], uploaded_track.id, os.path.splitext(path_to_file)[1])
@@ -343,13 +351,12 @@ class Uploader:
         # # f.close()
         # if uploaded_track:
         # UPDATE_TRACKLIST
-        # # remove .notuploaded file
-        # os.remove(not_uploaded_file)
+
         # count +=1
-        logger.debug("I could upload %s" % track)
+        logger.debug("UPLOADED %s" % track)
         pass
 
-    def update_tracklist(self, tracklist):
+    def update_playlist(self, tracklist):
         #     # generate tracklist of current playlist
         #     track_id_list = []
         #     for track in playlist.tracks:
@@ -447,7 +454,7 @@ try:
             prev_input = ser_input
 
         time.sleep(0.5)
-        pdb.set_trace()
+        # pdb.set_trace()
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
