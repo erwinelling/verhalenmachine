@@ -1,4 +1,7 @@
-from verhalenmachine import Player, Recorder, Kiku, Button
+import logging
+import RPi.GPIO as GPIO
+import serial
+from verhalenmachine import Player, Recorder, Kiku, Button, Volumeslider
 
 try:
     player = Player()
@@ -7,6 +10,7 @@ try:
 
     recorder = Recorder()
 
+    volumeslider = Volumeslider()
     kiku = Kiku()
 
     GPIO.cleanup()
@@ -67,13 +71,9 @@ try:
                 # TODO: implement kiku
 
         # Read volume slider data from serial port
-        ser.flushInput()
-        ser_input = ser.readline()
-        ser_decimals = re.findall("\d+\.\d+", ser_input)
-        if len(ser_decimals) == 1 and ser_input != prev_input:
-            logger.debug("VOLUME SLIDER: %s" % ser_decimals)
-            player.set_volume_decimal(float(ser_decimals[0]))
-            prev_input = ser_input
+        new_volume = volumeslider.read_new()
+        if new_volume:
+            player.set_volume_decimal(float(new_volume))
 
         time.sleep(0.5)
         # pdb.set_trace()

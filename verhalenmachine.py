@@ -244,6 +244,36 @@ class Kiku:
         self.burning = False
         logger.debug("KIKU OFF")
 
+class Volumeslider:
+    '''
+    slider
+    '''
+    # TODO: Test!
+    # TODO: Kijk of het goed gaat met meerdere seriele connecties
+    def __init__(self):
+        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
+        self.prev_input = None
+
+    def read(self):
+        ser.flushInput()
+        ser_input = self.ser.readline()
+        ser_decimals = re.findall("\d+\.\d+", ser_input)
+        if len(ser_decimals) == 1:
+            return ser_decimals[0]
+        else:
+            return None
+
+        logger.debug("KIKU ON")
+
+    def read_new(self):
+        ser_decimals = self.read()
+        if ser_decimals and ser_decimals != self.prev_input:
+            logger.debug("VOLUME SLIDER: %s" % ser_decimals)
+            self.prev_input = ser_decimals
+            return ser_decimals
+        else:
+            return None
+
 class Button:
     def __init__(self, pin):
         # Pin Setup:
