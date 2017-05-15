@@ -65,7 +65,7 @@ First install pip
 sudo apt-get install python-pip
 ```
 
-Then install MPD
+Then install MPD2
 
 ```
 sudo pip install python-mpd2
