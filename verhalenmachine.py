@@ -141,7 +141,7 @@ class Recorder:
 
     def record(self, filename):
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
-        filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
+        self.filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
         args = [
             'arecord',
             '-D', self.SOUND_CARD_MIC,
@@ -151,7 +151,7 @@ class Recorder:
             '-V', 'mono',
             # '-v', # for VU meter output, maybe use -vv or -v or -vvv
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
-            filepath+".temp"
+            self.filepath+".temp"
         ]
         logger.debug(args)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
