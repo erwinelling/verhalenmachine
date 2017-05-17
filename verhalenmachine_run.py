@@ -71,10 +71,8 @@ try:
 
         # Control recorder led also when recordering has been stopped externally
         if not recorder.is_recording():
-            pass
-            # TODO: Fix this, not working correctly
-            # if led1.burning:
-                # led1.off()
+            if led1.burning:
+                led1.off()
             # if kiku.burning:
                 # kiku.off()
                 # TODO: implement kiku
