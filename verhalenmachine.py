@@ -132,11 +132,12 @@ class Recorder:
 
     def is_recording(self):
         if psutil.pid_exists(self.get_pid()):
-            return True
             logger.debug("RECORDING")
+            return True
+
         else:
-            return False
             logger.debug("NOT RECORDING!")
+            return False
 
     def record(self, filename):
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
@@ -144,11 +145,11 @@ class Recorder:
         args = [
             'arecord',
             '-D', self.SOUND_CARD_MIC,
-            '-f', 'S16_LE',
-            '-c1',
-            '-r22050',
-            '-V', 'mono',
-            # '-v', # for VU meter output, maybe use -vv or -v or -vvv
+            # '-f', 'S16_LE',
+            # '-c1',
+            # '-r22050',
+            # '-V', 'mono',
+            # # '-v', # for VU meter output, maybe use -vv or -v or -vvv
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             self.filepath+".temp"
         ]
@@ -181,6 +182,7 @@ class Recorder:
 
     def dontrecordfortoolong(self):
         # TODO: Misschien fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
+        logger.debug("DO NOT RECORD FOR TOO LONG")
         if self.is_recording():
             p = psutil.Process(self.get_pid())
             logger.debug("Recording: %s" % p)
