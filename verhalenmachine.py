@@ -117,7 +117,7 @@ class Recorder:
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = "plughw:CARD=E205U,DEV=0" # Superlux USB mic
         self.RECORDING_DIR = "/data/INTERNAL/"
-        self.RECORDING_PROCESS_ID_FILE = "recprocess.pid"
+        self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
 
     def get_pid(self):
