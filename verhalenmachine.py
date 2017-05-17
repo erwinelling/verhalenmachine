@@ -62,7 +62,7 @@ class Player:
 
     def is_playing(self):
         status = self.client.status()
-        # logger.debug("MPD status: %s" % status)
+        logger.debug("MPD status: %s" % status)
         if status.get('state') == "play":
             return True
         return False
