@@ -119,6 +119,7 @@ class Recorder:
         self.RECORDING_DIR = "/data/INTERNAL/"
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
+        self.last_started_recording = ""
 
     def get_pid(self):
         try:
@@ -131,25 +132,30 @@ class Recorder:
             return False
 
     def is_recording(self):
+        time_since_last_started_recording = datetime.datetime.now() - self.last_started_recording
         if psutil.pid_exists(self.get_pid()):
             logger.debug("RECORDING")
             return True
-
+        elif time_since_last_started_recording < 2:
+            # Allow for 2 seconds startup time
+            logger.debug("PROBABLY RECORDING")
+            return True
         else:
             logger.debug("NOT RECORDING!")
             return False
 
     def record(self, filename):
         # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
+        self.last_started_recording = datetime.datetime.now()
         self.filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
         args = [
             'arecord',
             '-D', self.SOUND_CARD_MIC,
-            # '-f', 'S16_LE',
-            # '-c1',
-            # '-r22050',
-            # '-V', 'mono',
-            # # '-v', # for VU meter output, maybe use -vv or -v or -vvv
+            '-f', 'S16_LE',
+            '-c1',
+            '-r22050',
+            '-V', 'mono',
+            # '-v', # for VU meter output, maybe use -vv or -v or -vvv
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             self.filepath+".temp"
         ]
