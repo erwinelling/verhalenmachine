@@ -122,7 +122,7 @@ class Recorder:
 
     def get_pid(self):
         try:
-            pidfile = os.path.join(HOME_DIR, self.RECORDING_PROCESS_ID_FILE)
+            pidfile = self.RECORDING_PROCESS_ID_FILE
             f = open(pidfile)
             pid = int(f.readline().strip())
             f.close()
