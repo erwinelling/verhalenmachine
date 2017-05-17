@@ -3,12 +3,12 @@
 With David:
 TODO: Add vumeter stuff for recorder
 TODO: Fix vumeter stuff for player
-TODO: Fix volumemeter and vumeter stuff at same time
+TODO: Fix volumemeter and vumeter stuff at same time (serial, so prob also kiku)
 TODO: Add kiku
 TODO: Improve audio player quality
 
 Alone:
-TODO: Fix (lights for) recorder.is_recording() check
+TODO: Test best audio recording settings
 TODO: Check minor todo's across files
 TODO: Complete README
 
