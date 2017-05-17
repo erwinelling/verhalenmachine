@@ -17,6 +17,7 @@ import serial
 fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
 ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
 
+ser.write(str(1)+"\r")
 while True:
     try:
         rawStream = os.read(fifo, 4096)
@@ -51,6 +52,7 @@ while True:
             just_after_stream = True
             time.sleep(0.05)
     else:
+        # TODO: Test
         # Turn meter down when stream stops
         if just_after_stream:
             ser.write("1\r")
