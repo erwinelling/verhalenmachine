@@ -139,9 +139,24 @@ Change something in Volumio settings
 ```
 
 ### Add services
-Todo
-Describe
-See below
+
+As per <http://www.raspberrypi-spy.co.uk/2015/10/how-to-autorun-a-python-script-on-boot-using-systemd/> and Give it the right permissions and enable our unit file as service
+
+```
+sudo chmod 644 /home/volumio/verhalenmachine/verhalenmachine.service
+sudo chmod 644 /home/volumio/verhalenmachine/vumeter.service
+sudo systemctl enable /home/volumio/verhalenmachine/verhalenmachine.service
+sudo systemctl enable /home/volumio/verhalenmachine/vumeter.service
+```
+
+To control or check the service manually:
+
+```
+sudo systemctl start verhalenmachine
+sudo systemctl stop verhalenmachine
+sudo systemctl restart verhalenmachine
+sudo systemctl status verhalenmachine
+```
 
 ### Add cronjobs
 
