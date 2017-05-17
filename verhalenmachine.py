@@ -235,7 +235,7 @@ class Led:
                 time.sleep(sleep)
             count = count+1
 
-class Kiku:
+class Kaku:
     '''
     Klik aan klik uit
     '''
@@ -248,12 +248,12 @@ class Kiku:
     def on(self):
         self.ser.write("ka\r")
         self.burning = True
-        logger.debug("KIKU ON")
+        logger.debug("KAKU ON")
 
     def off(self):
         self.ser.write("ku\r")
         self.burning = False
-        logger.debug("KIKU OFF")
+        logger.debug("KAKU OFF")
 
 class Volumeslider:
     '''
@@ -273,7 +273,7 @@ class Volumeslider:
         else:
             return None
 
-        logger.debug("KIKU ON")
+        logger.debug("KAKU ON")
 
     def read_new(self):
         ser_decimals = self.read()
