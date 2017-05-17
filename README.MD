@@ -1,11 +1,14 @@
 # Verhalenmachine (Story Machine)
 
-TODO: Make vumeter and verhalenmachine_run services
-TODO: Test cronjobs
+With David:
 TODO: Add vumeter stuff for recorder
 TODO: Fix vumeter stuff for player
-TODO: Fix (lights for) recorder.is_recording() check
+TODO: Fix volumemeter and vumeter stuff at same time
 TODO: Add kiku
+TODO: Improve audio player quality
+
+Alone:
+TODO: Fix (lights for) recorder.is_recording() check
 TODO: Check minor todo's across files
 TODO: Complete README
 
