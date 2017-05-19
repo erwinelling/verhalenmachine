@@ -245,38 +245,6 @@ class Led:
                 time.sleep(sleep)
             count = count+1
 
-class Volumeslider:
-    '''
-    slider
-    '''
-    def __init__(self):
-        try:
-            self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-            self.prev_input = None
-        except:
-            logger.debug("SERIAL PORT NOT AVAILABLE")
-            self.ser = serial.Serial("/dev/null")
-
-    def read(self):
-        self.ser.flushInput()
-        ser_input = self.ser.readline()
-        ser_decimals = re.findall("\d+\.\d+", ser_input)
-        if len(ser_decimals) == 1:
-            return ser_decimals[0]
-        else:
-            return None
-
-        logger.debug("KAKU ON")
-
-    def read_new(self):
-        ser_decimals = self.read()
-        if ser_decimals and ser_decimals != self.prev_input:
-            logger.debug("VOLUME SLIDER: %s" % ser_decimals)
-            self.prev_input = ser_decimals
-            return ser_decimals
-        else:
-            return None
-
 class Button:
     def __init__(self, pin):
         # Pin Setup:

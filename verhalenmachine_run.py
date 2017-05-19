@@ -2,10 +2,9 @@
 # -*- coding: latin-1 -*-
 import logging
 import RPi.GPIO as GPIO
-import serial
 import time
 import datetime
-from verhalenmachine import Player, Recorder, Led, Button, Volumeslider
+from verhalenmachine import Player, Recorder, Led, Button
 
 try:
     player = Player()
@@ -13,8 +12,6 @@ try:
     player.load_playlist()
 
     recorder = Recorder()
-
-    volumeslider = Volumeslider()
 
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
@@ -24,9 +21,6 @@ try:
     led1 = Led(37)
     led2 = Led(35)
     led3 = Led(33)
-
-    ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-    prev_input = None
 
     while True:
         # Check GPIO for button events
@@ -70,11 +64,6 @@ try:
         if not recorder.is_recording():
             if led1.burning:
                 led1.off()
-
-        # Read volume slider data from serial port
-        new_volume = volumeslider.read_new()
-        if new_volume:
-            player.set_volume_decimal(float(new_volume))
 
         time.sleep(0.5)
         # pdb.set_trace()
