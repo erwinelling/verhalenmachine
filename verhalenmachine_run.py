@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 import serial
 import time
 import datetime
-from verhalenmachine import Player, Recorder, kaku, Led, Button, Volumeslider
+from verhalenmachine import Player, Recorder, Led, Button, Volumeslider
 
 try:
     player = Player()
@@ -15,7 +15,6 @@ try:
     recorder = Recorder()
 
     volumeslider = Volumeslider()
-    kaku = kaku()
 
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
@@ -36,7 +35,6 @@ try:
                 recorder.stop()
                 # TODO: Maybe control leds totally separate from buttons
                 led1.off()
-                # kaku.off()
             else:
                 if player.is_playing():
                     player.stop()
@@ -44,7 +42,6 @@ try:
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
                 led1.on()
-                # kaku.on()
 
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
@@ -73,9 +70,6 @@ try:
         if not recorder.is_recording():
             if led1.burning:
                 led1.off()
-            # if kaku.burning:
-                # kaku.off()
-                # TODO: implement kaku
 
         # Read volume slider data from serial port
         new_volume = volumeslider.read_new()
