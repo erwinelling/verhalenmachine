@@ -56,9 +56,9 @@ class Player:
         self.client.repeat(1)
         self.client.random(1)
 
-        self.min_volume = 10
-        self.max_volume = 90
-        self.prev_volume = None
+        # self.min_volume = 10
+        # self.max_volume = 90
+        # self.prev_volume = None
 
     def is_playing(self):
         status = self.client.status()
@@ -79,19 +79,19 @@ class Player:
     def stop(self):
         self.client.stop()
 
-    def set_volume(self, new_volume):
-        if new_volume != self.prev_volume:
-            if new_volume > self.max_volume:
-                new_volume = self.max_volume
-            if new_volume < self.min_volume:
-                new_volume = self.min_volume
-            logger.debug("Changing volume from %s to %s" % (self.prev_volume, new_volume))
-            self.client.setvol(new_volume)
-            self.prev_volume = new_volume
-
-    def set_volume_decimal(self, volume_decimal):
-        volume = self.min_volume + volume_decimal*(self.max_volume-self.min_volume)
-        self.set_volume(int(volume))
+    # def set_volume(self, new_volume):
+    #     if new_volume != self.prev_volume:
+    #         if new_volume > self.max_volume:
+    #             new_volume = self.max_volume
+    #         if new_volume < self.min_volume:
+    #             new_volume = self.min_volume
+    #         logger.debug("Changing volume from %s to %s" % (self.prev_volume, new_volume))
+    #         self.client.setvol(new_volume)
+    #         self.prev_volume = new_volume
+    #
+    # def set_volume_decimal(self, volume_decimal):
+    #     volume = self.min_volume + volume_decimal*(self.max_volume-self.min_volume)
+    #     self.set_volume(int(volume))
 
     # def get_volume(self):
     #     return int(self.client.status().get('volume'))
