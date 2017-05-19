@@ -110,6 +110,10 @@ class Recorder:
     Recorder
     arecord -D plughw:CARD=E205U,DEV=0 -f S16_LE -c1 -r 22050 -V mono -v bla.wav
     arecord -D plughw:CARD=Device,DEV=0 -f S16_LE -c1 -r 22050 -V mono -v bla.wav
+
+    arecord -D plughw:CARD=Device,DEV=0 /dev/null 2> ~/vu.txt
+    2 staat voor file descriptor 2 (stderr)
+    daar komt de error output uit
     '''
 
     def __init__(self):
@@ -152,15 +156,18 @@ class Recorder:
             'arecord',
             '-D', self.SOUND_CARD_MIC,
             '-f', 'S16_LE',
-            '-c1',
-            '-r22050',
+            '-c', '1',
+            '-r', '44100',
             '-V', 'mono',
-            # '-v', # for VU meter output, maybe use -vv or -v or -vvv
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
-            self.filepath+".temp"
+            self.filepath+".temp",
+            '2>', os.path.join(HOME_DIR, "vumeter.tmp"),
         ]
         logger.debug(args)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
+
+        # TODO: SEND VU METER SIGNAL TO SERIAL PORT (1-100)
+        # IF DATA is sent, KAKA also turns on
 
     def remove_temp_ext(self):
         # remove .temp extension files
@@ -184,6 +191,9 @@ class Recorder:
             os.kill(pid, signal.SIGINT)
         self.remove_temp_ext()
         self.add_not_uploaded_file()
+
+        # TODO send "0" to serial port to turn off KAKU
+
         # TODO: Misschien aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
@@ -234,26 +244,6 @@ class Led:
             if count<times-1:
                 time.sleep(sleep)
             count = count+1
-
-class Kaku:
-    '''
-    Klik aan klik uit
-    '''
-    # TODO: Test!
-    # TODO: Kijk of het goed gaat met meerdere seriele connecties
-    def __init__(self):
-        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        self.burning = False
-
-    def on(self):
-        self.ser.write("ka\r")
-        self.burning = True
-        logger.debug("KAKU ON")
-
-    def off(self):
-        self.ser.write("ku\r")
-        self.burning = False
-        logger.debug("KAKU OFF")
 
 class Volumeslider:
     '''
