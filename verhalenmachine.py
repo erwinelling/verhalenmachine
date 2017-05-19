@@ -249,10 +249,13 @@ class Volumeslider:
     '''
     slider
     '''
-    # TODO: Kijk of het goed gaat met meerdere seriele connecties
     def __init__(self):
-        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        self.prev_input = None
+        try:
+            self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
+            self.prev_input = None
+        except:
+            logger.debug("SERIAL PORT NOT AVAILABLE")
+            self.ser = serial.Serial("/dev/null")
 
     def read(self):
         self.ser.flushInput()
