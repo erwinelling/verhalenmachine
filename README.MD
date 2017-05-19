@@ -1,20 +1,21 @@
 # Verhalenmachine (Story Machine)
 
-
+---
 Erwin:
-TODO: Add vumeter stuff for recorder
+TODO: USB audio aansluiten en instellen
+TODO: Add vumeter output from recorder
 TODO: Test best audio recording settings
 TODO: Check minor todo's across files
 TODO: Complete README
-
+---
 
 David:
-* Fix vumeter stuff for player => Analoog
-* Fix volumemeter and vumeter stuff at same time (serial, so prob also kiku) => Analoog
-* Add kiku => obv seriële data
-* Improve audio player quality => Audioshield
+* USB hub erin
+* Headphone splitter + slider + VU meter aan USB audio card (output)
+* VU meter en KAKU aan ander apparaat via seriële poort (input)
+* Alles inbouwen in kist
 
-
+---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
 
 The player part is implemented on top of Volumio. It controls Volumio via MPD and presumes a custom enclosure outfitted with:
