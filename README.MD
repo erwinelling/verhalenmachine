@@ -1,16 +1,19 @@
 # Verhalenmachine (Story Machine)
 
-With David:
-TODO: Add vumeter stuff for recorder
-TODO: Fix vumeter stuff for player
-TODO: Fix volumemeter and vumeter stuff at same time (serial, so prob also kiku)
-TODO: Add kiku
-TODO: Improve audio player quality
 
-Alone:
+Erwin:
+TODO: Add vumeter stuff for recorder
 TODO: Test best audio recording settings
 TODO: Check minor todo's across files
 TODO: Complete README
+
+
+David:
+* Fix vumeter stuff for player => Analoog
+* Fix volumemeter and vumeter stuff at same time (serial, so prob also kiku) => Analoog
+* Add kiku => obv seriële data
+* Improve audio player quality => Audioshield
+
 
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
 
