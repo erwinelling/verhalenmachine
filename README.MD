@@ -2,12 +2,13 @@
 
 ---
 Erwin:
-TODO: USB audio aansluiten en instellen
 TODO: Add vumeter output from recorder
 TODO: Move vumeter to main py script
 TODO: Test best audio recording settings
 TODO: Check minor todo's across files
 TODO: Complete README
+TODO: Test
+TODO: Create documentation
 ---
 
 David:
@@ -22,14 +23,14 @@ Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ S
 The player part is implemented on top of Volumio. It controls Volumio via MPD and presumes a custom enclosure outfitted with:
 
 * 2 buttons: For play & stop and next.
-* a volume slider: For volume control :)
-* a VU meter: For display of output volume.
+* a volume slider: For volume control :) (controlled via Davids work)
+* a VU meter: For display of output volume (controlled via Davids work)
 * ...
 
 The recorder part is implemented ...:
 
 * 1 button: For record & stop.
-* VU meter: For display of input volume.
+* VU meter: For display of input volume (controlled via )
 * ...
 
 The Soundcloud uploader ...:
@@ -232,3 +233,4 @@ cat /var/log/mopidy/mopidy.log
 ### Handig
 python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
 python -m serial.tools.list_ports
+192.168.211.1

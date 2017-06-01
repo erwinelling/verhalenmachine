@@ -14,18 +14,18 @@ import time
 import pdb
 import ConfigParser
 import soundcloud
-# TODO: Cleanup unnecessary imports
+# TODO: Cleanup unnecessary imports or move to functions
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # TODO: Test configfile
-# TODO: Add shit to configfile
+# TODO: Add stuff to configfile
 config = ConfigParser.ConfigParser()
 config.read(os.path.join(HOME_DIR, "verhalenmachine.cfg"))
 
 
 # LOGGING
-# TODO: Cleanup logging
+# TODO: Cleanup logging statements
 LOG_FILE = os.path.join(HOME_DIR, "verhalenmachine.log")
 
 logger = logging.getLogger()
@@ -79,6 +79,7 @@ class Player:
     def stop(self):
         self.client.stop()
 
+    # Volume control is now deprecated
     # def set_volume(self, new_volume):
     #     if new_volume != self.prev_volume:
     #         if new_volume > self.max_volume:
@@ -149,7 +150,6 @@ class Recorder:
             return False
 
     def record(self, filename):
-        # TODO: RESEARCH/ ASK DAVID how to control VU meter with mic input
         self.last_started_recording = time.time()
         self.filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
         args = [
@@ -193,11 +193,10 @@ class Recorder:
         self.add_not_uploaded_file()
 
         # TODO send "0" to serial port to turn off KAKU
-
         # TODO: Misschien aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
-        # TODO: Misschien fixen als hij te lang opneemt wav-01, wav-02, wav-03 (>2GB)
+        # TODO: Misschien fixen als hij te grote files opneemt wav-01, wav-02, wav-03 (>2GB)
         logger.debug("DO NOT RECORD FOR TOO LONG")
         if self.is_recording():
             p = psutil.Process(self.get_pid())
