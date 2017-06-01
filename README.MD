@@ -2,17 +2,14 @@
 
 ---
 Erwin:
-TODO: Add vumeter output from recorder
-TODO: Move vumeter to main py script
-TODO: Test best audio recording settings
+TODO: Test serial port stuff
 TODO: Check minor todo's across files
 TODO: Complete README
-TODO: Test
+TODO: Test complete verhalenmachine
 TODO: Create documentation
 ---
 
 David:
-* USB hub erin
 * Headphone splitter + slider + VU meter aan USB audio card (output)
 * VU meter en KAKU aan ander apparaat via seriële poort (input)
 * Alles inbouwen in kist
@@ -214,10 +211,10 @@ sudo systemctl enable /home/pi/stormy/machine.service
 To control or check the service manually:
 
 ```
-sudo systemctl start machine
-sudo systemctl stop machine
-sudo systemctl restart machine
-sudo systemctl status machine
+sudo systemctl start verhalenmachine
+sudo systemctl stop verhalenmachine
+sudo systemctl restart verhalenmachine
+sudo systemctl status verhalenmachine
 ```
 
 To check logs:
@@ -234,3 +231,5 @@ cat /var/log/mopidy/mopidy.log
 python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
 python -m serial.tools.list_ports
 192.168.211.1
+ps ax | grep arecord
+sudo kill <pid>
