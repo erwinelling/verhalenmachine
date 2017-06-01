@@ -2,17 +2,17 @@
 
 ---
 Erwin:
-TODO: Test serial port stuff
+TODO: Test serial port stuff together with David
 TODO: Check minor todo's across files
+TODO: Stresstest complete verhalenmachine setup
 TODO: Complete README
-TODO: Test complete verhalenmachine
 TODO: Create documentation
 ---
 
 David:
-* Headphone splitter + slider + VU meter aan USB audio card (output)
-* VU meter en KAKU aan ander apparaat via seriële poort (input)
-* Alles inbouwen in kist
+TODO: Headphone splitter + slider + VU meter aan USB audio card (output)
+TODO: VU meter en KAKU aan ander apparaat via seriële poort (input)
+TODO: Alles inbouwen in kist
 
 ---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
