@@ -9,7 +9,10 @@ import re
 import RPi.GPIO as GPIO
 import serial
 import signal
+import sys
 import subprocess
+import threading
+import tempfile
 import time
 import pdb
 import ConfigParser
@@ -31,7 +34,7 @@ LOG_FILE = os.path.join(HOME_DIR, "verhalenmachine.log")
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
 
 fh = logging.handlers.RotatingFileHandler(
               LOG_FILE, maxBytes=5000000, backupCount=5)
@@ -115,6 +118,7 @@ class Recorder:
     arecord -D plughw:CARD=Device,DEV=0 /dev/null 2> ~/vu.txt
     2 staat voor file descriptor 2 (stderr)
     daar komt de error output uit
+
     '''
 
     def __init__(self):
@@ -125,6 +129,8 @@ class Recorder:
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
         self.last_started_recording = 0
+
+        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
 
     def get_pid(self):
         try:
@@ -149,7 +155,39 @@ class Recorder:
             logger.debug("NOT RECORDING!")
             return False
 
+    def record_and_control_vu(self, args):
+        # Also sends serial data
+        # If data is sent (other than 0), KAKA also turns on
+
+        # the temp file will be automatically cleaned up using context manager
+        with tempfile.TemporaryFile() as output:
+            sub = subprocess.Popen(args, stderr=output)
+            # sub.poll returns None until the subprocess ends,
+            # it will then return the exit code, hopefully 0 ;)
+            while sub.poll() is None:
+                where = output.tell()
+                lines = output.read()
+                if not lines:
+                    # Adjust the sleep interval to your needs
+                    time.sleep(0.1)
+                    # make sure pointing to the last place we read
+                    output.seek(where)
+                else:
+                    possible_vu_percentage = lines[-3:-1].lstrip("0")
+                    if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
+                        logger.debug("VU: %s" % possible_vu_percentage)
+                        # print possible_vu_percentage + "\r"
+                        self.ser.write(possible_vu_percentage + "\r")
+                    # sys.__stdout__.write(lines)
+                    sys.__stdout__.flush()
+                    time.sleep(0.1)
+            # A last write needed after subprocess ends
+            sys.__stdout__.write(output.read())
+            sys.__stdout__.flush()
+
     def record(self, filename):
+        # arecord -D plughw:CARD=E205U,DEV=0 -V mono -r 44100 -c 1 -f s16_LE vutest.wav
+
         self.last_started_recording = time.time()
         self.filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
         args = [
@@ -161,13 +199,16 @@ class Recorder:
             '-V', 'mono',
             '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
             self.filepath+".temp",
-            '2>', os.path.join(HOME_DIR, "vumeter.tmp"),
+            # '2>', os.path.join(HOME_DIR, "vumeter.tmp"),
         ]
         logger.debug(args)
-        proc = subprocess.Popen(args, stdout=subprocess.PIPE)
 
-        # TODO: SEND VU METER SIGNAL TO SERIAL PORT (1-100)
-        # IF DATA is sent, KAKA also turns on
+        # if not ser.is_open():
+        #   ser.open()
+
+        t = threading.Thread(target=self.record_and_control_vu, args=(args,))
+        t.start()
+        logger.debug("STARTED RECORDING THREAD")
 
     def remove_temp_ext(self):
         # remove .temp extension files
@@ -189,10 +230,13 @@ class Recorder:
         if pid:
             logger.debug("Stopping recording process by killing PID %s", str(pid))
             os.kill(pid, signal.SIGINT)
+        # Also send "0" to serial port to turn off KAKU
+        # TODO: Add serial port communication function that also opens port if necessary
+        self.ser.write("0\r")
+        logger.debug("VU: 0")
         self.remove_temp_ext()
         self.add_not_uploaded_file()
 
-        # TODO send "0" to serial port to turn off KAKU
         # TODO: Misschien aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
