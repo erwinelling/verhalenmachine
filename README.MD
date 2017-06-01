@@ -4,6 +4,7 @@
 Erwin:
 TODO: USB audio aansluiten en instellen
 TODO: Add vumeter output from recorder
+TODO: Move vumeter to main py script
 TODO: Test best audio recording settings
 TODO: Check minor todo's across files
 TODO: Complete README
