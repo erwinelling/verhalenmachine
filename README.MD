@@ -2,7 +2,7 @@
 
 ---
 Erwin:
-TODO: Test serial port stuff together with David
+TODO: Test serial port stuff together with David (check udev serial port for other serial prot)
 TODO: Check minor todo's across files
 TODO: Stresstest complete verhalenmachine setup
 TODO: Complete README

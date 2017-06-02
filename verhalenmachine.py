@@ -158,7 +158,8 @@ class Recorder:
     def record_and_control_vu(self, args):
         # Also sends serial data
         # If data is sent (other than 0), KAKA also turns on
-
+        # https://stackoverflow.com/questions/38374063/python-can-we-use-tempfile-with-subprocess-to-get-non-buffering-live-output-in-p#_=_
+        
         # the temp file will be automatically cleaned up using context manager
         with tempfile.TemporaryFile() as output:
             sub = subprocess.Popen(args, stderr=output)
