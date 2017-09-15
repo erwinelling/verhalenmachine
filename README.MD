@@ -10,7 +10,7 @@ TODO: Create documentation
 ---
 
 David:
-TODO: Headphone splitter + slider + VU meter aan USB audio card (output)
+TODO: VU meter aan audio output
 TODO: VU meter en KAKU aan ander apparaat via seriële poort (input)
 TODO: Alles inbouwen in kist
 
