@@ -15,12 +15,12 @@ try:
 
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
-    button1 = Button(40)
-    button2 = Button(38)
-    button3 = Button(36)
-    led1 = Led(37)
-    led2 = Led(35)
-    led3 = Led(33)
+    button1 = Button(37) # Blue
+    button2 = Button(35) # Red
+    button3 = Button(33) # Green
+    led1 = Led(40) # Blue
+    led2 = Led(38) # Red
+    led3 = Led(36) # Green
 
     while True:
         # Check GPIO for button events
