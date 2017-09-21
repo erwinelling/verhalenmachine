@@ -62,6 +62,7 @@ class Player:
         # self.min_volume = 10
         # self.max_volume = 90
         # self.prev_volume = None
+        # TODO: Set default volume
 
     def is_playing(self):
         status = self.client.status()
@@ -159,7 +160,7 @@ class Recorder:
         # Also sends serial data
         # If data is sent (other than 0), KAKA also turns on
         # https://stackoverflow.com/questions/38374063/python-can-we-use-tempfile-with-subprocess-to-get-non-buffering-live-output-in-p#_=_
-        
+
         # the temp file will be automatically cleaned up using context manager
         with tempfile.TemporaryFile() as output:
             sub = subprocess.Popen(args, stderr=output)
@@ -300,7 +301,7 @@ class Button:
 
 class Uploader:
     # TODO: Maybe implement uploading to several playlists again (settings or ip or wlan name or ...)
-
+    # TODO: Upload to playlist
     def __init__(self):
         # TODO: Add to config
         self.client = soundcloud.Client(client_id="2afa000b9c16670dd62c83700567487f", client_secret="dbf7e4b8b8140f142b62c8e93b4d0ab8", username="erwin@uptous.nl", password="ell82SOU!")

@@ -4,6 +4,8 @@
 Erwin:
 TODO: Test serial port stuff together with David (check udev serial port for other serial prot)
 TODO: Check minor todo's across files
+TODO: Create config file
+TODO: Make easy setup script (upload everything, (re)move recordings, set name for playlist, ...)
 TODO: Stresstest complete verhalenmachine setup
 TODO: Complete README
 TODO: Create documentation
