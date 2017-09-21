@@ -60,11 +60,12 @@ try:
             if not led2.burning:
                 led2.on()
 
-        # Control recorder led also when recordering has been stopped externally
+        # Control recorder led & VU & KAKU also when recorder has been stopped externally
         if not recorder.is_recording():
             if led1.burning:
                 led1.off()
                 # TODO: also turn off KAKU light by sending 0 to serial port
+                recorder.stop_vu()
 
         time.sleep(0.5)
         # pdb.set_trace()

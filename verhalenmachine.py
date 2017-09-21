@@ -62,7 +62,9 @@ class Player:
         # self.min_volume = 10
         # self.max_volume = 90
         # self.prev_volume = None
-        # TODO: Set default volume
+
+        # Default volume
+        self.client.setvol(90)
 
     def is_playing(self):
         status = self.client.status()
@@ -187,6 +189,13 @@ class Recorder:
             sys.__stdout__.write(output.read())
             sys.__stdout__.flush()
 
+    def stop_vu(self):
+        # Also send "0" to serial port to turn off KAKU
+        # TODO: Add serial port communication function that also opens port if necessary
+        sys.__stdout__.flush()
+        self.ser.write("0\r")
+        logger.debug("VU: 0")
+
     def record(self, filename):
         # arecord -D plughw:CARD=E205U,DEV=0 -V mono -r 44100 -c 1 -f s16_LE vutest.wav
 
@@ -232,10 +241,7 @@ class Recorder:
         if pid:
             logger.debug("Stopping recording process by killing PID %s", str(pid))
             os.kill(pid, signal.SIGINT)
-        # Also send "0" to serial port to turn off KAKU
-        # TODO: Add serial port communication function that also opens port if necessary
-        self.ser.write("0\r")
-        logger.debug("VU: 0")
+        self.stop_vu()
         self.remove_temp_ext()
         self.add_not_uploaded_file()
 
