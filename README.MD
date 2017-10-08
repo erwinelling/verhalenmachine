@@ -2,16 +2,17 @@
 
 ---
 Erwin:
-TODO: Where is the serial port?
+TODO: Where is the serial port? python -m serial.tools.list_ports
 TODO: Test serial port stuff together with David (check udev serial port for other serial port)
+TODO: Test buttons again
+TODO: Check weird sound when recording
 TODO: Check minor todo's across files
-TODO: Create config file
 TODO: Make easy setup script (upload everything, (re)move recordings, set name for playlist, ...)
 TODO: Stresstest complete verhalenmachine setup
 TODO: Complete README
 TODO: Create documentation
 TODO: Create requirements.txt
-TODO: Make is possible to insert mic later (catch exception?)
+TODO: Make it possible to insert mic later (catch exception?)
 ---
 
 David:
