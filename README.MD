@@ -2,6 +2,7 @@
 
 ---
 Erwin:
+TODO: Where is the serial port?
 TODO: Test serial port stuff together with David (check udev serial port for other serial port)
 TODO: Check minor todo's across files
 TODO: Create config file
@@ -10,6 +11,7 @@ TODO: Stresstest complete verhalenmachine setup
 TODO: Complete README
 TODO: Create documentation
 TODO: Create requirements.txt
+TODO: Make is possible to insert mic later (catch exception?)
 ---
 
 David:
@@ -236,3 +238,6 @@ python -m serial.tools.list_ports
 192.168.211.1
 ps ax | grep arecord
 sudo kill <pid>
+
+
+http://verhalenmachine.local/DEV/
