@@ -64,7 +64,8 @@ class Player:
         # self.prev_volume = None
 
         # Default volume
-        self.client.setvol(90)
+        default_volume = config.getint("player", "default_volume")
+        self.client.setvol(default_volume)
 
     def is_playing(self):
         status = self.client.status()
@@ -127,13 +128,14 @@ class Recorder:
     def __init__(self):
         # TODO: Throw exception when mic does not exist
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
-        self.SOUND_CARD_MIC = "plughw:CARD=E205U,DEV=0" # Superlux USB mic
-        self.RECORDING_DIR = "/data/INTERNAL/"
+        self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
+        self.RECORDING_DIR = config.get("recorder", "recording_dir")
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
         self.last_started_recording = 0
 
-        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
+        # self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
+        self.ser = serial.Serial(config.get("recorder", "serial_port"), baudrate=57600, timeout=1.0)
 
     def get_pid(self):
         try:
