@@ -21,8 +21,6 @@ import soundcloud
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
-# TODO: Test configfile
-# TODO: Add stuff to configfile
 config = ConfigParser.ConfigParser()
 config.read(os.path.join(HOME_DIR, "verhalenmachine.cfg"))
 
@@ -135,7 +133,7 @@ class Recorder:
         self.last_started_recording = 0
 
         # self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        self.ser = serial.Serial(None, baudrate=57600, timeout=1.0)
+        self.ser = serial.Serial(config.get("recorder", "serial_ports"), baudrate=57600, timeout=1.0)
 
     def get_pid(self):
         try:
@@ -202,7 +200,8 @@ class Recorder:
         # arecord -D plughw:CARD=E205U,DEV=0 -V mono -r 44100 -c 1 -f s16_LE vutest.wav
 
         self.last_started_recording = time.time()
-        self.filepath = os.path.join(self.RECORDING_DIR+"verhalenmachine_"+filename)
+        prefix_filename = config.get("recorder", "prefix_filename")
+        self.filepath = os.path.join(self.RECORDING_DIR+prefix_filename+filename)
         args = [
             'arecord',
             '-D', self.SOUND_CARD_MIC,
@@ -311,19 +310,16 @@ class Uploader:
     # TODO: Maybe implement uploading to several playlists again (settings or ip or wlan name or ...)
     # TODO: Upload to playlist
     def __init__(self):
-        # TODO: Add to config
-        self.client = soundcloud.Client(client_id="2afa000b9c16670dd62c83700567487f", client_secret="dbf7e4b8b8140f142b62c8e93b4d0ab8", username="erwin@uptous.nl", password="ell82SOU!")
+        # self.client = soundcloud.Client(client_id="2afa000b9c16670dd62c83700567487f", client_secret="dbf7e4b8b8140f142b62c8e93b4d0ab8", username="erwin@uptous.nl", password="ell82SOU!")
+        self.client = soundcloud.Client(
+            client_id = config.get("uploader", "client_id"),
+            client_secret = config.get("uploader", "client_secret"),
+            username = config.get("uploader", "username"),
+            password = config.get("uploader", "password"),
+        )
         logger.debug("SOUNDCLOUD connected to %s " % self.client.get('/me').username)
 
-        # self.client = soundcloud.Client(
-        #     client_id = config.get("upload", "client_id"),
-        #     client_secret = config.get("upload", "client_secret"),
-        #     username = config.get("upload", "username"),
-        #     password = config.get("upload", "password"),
-        # )
-
-        # TODO: Add to config
-        self.RECORDING_DIR = "/data/INTERNAL/"
+        self.RECORDING_DIR = config.get("uploader", "recording_dir")
 
     def clean_directory(self, directory=""):
         if directory == "":
