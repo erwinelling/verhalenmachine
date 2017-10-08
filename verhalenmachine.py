@@ -135,7 +135,7 @@ class Recorder:
         self.last_started_recording = 0
 
         # self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        self.ser = serial.Serial(config.get("recorder", "serial_port"), baudrate=57600, timeout=1.0)
+        self.ser = serial.Serial(None, baudrate=57600, timeout=1.0)
 
     def get_pid(self):
         try:
