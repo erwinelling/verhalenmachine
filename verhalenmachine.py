@@ -133,7 +133,8 @@ class Recorder:
         self.last_started_recording = 0
 
         # self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        self.ser = serial.Serial(config.get("recorder", "serial_ports"), baudrate=57600, timeout=1.0)
+        # self.ser = serial.Serial(config.get("recorder", "serial_ports"), baudrate=57600, timeout=1.0)
+        # TODO: Add new way to control VU meter
 
     def get_pid(self):
         try:
@@ -160,7 +161,8 @@ class Recorder:
 
     def record_and_control_vu(self, args):
         # Also sends serial data
-        # If data is sent (other than 0), KAKA also turns on
+        # TODO: Implement new way to control VU meter
+        # If data is sent (other than 0), KAKU also turns on
         # https://stackoverflow.com/questions/38374063/python-can-we-use-tempfile-with-subprocess-to-get-non-buffering-live-output-in-p#_=_
 
         # the temp file will be automatically cleaned up using context manager
@@ -181,7 +183,9 @@ class Recorder:
                     if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
                         logger.debug("VU: %s" % possible_vu_percentage)
                         # print possible_vu_percentage + "\r"
-                        self.ser.write(possible_vu_percentage + "\r")
+                        # self.ser.write(possible_vu_percentage + "\r")
+                        # TODO: Implement new way to control VU meter
+
                     # sys.__stdout__.write(lines)
                     sys.__stdout__.flush()
                     time.sleep(0.1)
@@ -191,10 +195,12 @@ class Recorder:
 
     def stop_vu(self):
         # Also send "0" to serial port to turn off KAKU
-        # TODO: Add serial port communication function that also opens port if necessary
-        sys.__stdout__.flush()
-        self.ser.write("0\r")
-        logger.debug("VU: 0")
+        # TODO: Implement new way to control VU meter
+        # sys.__stdout__.flush()
+        # self.ser.write("0\r")
+        # logger.debug("VU: 0")
+        pass
+
 
     def record(self, filename):
         # arecord -D plughw:CARD=E205U,DEV=0 -V mono -r 44100 -c 1 -f s16_LE vutest.wav
@@ -296,6 +302,22 @@ class Led:
             if count<times-1:
                 time.sleep(sleep)
             count = count+1
+
+class KAKU:
+    '''
+    Klik Aan Klik Uit
+    '''
+    def __init__(self):
+        # TODO: Implement
+        pass
+
+    def on(self):
+        # TODO: Implement
+        pass
+
+    def off(self):
+        # TODO: Implement
+        pass
 
 class Button:
     def __init__(self, pin):

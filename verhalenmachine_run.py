@@ -4,7 +4,7 @@ import logging
 import RPi.GPIO as GPIO
 import time
 import datetime
-from verhalenmachine import Player, Recorder, Led, Button
+from verhalenmachine import Player, Recorder, Led, Button, KAKU
 
 try:
     player = Player()
@@ -22,6 +22,9 @@ try:
     led2 = Led(38) # Red
     led3 = Led(36) # Green
 
+    kaku = KAKU()
+    # TODO: Implement Klik Aan Klik Uit
+
     while True:
         # Check GPIO for button events
         if GPIO.event_detected(button1.pin):
@@ -29,6 +32,7 @@ try:
                 recorder.stop()
                 # TODO: Maybe control leds totally separate from buttons
                 led1.off()
+                # kaku.off()
             else:
                 if player.is_playing():
                     player.stop()
@@ -36,6 +40,7 @@ try:
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
                 led1.on()
+                # kaku.on()
 
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
@@ -65,7 +70,8 @@ try:
             if led1.burning:
                 led1.off()
                 # TODO: also turn off KAKU light by sending 0 to serial port
-                recorder.stop_vu()
+                # recorder.stop_vu()
+                # kaku.off()
 
         time.sleep(0.5)
         # pdb.set_trace()

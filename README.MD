@@ -2,8 +2,6 @@
 
 ---
 Erwin:
-TODO: Where is the serial port? python -m serial.tools.list_ports
-TODO: Test serial port stuff together with David (check udev serial port for other serial port)
 TODO: Test buttons again
 TODO: Check weird sound when recording
 TODO: Check minor todo's across files
