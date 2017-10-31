@@ -3,20 +3,17 @@
 ---
 Erwin:
 TODO: Test buttons again
-TODO: Check weird sound when recording
+TODO: Implement VU
+TODO: Implement Klik aan Klik uit
 TODO: Check minor todo's across files
-TODO: Make easy setup script (upload everything, (re)move recordings, set name for playlist, ...)
+TODO: Check weird sound when recording
+
+TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
 TODO: Stresstest complete verhalenmachine setup
 TODO: Complete README
 TODO: Create documentation
 TODO: Create requirements.txt
 TODO: Make it possible to insert mic later (catch exception?)
----
-
-David:
-TODO: VU meter aan audio output
-TODO: VU meter en KAKU aan ander apparaat via seriële poort (input)
-TODO: Alles inbouwen in kist
 
 ---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
@@ -31,7 +28,7 @@ The player part is implemented on top of Volumio. It controls Volumio via MPD an
 The recorder part is implemented ...:
 
 * 1 button: For record & stop.
-* VU meter: For display of input volume (controlled via )
+* a VU meter: For display of input volume (controlled via )
 * ...
 
 The Soundcloud uploader ...:
@@ -225,7 +222,7 @@ To check logs:
 
 ```
 cat /var/log/mopidy/mopidy.log
-``` -->
+```
 
 
 ### TODO: Change default password?
