@@ -84,24 +84,6 @@ class Player:
     def stop(self):
         self.client.stop()
 
-    # Volume control is now deprecated
-    # def set_volume(self, new_volume):
-    #     if new_volume != self.prev_volume:
-    #         if new_volume > self.max_volume:
-    #             new_volume = self.max_volume
-    #         if new_volume < self.min_volume:
-    #             new_volume = self.min_volume
-    #         logger.debug("Changing volume from %s to %s" % (self.prev_volume, new_volume))
-    #         self.client.setvol(new_volume)
-    #         self.prev_volume = new_volume
-    #
-    # def set_volume_decimal(self, volume_decimal):
-    #     volume = self.min_volume + volume_decimal*(self.max_volume-self.min_volume)
-    #     self.set_volume(int(volume))
-
-    # def get_volume(self):
-    #     return int(self.client.status().get('volume'))
-
     def load_playlist(self):
         # TODO: Laden van playlist veranderen, zodat dit samenwerkt met Volumio GUI
         # TODO: Echt een playlist van maken, zelfde naamgeving als bij uploaden
@@ -160,9 +142,10 @@ class Recorder:
             return False
 
     def record_and_control_vu(self, args):
-        # Also sends serial data
+        """
+        Meant to run in a parallel thread.
+        """
         # TODO: Implement new way to control VU meter
-        # If data is sent (other than 0), KAKU also turns on
         # https://stackoverflow.com/questions/38374063/python-can-we-use-tempfile-with-subprocess-to-get-non-buffering-live-output-in-p#_=_
 
         # the temp file will be automatically cleaned up using context manager
@@ -255,6 +238,9 @@ class Recorder:
         # TODO: Misschien aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
+        """
+        Meant to run as cronjob.
+        """
         # TODO: Misschien fixen als hij te grote files opneemt wav-01, wav-02, wav-03 (>2GB)
         logger.debug("DO NOT RECORD FOR TOO LONG")
         if self.is_recording():
@@ -306,18 +292,43 @@ class Led:
 class KAKU:
     '''
     Klik Aan Klik Uit
+    TODO: Possibly just subclass LED()
     '''
-    def __init__(self):
+    def __init__(self): #,pin):
         # TODO: Implement
+        # # Pin Setup:
+        # self.pin = pin
+        #
+        # # Initiate LED
+        # GPIO.setup(self.pin, GPIO.OUT)
+        # self.burning = False
+        # self.blink()
         pass
 
     def on(self):
         # TODO: Implement
+        # GPIO.output(self.pin, GPIO.HIGH)
+        # self.burning = True
+        # logger.debug("LED (pin %s) ON." % self.pin)
         pass
 
     def off(self):
         # TODO: Implement
+        # GPIO.output(self.pin, GPIO.LOW)
+        # self.burning = False
+        # logger.debug("LED (pin %s) OFF." % self.pin)
         pass
+
+    def blink(self, times=1, sleep=0.5):
+        count = 0
+        while count<times:
+            self.on()
+            time.sleep(sleep)
+            self.off()
+            if count<times-1:
+                time.sleep(sleep)
+            count = count+1
+
 
 class Button:
     def __init__(self, pin):
@@ -362,7 +373,8 @@ class Uploader:
             directory = self.RECORDING_DIR
         # walk through all files in recording directory
         logger.debug("Checking contents of %s", directory)
-        count = 0
+        count = 0 # TODO: Remove and just us uploaded_track_list.length()
+        uploaded_track_list=[]
         # TODO: Replace with counter object
         for root, dirs, files in os.walk(directory):
             for filename in files:
@@ -375,8 +387,13 @@ class Uploader:
                     logger.debug(path_to_file)
                     not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
                     if os.path.isfile(not_uploaded_file):
-                        self.upload_track(path_to_file)
+                        uploaded_track = self.upload_track(path_to_file)
                         count = count+1
+
+                        # TODO: Keep list of uploaded tracks
+                        # uploaded_track_list.append(uploaded_track.id)
+
+        # TODO: Create or appenn to playlist
         logger.debug("UPLOADED %s files" % count)
 
     def upload_track(self, path_to_file):
@@ -429,14 +446,16 @@ class Uploader:
         #
         # # create the playlist
         # client.post('/playlists', playlist={
-        #     'title': 'My new album',
+        #     'title': name,
         #     'sharing': 'public',
         #     'tracks': tracks
         # })
+        ## return created_playlist
         pass
 
     def update_playlist(self, tracklist):
         # TODO: Implement
+        # playlist = client.get("/playlists/"+set_id)
         #     # generate tracklist of current playlist
         #     track_id_list = []
         #     for track in playlist.tracks:
@@ -450,4 +469,5 @@ class Uploader:
         #         'tracks': map(lambda id: dict(id=id), track_id_list)
         #     })
         #     logger.debug("%s, %s", updated_playlist.title, track_id_list)
+        ## return updated_playlist
         pass
