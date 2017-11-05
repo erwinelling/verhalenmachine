@@ -26,22 +26,25 @@ try:
     # TODO: Implement Klik Aan Klik Uit
 
     while True:
-        # Check GPIO for button events
+    # TODO: Maybe control leds totally separate from buttons
+
+        # Check GPIO for record button events
         if GPIO.event_detected(button1.pin):
             if recorder.is_recording():
                 recorder.stop()
-                # TODO: Maybe control leds totally separate from buttons
                 led1.off()
                 # kaku.off()
             else:
                 if player.is_playing():
                     player.stop()
+                    led2.off()
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
                 led1.on()
                 # kaku.on()
 
+        # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
                 player.stop()
@@ -50,6 +53,7 @@ try:
                 player.play()
                 led2.on()
 
+        # Check GPIO for next button events
         if GPIO.event_detected(button3.pin):
             if not player.is_playing():
                 player.play()
