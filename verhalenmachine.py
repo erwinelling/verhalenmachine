@@ -293,31 +293,30 @@ class KAKU:
     '''
     Klik Aan Klik Uit
     TODO: Possibly just subclass LED()
+    TODO: TEST!
     '''
-    def __init__(self): #,pin):
-        # TODO: Implement
-        # # Pin Setup:
-        # self.pin = pin
-        #
-        # # Initiate LED
-        # GPIO.setup(self.pin, GPIO.OUT)
-        # self.burning = False
-        # self.blink()
-        pass
+    def __init__(self, pin1, pin2):
+        # Pin Setup:
+        self.pin1 = pin1
+        self.pin2 = pin2
+
+        # Initiate KAKU
+        GPIO.setup(self.pin1, GPIO.OUT)
+        GPIO.setup(self.pin2, GPIO.OUT)
+        self.burning = False
+        self.blink(times=1, sleep=2)
 
     def on(self):
-        # TODO: Implement
-        # GPIO.output(self.pin, GPIO.HIGH)
-        # self.burning = True
-        # logger.debug("LED (pin %s) ON." % self.pin)
-        pass
+        GPIO.output(self.pin1, GPIO.HIGH)
+        GPIO.output(self.pin2, GPIO.LOW)
+        self.burning = True
+        logger.debug("LED (pins %s and %s) ON." % (self.pin1, self.pin2))
 
     def off(self):
-        # TODO: Implement
-        # GPIO.output(self.pin, GPIO.LOW)
-        # self.burning = False
-        # logger.debug("LED (pin %s) OFF." % self.pin)
-        pass
+        GPIO.output(self.pin1, GPIO.LOW)
+        GPIO.output(self.pin2, GPIO.HIGH)
+        self.burning = False
+        logger.debug("LED (pins %s and %s) ON." % (self.pin1, self.pin2))
 
     def blink(self, times=1, sleep=0.5):
         count = 0

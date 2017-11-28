@@ -22,7 +22,7 @@ try:
     led2 = Led(38) # Red
     led3 = Led(36) # Green
 
-    kaku = KAKU()
+    kaku = KAKU(15,16)
     # TODO: Implement Klik Aan Klik Uit
 
     while True:
