@@ -13,8 +13,7 @@ try:
 
     recorder = Recorder()
 
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
+    # GPIO.cleanup()
     vu = VU(12) # vu meter for player
     button1 = Button(37) # Blue
     button2 = Button(35) # Green

@@ -262,6 +262,7 @@ class VU:
         self.pin = pin
 
         # Initiate LED
+        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         GPIO.setup(self.pin, GPIO.OUT)
         self.vumax = 70
         self.p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
@@ -277,7 +278,6 @@ class VU:
             self.p.ChangeDutyCycle(dc)
             time.sleep(0.1)
         self.p.stop()
-        GPIO.cleanup()
 
 class Led:
     '''
@@ -288,6 +288,7 @@ class Led:
         self.pin = pin
 
         # Initiate LED
+        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         GPIO.setup(self.pin, GPIO.OUT)
         self.burning = False
         self.blink()
@@ -324,6 +325,7 @@ class KAKU:
         self.pin2 = pin2
 
         # Initiate KAKU
+        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         GPIO.setup(self.pin1, GPIO.OUT)
         GPIO.setup(self.pin2, GPIO.OUT)
         self.burning = False
@@ -358,6 +360,7 @@ class Button:
         self.pin = pin
 
         # Initiate button as input w/ pull-up
+        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
 
