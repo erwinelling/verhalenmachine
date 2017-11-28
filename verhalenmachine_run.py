@@ -16,14 +16,12 @@ try:
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
     button1 = Button(37) # Blue
-    button2 = Button(35) # Red
-    button3 = Button(33) # Green
+    button2 = Button(35) # Green
+    button3 = Button(33) # Red
     led1 = Led(40) # Blue
-    led2 = Led(38) # Red
-    led3 = Led(36) # Green
-
-    kaku = KAKU(15,16)
-    # TODO: Implement Klik Aan Klik Uit
+    led2 = Led(38) # Green
+    led3 = Led(36) # Red
+    kaku = KAKU(15,16) # Klik Aan Klik Uit
 
     while True:
     # TODO: Maybe control leds totally separate from buttons
@@ -33,7 +31,7 @@ try:
             if recorder.is_recording():
                 recorder.stop()
                 led1.off()
-                # kaku.off()
+                kaku.off()
             else:
                 if player.is_playing():
                     player.stop()
@@ -42,7 +40,7 @@ try:
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
                 led1.on()
-                # kaku.on()
+                kaku.on()
 
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
@@ -73,9 +71,8 @@ try:
         if not recorder.is_recording():
             if led1.burning:
                 led1.off()
-                # TODO: also turn off KAKU light by sending 0 to serial port
                 # recorder.stop_vu()
-                # kaku.off()
+                kaku.off()
 
         time.sleep(0.5)
         # pdb.set_trace()
