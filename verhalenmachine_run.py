@@ -4,7 +4,7 @@ import logging
 import RPi.GPIO as GPIO
 import time
 import datetime
-from verhalenmachine import Player, Recorder, Led, Button, KAKU
+from verhalenmachine import Player, Recorder, Led, Button, KAKU, VU
 
 try:
     player = Player()
@@ -22,6 +22,7 @@ try:
     led2 = Led(38) # Green
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
+    vu = VU(12) # vu meter for player
 
     while True:
     # TODO: Maybe control leds totally separate from buttons

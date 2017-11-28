@@ -114,8 +114,6 @@ class Recorder:
         self.filepath = ""
         self.last_started_recording = 0
 
-        # self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        # self.ser = serial.Serial(config.get("recorder", "serial_ports"), baudrate=57600, timeout=1.0)
         # TODO: Add new way to control VU meter based on Davids test
 
     def get_pid(self):
@@ -144,6 +142,7 @@ class Recorder:
     def record_and_control_vu(self, args):
         """
         Meant to run in a parallel thread.
+        Will run the recorder and send output to VU meter.
         """
         # : Implement new way to control VU meter
         # https://stackoverflow.com/questions/38374063/python-can-we-use-tempfile-with-subprocess-to-get-non-buffering-live-output-in-p#_=_
@@ -255,6 +254,29 @@ class Recorder:
                 self.stop()
         else:
             logger.debug("Not recording")
+
+
+class VU:
+    def __init__(self, pin):
+        # Pin Setup:
+        self.pin = pin
+
+        # Initiate LED
+        GPIO.setup(self.pin, GPIO.OUT)
+        self.vumax = 70
+        self.p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
+        self.test()
+
+
+    def test():
+        self.p.start(0)
+        for dc in range(0, self.vumax+1, 5):
+            p.ChangeDutyCycle(dc)
+            time.sleep(0.1)
+        for dc in range(self.vumax, -1, -5):
+            p.ChangeDutyCycle(dc)
+            time.sleep(0.1)
+        self.p.stop()
 
 class Led:
     '''
