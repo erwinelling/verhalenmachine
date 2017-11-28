@@ -47,7 +47,7 @@ logger.addHandler(ch)
 
 class Player:
     'Player'
-
+    #TODO: Use this: https://volumio.github.io/docs/API/WebSocket_APIs.html
     def __init__(self):
         from mpd import MPDClient
         self.client = MPDClient()
@@ -116,7 +116,7 @@ class Recorder:
 
         # self.ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
         # self.ser = serial.Serial(config.get("recorder", "serial_ports"), baudrate=57600, timeout=1.0)
-        # TODO: Add new way to control VU meter
+        # TODO: Add new way to control VU meter based on Davids test
 
     def get_pid(self):
         try:
@@ -135,17 +135,17 @@ class Recorder:
             return True
         elif time_since_last_started_recording < 2:
             # Allow for 2 seconds startup time
-            logger.debug("PROBABLY RECORDING")
+            # logger.debug("PROBABLY RECORDING")
             return True
         else:
-            logger.debug("NOT RECORDING!")
+            # logger.debug("NOT RECORDING!")
             return False
 
     def record_and_control_vu(self, args):
         """
         Meant to run in a parallel thread.
         """
-        # TODO: Implement new way to control VU meter
+        # : Implement new way to control VU meter
         # https://stackoverflow.com/questions/38374063/python-can-we-use-tempfile-with-subprocess-to-get-non-buffering-live-output-in-p#_=_
 
         # the temp file will be automatically cleaned up using context manager
@@ -310,13 +310,13 @@ class KAKU:
         GPIO.output(self.pin1, GPIO.HIGH)
         GPIO.output(self.pin2, GPIO.LOW)
         self.burning = True
-        logger.debug("LED (pins %s and %s) ON." % (self.pin1, self.pin2))
+        logger.debug("KAKU (pins %s and %s) ON." % (self.pin1, self.pin2))
 
     def off(self):
         GPIO.output(self.pin1, GPIO.LOW)
         GPIO.output(self.pin2, GPIO.HIGH)
         self.burning = False
-        logger.debug("LED (pins %s and %s) ON." % (self.pin1, self.pin2))
+        logger.debug("KAKU (pins %s and %s) OFF." % (self.pin1, self.pin2))
 
     def blink(self, times=1, sleep=0.5):
         count = 0
