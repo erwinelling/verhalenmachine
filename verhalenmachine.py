@@ -268,7 +268,7 @@ class VU:
         self.test()
 
 
-    def test():
+    def test(self):
         self.p.start(0)
         for dc in range(0, self.vumax+1, 5):
             p.ChangeDutyCycle(dc)
