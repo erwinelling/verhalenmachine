@@ -277,6 +277,7 @@ class VU:
             self.p.ChangeDutyCycle(dc)
             time.sleep(0.1)
         self.p.stop()
+        GPIO.cleanup()
 
 class Led:
     '''

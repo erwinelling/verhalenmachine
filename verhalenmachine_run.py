@@ -15,6 +15,7 @@ try:
 
     GPIO.cleanup()
     GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
+    vu = VU(12) # vu meter for player
     button1 = Button(37) # Blue
     button2 = Button(35) # Green
     button3 = Button(33) # Red
@@ -22,7 +23,6 @@ try:
     led2 = Led(38) # Green
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
-    vu = VU(12) # vu meter for player
 
     while True:
     # TODO: Maybe control leds totally separate from buttons
