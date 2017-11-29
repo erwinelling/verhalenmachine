@@ -203,9 +203,6 @@ class Recorder:
         ]
         logger.debug(args)
 
-        # if not ser.is_open():
-        #   ser.open()
-
         t = threading.Thread(target=self.record_and_control_vu, args=(args,))
         t.start()
         logger.debug("STARTED RECORDING THREAD")
@@ -272,11 +269,22 @@ class VU:
     def test(self):
         self.p.start(0)
         for dc in range(0, self.vumax+1, 5):
-            self.p.ChangeDutyCycle(dc)
+            self.set_value(dc)
             time.sleep(0.1)
         for dc in range(self.vumax, -1, -5):
-            self.p.ChangeDutyCycle(dc)
+            self.set_value(dc)
             time.sleep(0.1)
+        self.p.stop()
+
+    def set_value(self, value):
+        """
+        Should be between -1 and 71 ?
+        TODO: Move gradually
+        """
+        self.p.ChangeDutyCycle(dc)
+        self.current_value = value
+
+    def stop(self):
         self.p.stop()
 
 class Led:
