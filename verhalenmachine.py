@@ -280,7 +280,7 @@ class VU:
         Should be between -1 and 71 ?
         TODO: Move gradually
         """
-        self.p.ChangeDutyCycle(dc)
+        self.p.ChangeDutyCycle(value)
         self.current_value = value
 
     def stop(self):
