@@ -258,22 +258,21 @@ class VU:
         # Pin Setup:
         self.pin = pin
 
-        # Initiate LED
+        # Initiate VU
         GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         GPIO.setup(self.pin, GPIO.OUT)
         self.vumax = 70
         self.p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
         self.test()
 
-
     def test(self):
         self.p.start(0)
         for dc in range(0, self.vumax+1, 5):
             self.set_value(dc)
-            time.sleep(0.1)
+            time.sleep(0.05)
         for dc in range(self.vumax, -1, -5):
             self.set_value(dc)
-            time.sleep(0.1)
+            time.sleep(0.05)
         self.p.stop()
 
     def set_value(self, value):
