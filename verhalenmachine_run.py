@@ -27,10 +27,10 @@ try:
     # TODO: Maybe control leds totally separate from buttons
 
         # Check GPIO for record button events
-        if GPIO.event_detected(button1.pin):
+        if GPIO.event_detected(button3.pin):
             if recorder.is_recording():
                 recorder.stop()
-                led1.off()
+                led3.off()
                 kaku.off()
             else:
                 if player.is_playing():
@@ -39,7 +39,7 @@ try:
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
-                led1.on()
+                led3.on()
                 kaku.on()
 
         # Check GPIO for play button events
@@ -52,12 +52,12 @@ try:
                 led2.on()
 
         # Check GPIO for next button events
-        if GPIO.event_detected(button3.pin):
+        if GPIO.event_detected(button1.pin):
             if not player.is_playing():
                 player.play()
                 led2.on()
             player.next()
-            led3.blink()
+            led1.blink()
 
         # Control player led also when play/ stop has been used externally
         if not player.is_playing():
@@ -69,8 +69,8 @@ try:
 
         # Control recorder led & VU & KAKU also when recorder has been stopped externally
         if not recorder.is_recording():
-            if led1.burning:
-                led1.off()
+            if led3.burning:
+                led3.off()
                 # recorder.stop_vu()
                 kaku.off()
 
