@@ -48,6 +48,7 @@ logger.addHandler(ch)
 class Player:
     'Player'
     #TODO: Use this: https://volumio.github.io/docs/API/WebSocket_APIs.html
+    # https://github.com/foxey/volumio-buddy/blob/master/volumio_buddy/volumio_buddy.py
     def __init__(self):
         from mpd import MPDClient
         self.client = MPDClient()
@@ -113,8 +114,6 @@ class Recorder:
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
         self.last_started_recording = 0
-
-        # TODO: Add new way to control VU meter based on Davids test
 
     def get_pid(self):
         try:
@@ -277,11 +276,14 @@ class VU:
 
     def set_value(self, value):
         """
-        Should be between -1 and 71 ?
-        TODO: Move gradually
+        TODO: Should be between -1 and 71 ?
         """
         self.p.ChangeDutyCycle(value)
         self.current_value = value
+
+    def move_to_value(self, value):
+        # TODO: Move gradually
+        pass
 
     def stop(self):
         self.p.stop()

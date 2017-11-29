@@ -2,14 +2,15 @@
 
 ---
 Erwin:
-TODO: Test buttons again
-TODO: Implement VU
-TODO: Implement Klik aan Klik uit
-TODO: Check minor todo's across files
+TODO: Testen met echte setup
+TODO: Implement VU meter for recorder
 TODO: Check weird sound when recording
+TODO: Check static sound when not playing
+TODO: Check minor todo's across files
 
+TODO: Update Volumio?? (Move to latest version)
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
-TODO: Stresstest complete verhalenmachine setup
+TODO: Stresstest
 TODO: Complete README
 TODO: Create documentation
 TODO: Create requirements.txt
@@ -237,3 +238,9 @@ sudo kill <pid>
 
 
 http://verhalenmachine.local/DEV/
+
+
+###
+Turn off volume control in Volumio
+https://volumio.github.io/docs/User_Manual/Volume_Control_and_audio_quality.html
+We use our own hardware for it.
