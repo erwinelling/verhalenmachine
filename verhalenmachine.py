@@ -106,7 +106,7 @@ class Recorder:
 
     '''
 
-    def __init__(self):
+    def __init__(self, vu=None):
         # TODO: Throw exception when mic does not exist
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
@@ -114,6 +114,8 @@ class Recorder:
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
         self.last_started_recording = 0
+        if vu:
+            self.vu = vu
 
     def get_pid(self):
         try:
@@ -280,6 +282,9 @@ class VU:
         """
         self.p.ChangeDutyCycle(value)
         self.current_value = value
+
+    def set_percentage(self, percentage):
+        self.set_value(percentage/100*self.max_value)
 
     def move_to_value(self, value):
         # TODO: Move gradually
