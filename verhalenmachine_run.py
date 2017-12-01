@@ -11,10 +11,10 @@ try:
     player.update_database()
     player.load_playlist()
 
-    recorder = Recorder()
 
-    # GPIO.cleanup()
+
     vu = VU(12) # vu meter for player
+    recorder = Recorder(vu=vu)
     button1 = Button(37) # Blue
     button2 = Button(35) # Green
     button3 = Button(33) # Red
