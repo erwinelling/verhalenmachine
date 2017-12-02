@@ -114,8 +114,8 @@ class Recorder:
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
         self.filepath = ""
         self.last_started_recording = 0
-        if vu:
-            self.vu = vu
+        self.vu = vu
+        logger.debug("VU: %s" % self.vu)
 
     def get_pid(self):
         try:
@@ -153,6 +153,7 @@ class Recorder:
             sub = subprocess.Popen(args, stderr=output)
             # sub.poll returns None until the subprocess ends,
             # it will then return the exit code, hopefully 0 ;)
+            self.vu.start()
             while sub.poll() is None:
                 where = output.tell()
                 lines = output.read()
@@ -162,12 +163,11 @@ class Recorder:
                     # make sure pointing to the last place we read
                     output.seek(where)
                 else:
+                    # Try to parse percentages from output
                     possible_vu_percentage = lines[-3:-1].lstrip("0")
                     if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
                         logger.debug("VU: %s" % possible_vu_percentage)
-                        # print possible_vu_percentage + "\r"
-                        # self.ser.write(possible_vu_percentage + "\r")
-                        # TODO: Implement new way to control VU meter
+                        self.vu.set_percentage(possible_vu_percentage)
 
                     # sys.__stdout__.write(lines)
                     sys.__stdout__.flush()
@@ -175,15 +175,6 @@ class Recorder:
             # A last write needed after subprocess ends
             sys.__stdout__.write(output.read())
             sys.__stdout__.flush()
-
-    def stop_vu(self):
-        # Also send "0" to serial port to turn off KAKU
-        # TODO: Implement new way to control VU meter
-        # sys.__stdout__.flush()
-        # self.ser.write("0\r")
-        # logger.debug("VU: 0")
-        pass
-
 
     def record(self, filename):
         # arecord -D plughw:CARD=E205U,DEV=0 -V mono -r 44100 -c 1 -f s16_LE vutest.wav
@@ -228,7 +219,7 @@ class Recorder:
         if pid:
             logger.debug("Stopping recording process by killing PID %s", str(pid))
             os.kill(pid, signal.SIGINT)
-        self.stop_vu()
+        self.vu.stop()
         self.remove_temp_ext()
         self.add_not_uploaded_file()
 
@@ -267,28 +258,39 @@ class VU:
         self.test()
 
     def test(self):
-        self.p.start(0)
+        self.start()
         for dc in range(0, self.vumax+1, 5):
             self.set_value(dc)
             time.sleep(0.05)
         for dc in range(self.vumax, -1, -5):
             self.set_value(dc)
             time.sleep(0.05)
-        self.p.stop()
+        self.stop()
 
     def set_value(self, value):
         """
-        TODO: Should be between -1 and 71 ?
+        Needs to have an open connection to work (vu.start)
+        TODO: Move gradually, maybe in steps of 5? Also depending on number of reads of output
         """
+        if value > self.vumax:
+            value = vumax
+        if value < 0
+            value = 0
+
         self.p.ChangeDutyCycle(value)
         self.current_value = value
+        logger.debug("VU current value: %s" % value)
 
     def set_percentage(self, percentage):
-        self.set_value(percentage/100*self.max_value)
+        new_value = (int(percentage)*self.vumax)/100
+        self.set_value(new_value)
 
     def move_to_value(self, value):
         # TODO: Move gradually
         pass
+
+    def start(self):
+        self.p.start(0)
 
     def stop(self):
         self.p.stop()
