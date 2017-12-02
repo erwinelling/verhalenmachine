@@ -26,7 +26,7 @@ config.read(os.path.join(HOME_DIR, "verhalenmachine.cfg"))
 
 
 # LOGGING
-# TODO: Cleanup logging statements
+# TODO: Cleanup logging statements a bit
 LOG_FILE = os.path.join(HOME_DIR, "verhalenmachine.log")
 
 logger = logging.getLogger()
@@ -223,13 +223,12 @@ class Recorder:
         self.remove_temp_ext()
         self.add_not_uploaded_file()
 
-        # TODO: Misschien aan playlist toevoegen?
+        # TODO: Aan playlist toevoegen?
 
     def dontrecordfortoolong(self):
         """
         Meant to run as cronjob.
         """
-        # TODO: Misschien fixen als hij te grote files opneemt wav-01, wav-02, wav-03 (>2GB)
         logger.debug("DO NOT RECORD FOR TOO LONG")
         if self.is_recording():
             p = psutil.Process(self.get_pid())
@@ -332,7 +331,6 @@ class Led:
 class KAKU:
     '''
     Klik Aan Klik Uit
-    TODO: Possibly just subclass LED()
     TODO: TEST!
     '''
     def __init__(self, pin1, pin2):
