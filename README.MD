@@ -2,11 +2,12 @@
 
 ---
 Erwin:
+TODO: Andere manier van Volumio aansturen
 TODO: Testen met echte setup
-TODO: Implement VU meter for recorder
-TODO: Check weird sound when recording
-TODO: Check static sound when not playing
 TODO: Check minor todo's across files
+TODO: Check weird sound when recording (adapter?)
+TODO: Check static sound when not playing with David (adapter?)
+
 
 TODO: Update Volumio?? (Move to latest version)
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
