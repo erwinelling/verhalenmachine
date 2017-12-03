@@ -2,11 +2,10 @@
 
 ---
 Erwin:
-TODO: Andere manier van Volumio aansturen
+TODO: Update Volumio?? (Move to latest version)
 TODO: Check minor todo's across files
 TODO: Check weird sound when recording (adapter?)
 TODO: Check static sound when not playing with David (adapter?)
-TODO: Update Volumio?? (Move to latest version)
 TODO: Stresstest!!!
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
 TODO: Complete README
@@ -114,6 +113,11 @@ Install psutil
 pip install psutil
 ```
 
+Install socketIO
+```
+pip install socketIO-client-2
+```
+
 ### Remot3.it
 
 For remote SSH/ web access setup Remot3.it
@@ -121,28 +125,6 @@ For remote SSH/ web access setup Remot3.it
 <http://forum.weaved.com/t/how-to-get-started-with-remot3-it-for-pi/1029>
 
 sudo apt-get install weavedconnectd
-
-### Add FIFO MPD output
-```
-cd /volumio/app/plugins/music_service/mpd
-cp mpd.conf.tmpl mpd.conf.tmpl.bak
-nano mpd.conf.tmpl
-```
-
-Add:
-```
-audio_output {
-  type    "fifo"
-  name    "my_fifo"
-  path    "/tmp/mpd.fifo"
-  format  "44100:16:2"
-}
-```
-Change something in Volumio settings
-
-```
-/etc/init.d/mpd restart
-```
 
 ### Add services
 
@@ -199,32 +181,14 @@ After that, you need to restart rsyslog via
 $ sudo /etc/init.d/rsyslog restart
 ```
 
-## Run player as a service
-
-As per <http://www.raspberrypi-spy.co.uk/2015/10/how-to-autorun-a-python-script-on-boot-using-systemd/> and Give it the right permissions and enable our unit file as service
+## TODO: To check logs:
 
 ```
-sudo chmod 644 /home/pi/stormy/machine.service
-sudo systemctl enable /home/pi/stormy/machine.service
-```
-
-To control or check the service manually:
-
-```
-sudo systemctl start verhalenmachine
-sudo systemctl stop verhalenmachine
-sudo systemctl restart verhalenmachine
-sudo systemctl status verhalenmachine
-```
-
-To check logs:
-
-```
-cat /var/log/mopidy/mopidy.log
+cat /var/log/???
 ```
 
 
-### TODO: Change default password?
+### TODO: Change default password of Volumio?
 
 
 ### Handig
@@ -242,3 +206,5 @@ http://verhalenmachine.local/DEV/
 Turn off volume control in Volumio
 https://volumio.github.io/docs/User_Manual/Volume_Control_and_audio_quality.html
 We use our own hardware for it.
+
+pip install socketIO-client-2
