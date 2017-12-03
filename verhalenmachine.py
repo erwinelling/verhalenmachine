@@ -11,12 +11,13 @@ import serial
 import signal
 import sys
 import subprocess
-import threading
 import tempfile
 import time
 import pdb
 import ConfigParser
 import soundcloud
+from socketIO_client import SocketIO, LoggingNamespace
+from threading import Thread
 # TODO: Cleanup unnecessary imports or move to functions
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -115,8 +116,10 @@ class VolumioClient:
         def _on_pushState(*args):
             self.state = args[0]
             if self._callback_function:
+                # call callback functions with arguments we need
                 self._callback_function(*self._callback_args)
             self.prev_state = self.state
+            logger.debug("VOLUMIO: %s" % self.state["status"])
 
         self._client = SocketIO(HOSTNAME, PORT, LoggingNamespace)
         self._client.on('pushState', _on_pushState)
@@ -157,17 +160,22 @@ class VolumioClient:
     def seek(self, seconds):
         self._client.emit('seek', int(seconds))
 
-    def create_playlist(self, name=self.default_playlist):
+    def create_playlist(self, name=None):
+        if name==None:
+            name=self.default_playlist
+
         self._client.emit('createPlaylist', {'name': name})
 
-    # def create_current_playlist(self):
-    #     playlist =
-    #     self.create_playlist(playlist)
-
-    def play_playlist(self, name=self.default_playlist):
+    def play_playlist(self, name=None):
+        if name==None:
+            name=self.default_playlist
         self._client.emit('playPlaylist', {'name': name})
 
-    def add_to_playlist(self, playlist_name=self.default_playlist, service=mpd, uri):
+    def add_to_playlist(self, uri, playlist_name=None, service=None):
+        if playlist_name==None:
+            playlist_name=self.default_playlist
+        if service==None:
+            service="mpd"
         # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
         self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
 
@@ -176,6 +184,13 @@ class VolumioClient:
 
     def set_repeat(self):
         self._client.emit('setRepeat', 'true')
+
+    def is_playing(self):
+        if self.state["status"] == "play":
+            logger.debug("VOLUMIO IS PLAYING: %s" % self.state["status"])
+            return True
+        logger.debug("VOLUMIO IS *NOT* PLAYING: %s" % self.state["status"])
+        return False
 
     def wait(self, **kwargs):
         self.wait_thread = Thread(target=self._wait, args=(kwargs))
@@ -289,7 +304,7 @@ class Recorder:
         ]
         logger.debug(args)
 
-        t = threading.Thread(target=self.record_and_control_vu, args=(args,))
+        t = Thread(target=self.record_and_control_vu, args=(args,))
         t.start()
         logger.debug("STARTED RECORDING THREAD")
 
@@ -367,7 +382,7 @@ class VU:
         """
         if value > self.vumax:
             value = vumax
-        if value < 0
+        if value < 0:
             value = 0
 
         self.p.ChangeDutyCycle(value)

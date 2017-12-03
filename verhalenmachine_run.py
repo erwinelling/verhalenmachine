@@ -4,7 +4,7 @@ import logging
 import RPi.GPIO as GPIO
 import time
 import datetime
-from verhalenmachine import Player, Recorder, Led, Button, KAKU, VU
+from verhalenmachine import VolumioClient, Recorder, Led, Button, KAKU, VU
 
 try:
     player = VolumioClient()
@@ -13,9 +13,7 @@ try:
     player.wait()
     player.set_random()
     player.set_repeat()
-    player.create_current_playlist()
-    # player.update_database()
-    # player.load_playlist()
+    player.create_playlist()
 
     vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu)
@@ -27,8 +25,10 @@ try:
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
 
+    player.play_playlist()
+    player.pause()
     while True:
-    # TODO: Refactor and use callback functions
+    # TODO: Refactor and use callback functions?
 
         # Check GPIO for record button events
         if GPIO.event_detected(button3.pin):
@@ -38,7 +38,7 @@ try:
                 kaku.off()
             else:
                 if player.is_playing():
-                    player.stop()
+                    player.pause()
                     led2.off()
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
@@ -49,17 +49,18 @@ try:
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
-                player.stop()
+                player.pause()
                 led2.off()
             else:
+                # TODO: Maybe check if default playlist is still playing
                 player.play()
                 led2.on()
 
         # Check GPIO for next button events
         if GPIO.event_detected(button1.pin):
-            if not player.is_playing():
-                player.play()
-                led2.on()
+            # if not player.is_playing():
+            #     player.play()
+            #     led2.on()
             player.next()
             led1.blink()
 
