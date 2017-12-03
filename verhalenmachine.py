@@ -45,54 +45,148 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-class Player:
-    'Player'
-    #TODO: Use this: https://volumio.github.io/docs/API/WebSocket_APIs.html
-    # https://github.com/foxey/volumio-buddy/blob/master/volumio_buddy/volumio_buddy.py
+# class Player:
+#     'Player'
+#     #TODO: Use this: https://volumio.github.io/docs/API/WebSocket_APIs.html
+#     # https://github.com/foxey/volumio-buddy/blob/master/volumio_buddy/volumio_buddy.py
+#     def __init__(self):
+#         from mpd import MPDClient
+#         self.client = MPDClient()
+#         self.client.connect("localhost", 6600)
+#
+#         # TODO: Check whether this works. It seems not.
+#         self.client.repeat(1)
+#         self.client.random(1)
+#
+#         # self.min_volume = 10
+#         # self.max_volume = 90
+#         # self.prev_volume = None
+#
+#         # Default volume
+#         default_volume = config.getint("player", "default_volume")
+#         self.client.setvol(default_volume)
+#
+#     def is_playing(self):
+#         status = self.client.status()
+#         logger.debug("MPD status: %s" % status)
+#         if status.get('state') == "play":
+#             return True
+#         return False
+#
+#     def play(self):
+#         self.client.play()
+#
+#     def pause(self):
+#         self.client.pause(1)
+#
+#     def next(self):
+#         self.client.next()
+#
+#     def stop(self):
+#         self.client.stop()
+#
+#     def load_playlist(self):
+#         # TODO: Laden van playlist veranderen, zodat dit samenwerkt met Volumio GUI
+#         # TODO: Echt een playlist van maken, zelfde naamgeving als bij uploaden
+#         self.client.clear()
+#         self.client.add('INTERNAL')
+#
+#     def update_database(self):
+#         self.client.update()
+
+class VolumioClient:
+    """ Class for the websocket client to Volumio """
+    """https://github.com/foxey/volumio-buddy/blob/master/volumio_buddy/volumio_buddy.py"""
+
     def __init__(self):
-        from mpd import MPDClient
-        self.client = MPDClient()
-        self.client.connect("localhost", 6600)
+        HOSTNAME='localhost'
+        PORT=3000
 
-        # TODO: Check whether this works. It seems not.
-        self.client.repeat(1)
-        self.client.random(1)
+        self._callback_function = False
+        self._callback_args = False
+        self.state = dict()
+        self.state["status"] = ""
+        self.prev_state = dict()
+        self.prev_state["status"] = ""
+        self.last_update_time = 0
 
-        # self.min_volume = 10
-        # self.max_volume = 90
-        # self.prev_volume = None
+        self.default_playlist = config.get("player", "default_playlist")
 
-        # Default volume
-        default_volume = config.getint("player", "default_volume")
-        self.client.setvol(default_volume)
+        def _on_pushState(*args):
+            self.state = args[0]
+            if self._callback_function:
+                self._callback_function(*self._callback_args)
+            self.prev_state = self.state
 
-    def is_playing(self):
-        status = self.client.status()
-        logger.debug("MPD status: %s" % status)
-        if status.get('state') == "play":
-            return True
-        return False
+        self._client = SocketIO(HOSTNAME, PORT, LoggingNamespace)
+        self._client.on('pushState', _on_pushState)
+        self._client.emit('getState', _on_pushState)
+        self._client.wait_for_callbacks(seconds=1)
+
+    def set_callback(self, callback_function, *callback_args):
+        self._callback_function = callback_function
+        self._callback_args = callback_args
 
     def play(self):
-        self.client.play()
+        self._client.emit('play')
 
     def pause(self):
-        self.client.pause(1)
+        self._client.emit('pause')
+
+    def toggle_play(self):
+        try:
+            if self.state["status"] == "play":
+                self._client.emit('pause')
+            else:
+                self._client.emit('play')
+        except KeyError:
+            self._client.emit('play')
+
+    def volume_up(self):
+        self._client.emit('volume', '+')
+
+    def volume_down(self):
+        self._client.emit('volume', '-')
+
+    def previous(self):
+        self._client.emit('prev')
 
     def next(self):
-        self.client.next()
+        self._client.emit('next')
 
-    def stop(self):
-        self.client.stop()
+    def seek(self, seconds):
+        self._client.emit('seek', int(seconds))
 
-    def load_playlist(self):
-        # TODO: Laden van playlist veranderen, zodat dit samenwerkt met Volumio GUI
-        # TODO: Echt een playlist van maken, zelfde naamgeving als bij uploaden
-        self.client.clear()
-        self.client.add('INTERNAL')
+    def create_playlist(self, name=self.default_playlist):
+        self._client.emit('createPlaylist', {'name': name})
 
-    def update_database(self):
-        self.client.update()
+    # def create_current_playlist(self):
+    #     playlist =
+    #     self.create_playlist(playlist)
+
+    def play_playlist(self, name=self.default_playlist):
+        self._client.emit('playPlaylist', {'name': name})
+
+    def add_to_playlist(self, playlist_name=self.default_playlist, service=mpd, uri):
+        # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
+        self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
+
+    def set_random(self):
+        self._client.emit('setRandom', 'true')
+
+    def set_repeat(self):
+        self._client.emit('setRepeat', 'true')
+
+    def wait(self, **kwargs):
+        self.wait_thread = Thread(target=self._wait, args=(kwargs))
+        self.wait_thread.start()
+        print "started websocket wait thread"
+        return self.wait_thread
+
+    def _wait(self, **kwargs):
+        while True:
+            self._client.wait(kwargs)
+            print "websocket wait loop terminated, restarting"
 
 class Recorder:
     '''

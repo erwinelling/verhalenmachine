@@ -7,13 +7,17 @@ import datetime
 from verhalenmachine import Player, Recorder, Led, Button, KAKU, VU
 
 try:
-    player = Player()
-    player.update_database()
-    player.load_playlist()
+    player = VolumioClient()
+    # client.set_callback(print_state, client)
+    # Wait for events from the volumio websocket connection in separate thread
+    player.wait()
+    player.set_random()
+    player.set_repeat()
+    player.create_current_playlist()
+    # player.update_database()
+    # player.load_playlist()
 
-
-
-    vu = VU(12) # vu meter for player
+    vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu)
     button1 = Button(37) # Blue
     button2 = Button(35) # Green
@@ -24,7 +28,7 @@ try:
     kaku = KAKU(15,16) # Klik Aan Klik Uit
 
     while True:
-    # TODO: Maybe control leds totally separate from buttons
+    # TODO: Refactor and use callback functions
 
         # Check GPIO for record button events
         if GPIO.event_detected(button3.pin):
@@ -71,7 +75,7 @@ try:
         if not recorder.is_recording():
             if led3.burning:
                 led3.off()
-                # recorder.stop_vu()
+                vu.stop()
                 kaku.off()
 
         time.sleep(0.5)
