@@ -3,15 +3,12 @@
 ---
 Erwin:
 TODO: Andere manier van Volumio aansturen
-TODO: Testen met echte setup
 TODO: Check minor todo's across files
 TODO: Check weird sound when recording (adapter?)
 TODO: Check static sound when not playing with David (adapter?)
-
-
 TODO: Update Volumio?? (Move to latest version)
+TODO: Stresstest!!!
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
-TODO: Stresstest
 TODO: Complete README
 TODO: Create documentation
 TODO: Create requirements.txt
