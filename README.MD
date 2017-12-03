@@ -2,17 +2,21 @@
 
 ---
 Erwin:
-TODO: Update Volumio?? (Move to latest version)
+TODO: Nieuwe Volumio op SC kaart zetten
+TODO: Alle stappen in README doorlopen en waar nodig aanvullen
+TODO: Create requirements.txt
+TODO: Testen of playlistwijzigingen en control dan wel goed gaan (e.g. next button)
+TODO: Stresstest buttons
+TODO: Fix Soundcloud uploader
+
 TODO: Check minor todo's across files
+TODO: Stresstest everything
+TODO: Make it possible to insert mic later (catch exception?)
 TODO: Check weird sound when recording (adapter?)
 TODO: Check static sound when not playing with David (adapter?)
-TODO: Stresstest!!!
+TODO: Create documentation for users
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
-TODO: Complete README
-TODO: Create documentation
-TODO: Create requirements.txt
-TODO: Make it possible to insert mic later (catch exception?)
-
+TODO: Refactor?
 ---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
 
