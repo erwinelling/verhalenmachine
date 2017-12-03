@@ -16,7 +16,7 @@ try:
     player.create_playlist()
 
     vu = VU(12) # vu meter for recorder
-    recorder = Recorder(vu=vu)
+    recorder = Recorder(vu=vu, player=player)
     button1 = Button(37) # Blue
     button2 = Button(35) # Green
     button3 = Button(33) # Red
@@ -25,8 +25,8 @@ try:
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
 
-    player.play_playlist()
-    player.pause()
+    # TODO: Clear queue?
+    player.enqueue_playlist()
     while True:
     # TODO: Refactor and use callback functions?
 

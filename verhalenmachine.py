@@ -18,7 +18,7 @@ import ConfigParser
 import soundcloud
 from socketIO_client import SocketIO, LoggingNamespace
 from threading import Thread
-# TODO: Cleanup unnecessary imports or move to functions
+# TODO: Cleanup unnecessary imports if there are any
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -179,11 +179,17 @@ class VolumioClient:
         # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
         self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
 
+    def enqueue_playlist(self, name=None):
+        if name==None:
+            name=self.default_playlist
+        self._client.emit('enqueue', {'name': name})
+
+
     def set_random(self):
-        self._client.emit('setRandom', 'true')
+        self._client.emit('setRandom', {'value': 'true'})
 
     def set_repeat(self):
-        self._client.emit('setRepeat', 'true')
+        self._client.emit('setRepeat', {'value': 'true'})
 
     def is_playing(self):
         if self.state["status"] == "play":
@@ -215,7 +221,7 @@ class Recorder:
 
     '''
 
-    def __init__(self, vu=None):
+    def __init__(self, vu, player):
         # TODO: Throw exception when mic does not exist
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
@@ -224,6 +230,7 @@ class Recorder:
         self.filepath = ""
         self.last_started_recording = 0
         self.vu = vu
+        self.player = player
         logger.debug("VU: %s" % self.vu)
 
     def get_pid(self):
@@ -331,8 +338,7 @@ class Recorder:
         self.vu.stop()
         self.remove_temp_ext()
         self.add_not_uploaded_file()
-
-        # TODO: Aan playlist toevoegen?
+        self.player.add_to_playlist(uri=self.filepath)
 
     def dontrecordfortoolong(self):
         """
