@@ -11,7 +11,7 @@ try:
     # client.set_callback(print_state, client)
     # Wait for events from the volumio websocket connection in separate thread
     player.wait()
-    player.set_random()
+    # player.set_random()
     player.set_repeat()
     player.create_playlist()
 
