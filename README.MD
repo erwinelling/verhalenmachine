@@ -41,31 +41,50 @@ The Soundcloud uploader ...:
 
 ## Setup
 
-### 1. Install Volumio
+### 1. Install Volumio on an SD card
 
 <https://volumio.org/get-started>
 
-### 2. Setup Volumio
+### 2. Boot it and setup Volumio
 
 Plugin network cable and electricity and startup the device.
 Connect to <http://volumio.local/>.
 
-* Select Output Device
+* Change Player Name to Verhalenmachine
+<http://volumio.local/plugin/system_controller-system>
+
+* Set audio output to Audio Jack
 <http://volumio.local/plugin/audio_interface-alsa_controller>
 
-* Change Player Name
-<http://volumio.local/plugin/system_controller-system>
+
+* Turn off volume control in Volumio
+<http://volumio.local/plugin/system_controller-network>
+
+We use our own hardware for it and it improves audio quality.
+<https://volumio.github.io/docs/User_Manual/Volume_Control_and_audio_quality.html>
 
 * Change Hotspot Name & Password
 <http://volumio.local/plugin/system_controller-network>
 
-### 3. Checkout this script
+* Enable SSH access
 
-Do this <https://help.github.com/articles/generating-an-ssh-key/>
+<https://volumio.github.io/docs/User_Manual/SSH.html>
+
+
+### 3. Connect with SSH and checkout this script
+
+```
+ssh volumio@verhalenmachine.local
+```
+
+```
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
 
 ```
 cd /home/volumio/
-git clone git@github.com:erwinelling/verhalenmachine.git
+git clone https://github.com/erwinelling/verhalenmachine.git
 ```
 
 To update:
@@ -77,34 +96,10 @@ git pull
 
 ### 4. Install (Python) dependencies
 
-First install pip
-
-```
-sudo apt-get install python-pip
-```
-
-Then install MPD2
-
-```
-sudo pip install python-mpd2
-```
-
-Install Soundcloud
-
-```
-sudo pip install soundcloud
-```
-
 Install GPIO stuff
 
 ```
 sudo apt-get install rpi.gpio
-```
-
-Install Serial port stuff (also available through pip)
-
-```
-sudo apt-get install python-serial
 ```
 
 Install python development headers
@@ -112,23 +107,41 @@ Install python development headers
 sudo apt-get install python-dev
 ```
 
-Install psutil
+Install pip
+
 ```
-pip install psutil
+sudo apt-get update && sudo apt-get install python-pip
 ```
 
-Install socketIO
+
+<!-- Then install MPD2
+
 ```
-pip install socketIO-client-2
+sudo pip install python-mpd2
+``` -->
+
+Install Soundcloud, psutil and socketIO
+
+```
+sudo pip install soundcloud psutil socketIO-client-2
 ```
 
-### Remot3.it
+<!-- Install Serial port stuff (also available through pip)
+
+```
+sudo apt-get install python-serial
+``` -->
+
+### Install Remot3.it
 
 For remote SSH/ web access setup Remot3.it
 
-<http://forum.weaved.com/t/how-to-get-started-with-remot3-it-for-pi/1029>
+<https://remot3it.zendesk.com/hc/en-us/articles/115006015367-Installing-the-remot3-it-weavedconnectd-daemon-on-your-Raspberry-Pi>
 
+```
 sudo apt-get install weavedconnectd
+sudo weavedinstaller
+```
 
 ### Add services
 
@@ -136,9 +149,7 @@ As per <http://www.raspberrypi-spy.co.uk/2015/10/how-to-autorun-a-python-script-
 
 ```
 sudo chmod 644 /home/volumio/verhalenmachine/verhalenmachine.service
-sudo chmod 644 /home/volumio/verhalenmachine/vumeter.service
 sudo systemctl enable /home/volumio/verhalenmachine/verhalenmachine.service
-sudo systemctl enable /home/volumio/verhalenmachine/vumeter.service
 ```
 
 To control or check the service manually:
@@ -166,7 +177,7 @@ Add:
 */15 * * * * /usr/bin/python /home/volumio/verhalenmachine/cron_upload.py > /home/volumio/verhalenmachine/cron_upload.log
 */15 * * * * /usr/bin/python /home/volumio/verhalenmachine/cron_recordcheck.py > /home/volumio/verhalenmachine/cron_recordcheck.log
 ```
-
+<!--
 ## Add logs for cron:
 
 ```
@@ -188,27 +199,17 @@ $ sudo /etc/init.d/rsyslog restart
 ## TODO: To check logs:
 
 ```
-cat /var/log/???
-```
+cat /var/log/syslog
+``` -->
 
-
-### TODO: Change default password of Volumio?
-
-
+<!--
 ### Handig
 python -m serial.tools.miniterm /dev/ttyUSB0 -b 57600
 python -m serial.tools.list_ports
 192.168.211.1
 ps ax | grep arecord
-sudo kill <pid>
-
-
-http://verhalenmachine.local/DEV/
-
+sudo kill <pid> -->
 
 ###
-Turn off volume control in Volumio
-https://volumio.github.io/docs/User_Manual/Volume_Control_and_audio_quality.html
-We use our own hardware for it.
 
 pip install socketIO-client-2
