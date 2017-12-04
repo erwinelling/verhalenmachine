@@ -2,10 +2,7 @@
 
 ---
 Erwin:
-TODO: Nieuwe Volumio op SC kaart zetten
-TODO: Alle stappen in README doorlopen en waar nodig aanvullen
-TODO: Create requirements.txt
-TODO: Testen of playlistwijzigingen en control dan wel goed gaan (e.g. next button)
+TODO: Testen of playlistwijzigingen en control wel goed gaan
 TODO: Stresstest buttons
 TODO: Fix Soundcloud uploader
 
@@ -167,6 +164,7 @@ sudo systemctl status verhalenmachine
 chmod a+x /home/volumio/verhalenmachine/cron_upload.py
 chmod a+x /home/volumio/verhalenmachine/cron_recordcheck.py
 crontab -e
+sudo chown root: cron_*.log
 ```
 
 Make sure to use crontab and not sudo, so the cronjob will run for user pi.
