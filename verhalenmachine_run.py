@@ -58,10 +58,10 @@ try:
 
         # Check GPIO for next button events
         if GPIO.event_detected(button1.pin):
-            # if not player.is_playing():
-            #     player.play()
-            #     led2.on()
+            if player.is_playing():
+                player.pause()
             player.next()
+            player.play()
             led1.blink()
 
         # Control player led also when play/ stop has been used externally
