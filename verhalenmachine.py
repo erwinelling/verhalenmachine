@@ -159,6 +159,10 @@ class VolumioClient:
     def seek(self, seconds):
         self._client.emit('seek', int(seconds))
 
+
+    def add_to_queue(self, uri):
+        self._client.emit('addToQueue', {'uri':uri})
+
     def create_playlist(self, name=None):
         if name==None:
             name=self.default_playlist
@@ -337,7 +341,8 @@ class Recorder:
         self.vu.stop()
         self.remove_temp_ext()
         self.add_not_uploaded_file()
-        self.player.add_to_playlist(uri=self.filepath)
+        self.player.add_to_queue(uri=self.filepath)
+        # self.player.add_to_playlist(uri=self.filepath)
 
     def dontrecordfortoolong(self):
         """
