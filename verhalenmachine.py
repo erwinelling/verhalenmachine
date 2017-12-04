@@ -2,23 +2,22 @@
 # -*- coding: latin-1 -*-
 import datetime
 import logging, logging.handlers
-import mpd
+# import mpd
 import os
 import psutil
 import re
 import RPi.GPIO as GPIO
-import serial
+# import serial
 import signal
 import sys
 import subprocess
 import tempfile
 import time
-import pdb
+# import pdb
 import ConfigParser
 import soundcloud
 from socketIO_client import SocketIO, LoggingNamespace
 from threading import Thread
-# TODO: Cleanup unnecessary imports if there are any
 
 HOME_DIR = os.path.dirname(os.path.realpath(__file__))
 
