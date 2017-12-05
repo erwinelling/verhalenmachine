@@ -2,7 +2,7 @@
 
 ---
 Erwin:
-TODO: Testen of playlistwijzigingen en control wel goed gaan
+TODO: Testen of playlistwijzigingen en control wel goed gaan na mpd fix
 TODO: Stresstest buttons
 TODO: Fix Soundcloud uploader
 
@@ -110,17 +110,10 @@ Install pip
 sudo apt-get update && sudo apt-get install python-pip
 ```
 
-
-<!-- Then install MPD2
-
-```
-sudo pip install python-mpd2
-``` -->
-
-Install Soundcloud, psutil and socketIO
+Install Soundcloud, psutil, socketIO and MPD2
 
 ```
-sudo pip install soundcloud psutil socketIO-client-2
+sudo pip install soundcloud psutil socketIO-client-2 python-mpd2
 ```
 
 <!-- Install Serial port stuff (also available through pip)

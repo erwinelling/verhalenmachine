@@ -112,6 +112,10 @@ class VolumioClient:
 
         self.default_playlist = config.get("player", "default_playlist")
 
+        from mpd import MPDClient
+        self.mpdclient = MPDClient()
+        self.mpdclient.connect("localhost", 6600)
+
         def _on_pushState(*args):
             self.state = args[0]
             if self._callback_function:
@@ -200,6 +204,9 @@ class VolumioClient:
             return True
         logger.debug("VOLUMIO IS *NOT* PLAYING: %s" % self.state["status"])
         return False
+
+    def update_database(self, uri=[]):
+        self.mpdclient.update(uri)
 
     def wait(self, **kwargs):
         self.wait_thread = Thread(target=self._wait, args=(kwargs))
@@ -341,6 +348,7 @@ class Recorder:
         self.vu.stop()
         self.remove_temp_ext()
         self.add_not_uploaded_file()
+        self.player.update_database(uri=self.filepath)
         self.player.add_to_queue(uri=self.filepath)
         # self.player.add_to_playlist(uri=self.filepath)
 
