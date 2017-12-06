@@ -163,10 +163,6 @@ class VolumioClient:
     def seek(self, seconds):
         self._client.emit('seek', int(seconds))
 
-
-    def add_to_queue(self, uri):
-        self._client.emit('addToQueue', {'uri':uri})
-
     def create_playlist(self, name=None):
         if name==None:
             name=self.default_playlist
@@ -186,11 +182,13 @@ class VolumioClient:
         # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
         self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
 
+    def add_to_queue(self, uri):
+        self._client.emit('addToQueue', {'uri':uri})
+
     def enqueue_playlist(self, name=None):
         if name==None:
             name=self.default_playlist
         self._client.emit('enqueue', {'name': name})
-
 
     def set_random(self):
         self._client.emit('setRandom', {'value': 'true'})
@@ -206,7 +204,7 @@ class VolumioClient:
         return False
 
     def update_database(self, uri=[]):
-        self.mpdclient.update(uri)
+        self.mpdclient.update([uri])
 
     def wait(self, **kwargs):
         self.wait_thread = Thread(target=self._wait, args=(kwargs))
@@ -348,6 +346,7 @@ class Recorder:
         self.vu.stop()
         self.remove_temp_ext()
         self.add_not_uploaded_file()
+        logger.debug("Current file %s", self.filepath)
         self.player.update_database(uri=self.filepath)
         self.player.add_to_queue(uri=self.filepath)
         # self.player.add_to_playlist(uri=self.filepath)
