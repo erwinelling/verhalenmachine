@@ -26,7 +26,7 @@ try:
     kaku = KAKU(15,16) # Klik Aan Klik Uit
 
     # TODO: Clear queue?
-    player.enqueue_playlist()
+    # player.enqueue_playlist()
     while True:
     # TODO: Refactor and use callback functions?
 
