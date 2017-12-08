@@ -203,4 +203,18 @@ sudo kill <pid> -->
 
 ###
 
-pip install socketIO-client-2
+# When connecting to new network
+
+https://volumio.github.io/docs/User_Manual/Quick_Start_Guide
+
+Turn it on
+
+Wait for startup
+
+Connect to Wifi Network Verhalenmachine with password verhalenmachine
+
+Setup Wifi connection
+http://192.168.211.1/plugin/system_controller-network
+
+It should now be reachable at
+http://verhalenmachine.local/
