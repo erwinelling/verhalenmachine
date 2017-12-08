@@ -184,6 +184,7 @@ class VolumioClient:
 
     def add_to_queue(self, uri):
         self._client.emit('addToQueue', {'uri':uri})
+        self._client.emit('addToQueue', "{'uri:%s'}" % uri)
 
     def enqueue_playlist(self, name=None):
         if name==None:
@@ -347,9 +348,9 @@ class Recorder:
         self.remove_temp_ext()
         self.add_not_uploaded_file()
         logger.debug("Current file %s", self.filepath)
-        self.player.update_database(uri=self.filepath)
+        time.sleep(5) #wait for update to complete
         self.player.add_to_queue(uri=self.filepath)
-        # self.player.add_to_playlist(uri=self.filepath)
+        self.player.add_to_playlist(uri=self.filepath)
 
     def dontrecordfortoolong(self):
         """
