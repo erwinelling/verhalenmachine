@@ -1,4 +1,4 @@
-#!/usr/bin/python
+  #!/usr/bin/python
 # -*- coding: latin-1 -*-
 import logging
 import RPi.GPIO as GPIO
@@ -13,7 +13,7 @@ try:
     player.wait()
     # player.set_random()
     player.set_repeat()
-    player.create_playlist()
+    # player.create_playlist()
 
     vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu, player=player)
@@ -41,10 +41,10 @@ try:
                     led2.off()
                     player.pause()
                 led3.on()
-                kaku.on()
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
+                kaku.on()
 
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
