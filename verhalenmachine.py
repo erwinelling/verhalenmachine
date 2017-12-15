@@ -475,12 +475,16 @@ class KAKU:
     def on(self):
         GPIO.output(self.pin1, GPIO.HIGH)
         GPIO.output(self.pin2, GPIO.LOW)
+        time.sleep(0.1)
+        GPIO.output(self.pin1, GPIO.LOW)
         self.burning = True
         logger.debug("KAKU (pins %s and %s) ON." % (self.pin1, self.pin2))
 
     def off(self):
         GPIO.output(self.pin1, GPIO.LOW)
         GPIO.output(self.pin2, GPIO.HIGH)
+        time.sleep(0.1)
+        GPIO.output(self.pin2, GPIO.LOW)
         self.burning = False
         logger.debug("KAKU (pins %s and %s) OFF." % (self.pin1, self.pin2))
 
