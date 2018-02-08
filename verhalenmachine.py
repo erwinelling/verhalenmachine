@@ -348,7 +348,7 @@ class Recorder:
         self.remove_temp_ext()
         self.add_not_uploaded_file()
         logger.debug("Current file %s", self.filepath)
-        time.sleep(5) #wait for update to complete
+        # time.sleep(5) #wait for update to complete
         self.player.add_to_queue(uri=self.filepath)
         self.player.add_to_playlist(uri=self.filepath)
 
