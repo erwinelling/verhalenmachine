@@ -36,6 +36,7 @@ try:
                 led3.off()
                 kaku.off()
                 recorder.stop()
+                player.add_to_queue(sound_file_name)
             else:
                 if player.is_playing():
                     led2.off()
