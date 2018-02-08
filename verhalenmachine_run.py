@@ -34,17 +34,17 @@ try:
         if GPIO.event_detected(button3.pin):
             if recorder.is_recording():
                 led3.off()
-                kaku.off()
                 recorder.stop()
+                kaku.off()
             else:
                 if player.is_playing():
                     led2.off()
                     player.pause()
                 led3.on()
-                kaku.on()
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
+                kaku.on()
 
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
