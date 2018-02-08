@@ -187,6 +187,9 @@ class VolumioClient:
         self._client.emit('addToQueue', "{uri:%s}" % uri)
         self._client.emit('addToQueue', "{'uri':%s}" % uri)
         self._client.emit('addToQueue', "{'uri':'%s'}" % uri)
+        # socketIO.emit('play',{"value":'5'})
+        self._client.emit('addToQueue', {"uri":uri})
+        self._client.emit('addToQueue', {"uri":'uri'})
 
     def enqueue_playlist(self, name=None):
         if name==None:
