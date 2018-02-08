@@ -1,4 +1,4 @@
-#!/usr/bin/python
+  #!/usr/bin/python
 # -*- coding: latin-1 -*-
 import logging
 import RPi.GPIO as GPIO
@@ -13,7 +13,7 @@ try:
     player.wait()
     # player.set_random()
     player.set_repeat()
-    player.create_playlist()
+    # player.create_playlist()
 
     vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu, player=player)
