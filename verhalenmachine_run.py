@@ -45,7 +45,7 @@ try:
                 current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
                 sound_file_name = "%s.wav" % (current_datetime)
                 recorder.record(sound_file_name)
-                kaku.on()
+                # kaku.on()
 
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
@@ -78,7 +78,7 @@ try:
             if led3.burning:
                 led3.off()
                 vu.stop()
-                kaku.off()
+                # kaku.off()
 
         time.sleep(0.5)
         # pdb.set_trace()
