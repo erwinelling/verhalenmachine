@@ -240,8 +240,10 @@ class Recorder:
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
         self.RECORDING_DIR = config.get("recorder", "recording_dir")
+        self.PLAYER_DIR = config.get("player", "player_dir")
         self.RECORDING_PROCESS_ID_FILE = os.path.join(HOME_DIR, "recprocess.pid")
-        self.filepath = ""
+        self.filepath = "" #TODO: Refactor into something better than this variable
+        self.playerpath = "" #TODO: Refactor into something better than this variable
         self.last_started_recording = 0
         self.vu = vu
         self.player = player
@@ -312,6 +314,7 @@ class Recorder:
         self.last_started_recording = time.time()
         prefix_filename = config.get("recorder", "prefix_filename")
         self.filepath = os.path.join(self.RECORDING_DIR+prefix_filename+filename)
+        self.playerpath = os.path.join(self.PLAYER_DIR+prefix_filename+filename)
         args = [
             'arecord',
             '-D', self.SOUND_CARD_MIC,
@@ -354,8 +357,8 @@ class Recorder:
         self.add_not_uploaded_file()
         logger.debug("Current file %s", self.filepath)
         # time.sleep(5) #wait for update to complete
-        # self.player.add_to_queue(uri=self.filepath)
-        self.player.add_to_playlist(uri=self.filepath)
+        self.player.add_to_queue(uri=self.playerpath)
+        self.player.add_to_playlist(uri=self.playerpath)
 
     def dontrecordfortoolong(self):
         """
