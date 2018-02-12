@@ -190,6 +190,7 @@ class VolumioClient:
         # socketIO.emit('play',{"value":'5'})
         self._client.emit('addToQueue', {"uri":uri})
         self._client.emit('addToQueue', {"uri":'uri'})
+        self._client.emit('pushQueue', '[{"uri":"%s","service":"mpd","name":"test.wav","tracknumber":0,"type":"track","trackType":"wav"}]' % uri)
 
     def enqueue_playlist(self, name=None):
         if name==None:
