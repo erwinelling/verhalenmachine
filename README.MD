@@ -2,18 +2,24 @@
 
 ---
 Erwin:
-TODO: Testen of playlistwijzigingen en control wel goed gaan na mpd fix
-TODO: Stresstest buttons
+TODO: Check minor todo's across files
 TODO: Fix Soundcloud uploader
 
-TODO: Check minor todo's across files
+TODO: Stresstest buttons
 TODO: Stresstest everything
 TODO: Make it possible to insert mic later (catch exception?)
-TODO: Check weird sound when recording (adapter?)
-TODO: Check static sound when not playing with David (adapter?)
+
 TODO: Create documentation for users
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
+
 TODO: Refactor?
+
+
+Aan David vragen:
+Gek geluid tijdens opname
+Gek statisch geluid altijd
+Gekke piepjes door aansturing klikaanklikuit
+
 ---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
 
@@ -116,12 +122,6 @@ Install Soundcloud, psutil, socketIO and MPD2
 sudo pip install soundcloud psutil socketIO-client-2 python-mpd2
 ```
 
-<!-- Install Serial port stuff (also available through pip)
-
-```
-sudo apt-get install python-serial
-``` -->
-
 ### Install Remot3.it
 
 For remote SSH/ web access setup Remot3.it
@@ -218,3 +218,8 @@ http://192.168.211.1/plugin/system_controller-network
 
 It should now be reachable at
 http://verhalenmachine.local/
+
+
+# Convenient for testing
+
+cd tail -f ~/verhalenmachine/verhalenmachine.log
