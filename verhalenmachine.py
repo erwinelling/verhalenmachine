@@ -235,7 +235,7 @@ class Recorder:
 
     '''
 
-    def __init__(self, vu=None, player=None):
+    def __init__(self, vu, player):
         # TODO: Throw exception when mic does not exist
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
@@ -508,7 +508,7 @@ class KAKU:
         self.burning = False
         logger.debug("KAKU (pins %s and %s) OFF." % (self.pin1, self.pin2))
 
-    def blink(self, times=1, sleep=0.2):
+    def blink(self, times=1, sleep=0.2  ):
         count = 0
         while count<times:
             self.on()
