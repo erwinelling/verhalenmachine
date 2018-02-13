@@ -583,7 +583,7 @@ class Uploader:
                         # TODO: Keep list of uploaded tracks
                         # uploaded_track_list.append(uploaded_track.id)
 
-        # TODO: Create or appenn to playlist
+        # TODO: Create or append to playlist
         logger.debug("UPLOADED %s files" % count)
 
     def upload_track(self, path_to_file):
@@ -593,7 +593,7 @@ class Uploader:
         # playlist = client.get("/playlists/"+set_id)
         # logger.debug("Playlist: %s", playlist)
         track_dict = {
-            # TODO: Set more track data, get input somewhere
+            # TODO: Set more track data, get input somewhere, set better name
             'title': unicode(os.path.splitext(path_to_file)[0]),
             'asset_data': open(path_to_file, 'rb'),
             'description': u'Dit verhaal is opgenomen met de verhalenmachine op %s om %s.' % (datetime.datetime.now().__format__("%e-%m-%Y"), datetime.datetime.now().__format__("%T")),
