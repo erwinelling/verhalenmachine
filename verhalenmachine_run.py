@@ -14,6 +14,7 @@ try:
     player.set_random()
     player.set_repeat()
     player.create_playlist()
+    # TODO: Clear queue?
     player.enqueue_playlist()
 
     vu = VU(12) # vu meter for recorder
@@ -26,8 +27,7 @@ try:
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
 
-    # TODO: Clear queue?
-    # player.enqueue_playlist()
+
     while True:
     # TODO: Refactor and use callback functions?
 
@@ -56,7 +56,6 @@ try:
                 led2.off()
                 player.pause()
             else:
-                # TODO: Maybe check if default playlist is still playing
                 led2.on()
                 player.play()
 
@@ -66,7 +65,6 @@ try:
             # if player.is_playing():
             #     player.pause()
             player.next()
-            # player.play()
 
         # Control player led also when play/ stop has been used externally
         if not player.is_playing():
@@ -84,7 +82,6 @@ try:
                 kaku.off()
 
         time.sleep(0.5)
-        # pdb.set_trace()
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
