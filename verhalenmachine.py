@@ -391,10 +391,11 @@ class VU:
         GPIO.setup(self.pin, GPIO.OUT)
         self.vumax = 70
         self.p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
-        self.test()
+
         self.current_value = -1
         self.current_percentage = 0
-
+        self.test()
+        
     def test(self):
         self.start()
         # for dc in range(0, self.vumax+1, 5):
