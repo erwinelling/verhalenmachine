@@ -36,8 +36,10 @@ try:
                 led3.off()
                 kaku.off()
                 recorder.stop()
-                # player.add_to_queue(sound_file_name) #plus player path plus prefix
+                #
+
             else:
+                # player.add_to_queue("2018-02-12_09:46:19.wav") #plus player path plus prefix
                 if player.is_playing():
                     led2.off()
                     player.pause()

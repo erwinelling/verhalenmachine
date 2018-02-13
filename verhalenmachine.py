@@ -182,15 +182,52 @@ class VolumioClient:
         # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
         self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
 
-    def add_to_queue(self, uri):
-        self._client.emit('addToQueue', {'uri':uri})
-        self._client.emit('addToQueue', "{uri:%s}" % uri)
-        self._client.emit('addToQueue', "{'uri':%s}" % uri)
-        self._client.emit('addToQueue', "{'uri':'%s'}" % uri)
-        # socketIO.emit('play',{"value":'5'})
-        self._client.emit('addToQueue', {"uri":uri})
-        self._client.emit('addToQueue', {"uri":'uri'})
-        self._client.emit('pushQueue', '[{"uri":"%s","service":"mpd","name":"test.wav","tracknumber":0,"type":"track","trackType":"wav"}]' % uri)
+    # def add_to_queue(self, uri):
+    #     self._client.emit('addToQueue', {'uri':uri})
+    #     self._client.emit('addToQueue', "{uri:%s}" % uri)
+    #     self._client.emit('addToQueue', "{'uri':%s}" % uri)
+    #     self._client.emit('addToQueue', "{'uri':'%s'}" % uri)
+    #     # socketIO.emit('play',{"value":'5'})
+    #     self._client.emit('addToQueue', {"uri":uri})
+    #     self._client.emit('addToQueue', {"uri":'uri'})
+    #     self._client.emit('pushQueue', '[{"uri":"%s","service":"mpd","name":"test.wav","tracknumber":0,"type":"track","trackType":"wav"}]' % uri)
+
+    def add_to_queue(self, uri, sleep=5, update_database=True):
+        # self._client.emit('addToQueue') # this triggers a database update?
+
+        arg = { "uri": uri,
+                # "service": "mpd",
+                # "name": "test.wav",
+                # "tracknumber": 0,
+                # "type":"track",
+                # "trackType":"wav"
+                }
+        self._client.emit('addToQueue', [arg])
+        time.sleep(sleep)
+        self.update_database(uri="/mnt/INTERNAL/")
+        
+        # prefix_filename = config.get("recorder", "prefix_filename")
+        # self.PLAYER_DIR = config.get("player", "player_dir")
+        # self.playerpath = os.path.join(self.PLAYER_DIR+prefix_filename+uri)
+        # uri = self.playerpath
+        # self._client.emit('addToQueue', {'uri':uri})
+        # self._client.emit('addToQueue', "{uri:%s}" % uri)
+        # self._client.emit('addToQueue', "{'uri':%s}" % uri)
+        # self._client.emit('addToQueue', "{'uri':'%s'}" % uri)
+        # # socketIO.emit('play',{"value":'5'})
+        # self._client.emit('addToQueue', {"uri":uri})
+        # self._client.emit('addToQueue', {"uri":'uri'})
+        arg = { "uri": uri,
+                # "service": "mpd",
+                # "name": "test.wav",
+                # "tracknumber": 0,
+                # "type":"track",
+                # "trackType":"wav"
+                }
+        # self._client.emit('addToQueue', [arg])
+        # time.sleep(5)
+        self._client.emit('addToQueue', [arg])
+        # self._client.emit('pushQueue', '[{"uri":"%s","service":"mpd","name":"test.wav","tracknumber":0,"type":"track","trackType":"wav"}]' % uri)
 
     def enqueue_playlist(self, name=None):
         if name==None:
@@ -358,8 +395,11 @@ class Recorder:
         self.add_not_uploaded_file()
         logger.debug("Current file %s", self.filepath)
         # time.sleep(5) #wait for update to complete
-        self.player.add_to_queue(uri=self.playerpath)
-        self.player.add_to_playlist(uri=self.playerpath)
+        # args = {
+        # uri=self.playerpath)
+        t = Thread(target=self.player.add_to_queue, args=(self.playerpath, 3,))
+        t.start()
+        # self.player.add_to_playlist(uri=self.playerpath)
 
     def dontrecordfortoolong(self):
         """
