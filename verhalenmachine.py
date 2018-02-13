@@ -112,10 +112,6 @@ class VolumioClient:
 
         self.default_playlist = config.get("player", "default_playlist")
 
-        from mpd import MPDClient
-        self.mpdclient = MPDClient()
-        self.mpdclient.connect("localhost", 6600)
-
         def _on_pushState(*args):
             self.state = args[0]
             if self._callback_function:
@@ -169,18 +165,18 @@ class VolumioClient:
 
         self._client.emit('createPlaylist', {'name': name})
 
-    def play_playlist(self, name=None):
-        if name==None:
-            name=self.default_playlist
-        self._client.emit('playPlaylist', {'name': name})
+    # def play_playlist(self, name=None):
+    #     if name==None:
+    #         name=self.default_playlist
+    #     self._client.emit('playPlaylist', {'name': name})
 
-    def add_to_playlist(self, uri, playlist_name=None, service=None):
-        if playlist_name==None:
-            playlist_name=self.default_playlist
-        if service==None:
-            service="mpd"
-        # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
-        self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
+    # def add_to_playlist(self, uri, playlist_name=None, service=None):
+    #     if playlist_name==None:
+    #         playlist_name=self.default_playlist
+    #     if service==None:
+    #         service="mpd"
+    #     # uri: mnt/INTERNAL/verhalenmachine_2017-12-01_20:04:45.wav
+    #     self._client.emit('addToPlaylist', {'name': playlist_name, 'service': service, 'uri': uri})
 
     # def add_to_queue(self, uri):
     #     self._client.emit('addToQueue', {'uri':uri})
@@ -192,20 +188,17 @@ class VolumioClient:
     #     self._client.emit('addToQueue', {"uri":'uri'})
     #     self._client.emit('pushQueue', '[{"uri":"%s","service":"mpd","name":"test.wav","tracknumber":0,"type":"track","trackType":"wav"}]' % uri)
 
-    def add_to_queue(self, uri, sleep=5, update_database=True):
+    def add_to_queue_and_playlist(self, uri, sleep=5, update_database=True):
         # self._client.emit('addToQueue') # this triggers a database update?
 
-        arg = { "uri": uri,
-                # "service": "mpd",
-                # "name": "test.wav",
-                # "tracknumber": 0,
-                # "type":"track",
-                # "trackType":"wav"
-                }
-        self._client.emit('addToQueue', [arg])
-        time.sleep(sleep)
-        self.update_database(uri="/mnt/INTERNAL/")
-        
+        # arg = { "uri": uri,
+        #         # "service": "mpd",
+        #         # "name": "test.wav",
+        #         # "tracknumber": 0,
+        #         # "type":"track",
+        #         # "trackType":"wav"
+        #         }
+        # self._client.emit('addToQueue', [arg])
         # prefix_filename = config.get("recorder", "prefix_filename")
         # self.PLAYER_DIR = config.get("player", "player_dir")
         # self.playerpath = os.path.join(self.PLAYER_DIR+prefix_filename+uri)
@@ -217,16 +210,27 @@ class VolumioClient:
         # # socketIO.emit('play',{"value":'5'})
         # self._client.emit('addToQueue', {"uri":uri})
         # self._client.emit('addToQueue', {"uri":'uri'})
-        arg = { "uri": uri,
+        time.sleep(sleep)
+        self.update_database(uri="INTERNAL")
+        time.sleep(sleep)
+        # self._client.emit('addToQueue', [arg])
+        # time.sleep(5)
+        logger.debug("Adding %s to queue" % uri)
+        queuearg = { "uri": uri,
                 # "service": "mpd",
                 # "name": "test.wav",
                 # "tracknumber": 0,
                 # "type":"track",
                 # "trackType":"wav"
-                }
-        # self._client.emit('addToQueue', [arg])
-        # time.sleep(5)
-        self._client.emit('addToQueue', [arg])
+        }
+        self._client.emit('addToQueue', [queuearg])
+        playlistarg = {
+                "name": self.default_playlist,
+                "service":"mpd",
+                "uri": uri
+        }
+        self._client.emit('addToPlaylist', playlistarg)
+
         # self._client.emit('pushQueue', '[{"uri":"%s","service":"mpd","name":"test.wav","tracknumber":0,"type":"track","trackType":"wav"}]' % uri)
 
     def enqueue_playlist(self, name=None):
@@ -248,7 +252,13 @@ class VolumioClient:
         return False
 
     def update_database(self, uri=[]):
+        from mpd import MPDClient
+        self.mpdclient = MPDClient()
+        self.mpdclient.connect("localhost", 6600)
         self.mpdclient.update([uri])
+        self.mpdclient.close()
+        self.mpdclient.disconnect()
+        logger.debug("Updating MPD %s" %uri)
 
     def wait(self, **kwargs):
         self.wait_thread = Thread(target=self._wait, args=(kwargs))
@@ -397,9 +407,8 @@ class Recorder:
         # time.sleep(5) #wait for update to complete
         # args = {
         # uri=self.playerpath)
-        t = Thread(target=self.player.add_to_queue, args=(self.playerpath, 3,))
+        t = Thread(target=self.player.add_to_queue_and_playlist, args=(self.playerpath, 5,))
         t.start()
-        # self.player.add_to_playlist(uri=self.playerpath)
 
     def dontrecordfortoolong(self):
         """

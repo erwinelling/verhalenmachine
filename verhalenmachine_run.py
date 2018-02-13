@@ -11,9 +11,10 @@ try:
     # client.set_callback(print_state, client)
     # Wait for events from the volumio websocket connection in separate thread
     player.wait()
-    # player.set_random()
+    player.set_random()
     player.set_repeat()
-    # player.create_playlist()
+    player.create_playlist()
+    player.enqueue_playlist()
 
     vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu, player=player)
@@ -62,10 +63,10 @@ try:
         # Check GPIO for next button events
         if GPIO.event_detected(button1.pin):
             led1.blink()
-            if player.is_playing():
-                player.pause()
+            # if player.is_playing():
+            #     player.pause()
             player.next()
-            player.play()
+            # player.play()
 
         # Control player led also when play/ stop has been used externally
         if not player.is_playing():
