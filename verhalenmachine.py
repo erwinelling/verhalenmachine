@@ -235,7 +235,7 @@ class Recorder:
 
     '''
 
-    def __init__(self, vu, player):
+    def __init__(self, vu=None, player=None):
         # TODO: Throw exception when mic does not exist
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
@@ -395,7 +395,7 @@ class VU:
         self.current_value = -1
         self.current_percentage = 0
         self.test()
-        
+
     def test(self):
         self.start()
         # for dc in range(0, self.vumax+1, 5):
