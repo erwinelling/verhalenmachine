@@ -299,11 +299,11 @@ class Recorder:
                     possible_vu_percentage = lines[-3:-1].lstrip("0")
                     if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
                         logger.debug("VU: %s" % possible_vu_percentage)
-                        self.vu.move_to_percentage(possible_vu_percentage)
+                        self.vu.move_to_percentage(int(possible_vu_percentage))
 
                     # sys.__stdout__.write(lines)
                     sys.__stdout__.flush()
-                    time.sleep(0.1)
+                    time.sleep(0.05)
             # A last write needed after subprocess ends
             sys.__stdout__.write(output.read())
             sys.__stdout__.flush()
@@ -395,7 +395,7 @@ class VU:
         self.current_value = -1
         self.current_percentage = 0
         self.test()
-        
+
     def test(self):
         self.start()
         # for dc in range(0, self.vumax+1, 5):
@@ -411,7 +411,6 @@ class VU:
     def set_value(self, value):
         """
         Needs to have an open connection to work (vu.start)
-        TODO: Move gradually, maybe in steps of 5? Also depending on number of reads of output
         """
         if value > self.vumax:
             value = vumax
@@ -428,13 +427,13 @@ class VU:
         self.set_value(new_value)
 
     def move_to_percentage(self, percentage):
-        increase = 1
+        increase = 5
         if percentage < self.current_percentage:
-            increase = -1
+            increase = -5
 
         for dc in range(self.current_percentage, percentage, increase):
             self.set_percentage(dc)
-            time.sleep(0.05)
+            time.sleep(0.01)
 
     def start(self):
         self.p.start(0)
@@ -466,7 +465,7 @@ class Led:
         self.burning = False
         logger.debug("LED (pin %s) OFF." % self.pin)
 
-    def blink(self, times=1, sleep=0.5):
+    def blink(self, times=1, sleep=0.1):
         count = 0
         while count<times:
             self.on()
@@ -496,7 +495,7 @@ class KAKU:
     def on(self):
         GPIO.output(self.pin1, GPIO.HIGH)
         GPIO.output(self.pin2, GPIO.LOW)
-        time.sleep(0.1)
+        time.sleep(0.05)
         GPIO.output(self.pin1, GPIO.LOW)
         self.burning = True
         logger.debug("KAKU (pins %s and %s) ON." % (self.pin1, self.pin2))
@@ -504,12 +503,12 @@ class KAKU:
     def off(self):
         GPIO.output(self.pin1, GPIO.LOW)
         GPIO.output(self.pin2, GPIO.HIGH)
-        time.sleep(0.1)
+        time.sleep(0.05)
         GPIO.output(self.pin2, GPIO.LOW)
         self.burning = False
         logger.debug("KAKU (pins %s and %s) OFF." % (self.pin1, self.pin2))
 
-    def blink(self, times=1, sleep=0.5):
+    def blink(self, times=1, sleep=0.2):
         count = 0
         while count<times:
             self.on()
