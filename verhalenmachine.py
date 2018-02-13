@@ -45,54 +45,6 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-# class Player:
-#     'Player'
-#     #TODO: Use this: https://volumio.github.io/docs/API/WebSocket_APIs.html
-#     # https://github.com/foxey/volumio-buddy/blob/master/volumio_buddy/volumio_buddy.py
-#     def __init__(self):
-#         from mpd import MPDClient
-#         self.client = MPDClient()
-#         self.client.connect("localhost", 6600)
-#
-#         # TODO: Check whether this works. It seems not.
-#         self.client.repeat(1)
-#         self.client.random(1)
-#
-#         # self.min_volume = 10
-#         # self.max_volume = 90
-#         # self.prev_volume = None
-#
-#         # Default volume
-#         default_volume = config.getint("player", "default_volume")
-#         self.client.setvol(default_volume)
-#
-#     def is_playing(self):
-#         status = self.client.status()
-#         logger.debug("MPD status: %s" % status)
-#         if status.get('state') == "play":
-#             return True
-#         return False
-#
-#     def play(self):
-#         self.client.play()
-#
-#     def pause(self):
-#         self.client.pause(1)
-#
-#     def next(self):
-#         self.client.next()
-#
-#     def stop(self):
-#         self.client.stop()
-#
-#     def load_playlist(self):
-#         # TODO: Laden van playlist veranderen, zodat dit samenwerkt met Volumio GUI
-#         # TODO: Echt een playlist van maken, zelfde naamgeving als bij uploaden
-#         self.client.clear()
-#         self.client.add('INTERNAL')
-#
-#     def update_database(self):
-#         self.client.update()
 
 class VolumioClient:
     """ Class for the websocket client to Volumio """
@@ -110,7 +62,7 @@ class VolumioClient:
         self.prev_state["status"] = ""
         self.last_update_time = 0
 
-        self.default_playlist = config.get("player", "default_playlist")
+        self.default_playlist = config.get("recorder", "default_playlist")
 
         def _on_pushState(*args):
             self.state = args[0]
@@ -339,7 +291,7 @@ class Recorder:
                 lines = output.read()
                 if not lines:
                     # Adjust the sleep interval to your needs
-                    time.sleep(0.1)
+                    time.sleep(0.05)
                     # make sure pointing to the last place we read
                     output.seek(where)
                 else:
@@ -347,7 +299,7 @@ class Recorder:
                     possible_vu_percentage = lines[-3:-1].lstrip("0")
                     if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
                         logger.debug("VU: %s" % possible_vu_percentage)
-                        self.vu.set_percentage(possible_vu_percentage)
+                        self.vu.move_to_percentage(possible_vu_percentage)
 
                     # sys.__stdout__.write(lines)
                     sys.__stdout__.flush()
@@ -440,15 +392,19 @@ class VU:
         self.vumax = 70
         self.p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
         self.test()
+        self.current_value = -1
+        self.current_percentage = 0
 
     def test(self):
         self.start()
-        for dc in range(0, self.vumax+1, 5):
-            self.set_value(dc)
-            time.sleep(0.05)
-        for dc in range(self.vumax, -1, -5):
-            self.set_value(dc)
-            time.sleep(0.05)
+        # for dc in range(0, self.vumax+1, 5):
+        #     self.set_value(dc)
+        #     time.sleep(0.05)
+        # for dc in range(self.vumax, -1, -5):
+        #     self.set_value(dc)
+        #     time.sleep(0.05)
+        self.move_to_percentage(100)
+        self.move_to_percentage(0)
         self.stop()
 
     def set_value(self, value):
@@ -469,9 +425,14 @@ class VU:
         new_value = (int(percentage)*self.vumax)/100
         self.set_value(new_value)
 
-    def move_to_value(self, value):
-        # TODO: Move gradually
-        pass
+    def move_to_percentage(self, percentage):
+        increase = 1
+        if percentage < self.current_percentage:
+            increase = -1
+
+        for dc in range(self.current_percentage, percentage, increase):
+            self.set_percentage(dc)
+            time.sleep(0.05)
 
     def start(self):
         self.p.start(0)
