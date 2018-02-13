@@ -235,7 +235,7 @@ class Recorder:
 
     '''
 
-    def __init__(self, vu, player):
+    def __init__(self, vu=None, player=None):
         # TODO: Throw exception when mic does not exist
         # self.SOUND_CARD_MIC = "plughw:CARD=Device,DEV=0" # USB audio card
         self.SOUND_CARD_MIC = config.get("recorder", "sound_card_mic")
