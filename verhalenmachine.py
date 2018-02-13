@@ -423,6 +423,7 @@ class VU:
 
     def set_percentage(self, percentage):
         new_value = (int(percentage)*self.vumax)/100
+        self.current_percentage = percentage
         self.set_value(new_value)
 
     def move_to_percentage(self, percentage):
