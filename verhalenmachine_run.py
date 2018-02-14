@@ -53,15 +53,15 @@ try:
 
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
-            if recorder.is_recording():
-                logging.debug("Opnemen en play")
-                led3.off()
-                kaku.off()
-                recorder.stop()
-            elif player.is_playing():
+            if player.is_playing():
                 led2.off()
                 player.pause()
             else:
+                if recorder.is_recording():
+                    logging.debug("Opnemen en play")
+                    led3.off()
+                    kaku.off()
+                    recorder.stop()
                 led2.on()
                 player.play()
 
