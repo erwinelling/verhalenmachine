@@ -2,13 +2,9 @@
 
 ---
 Erwin:
-TODO: Stresstest buttons:
-* Stop recording when pushing play or next during recording
-* Langere tijd voor ingedrukt houden knopjes
-
 TODO: Check minor todo's across files
-
 TODO: Make it possible to insert mic later (catch exception?)
+TODO: Better Soundcloud handling (sets, info, etc.)
 
 TODO: Create documentation for users
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
