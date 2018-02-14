@@ -34,28 +34,14 @@ try:
     while True:
     # TODO: Refactor and use callback functions?
 
-        # Check GPIO for record button events
-        if GPIO.event_detected(button3.pin):
+        # Check GPIO for play button events
+        if GPIO.event_detected(button2.pin):
             if recorder.is_recording():
+                logging.debug("Opnemen en play")
                 led3.off()
                 kaku.off()
                 recorder.stop()
-                #
-
-            else:
-                # player.add_to_queue("2018-02-12_09:46:19.wav") #plus player path plus prefix
-                if player.is_playing():
-                    led2.off()
-                    player.pause()
-                led3.on()
-                current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
-                sound_file_name = "%s.wav" % (current_datetime)
-                recorder.record(sound_file_name)
-                kaku.on()
-
-        # Check GPIO for play button events
-        if GPIO.event_detected(button2.pin):
-            if player.is_playing():
+            elif player.is_playing():
                 led2.off()
                 player.pause()
             else:
@@ -64,10 +50,15 @@ try:
 
         # Check GPIO for next button events
         if GPIO.event_detected(button1.pin):
-            led1.blink()
-            # if player.is_playing():
-            #     player.pause()
-            player.next()
+            if recorder.is_recording():
+                led3.off()
+                kaku.off()
+                recorder.stop()
+            else:
+                led1.blink()
+                # if player.is_playing():
+                #     player.pause()
+                player.next()
 
         # Control player led also when play/ stop has been used externally
         if not player.is_playing():
