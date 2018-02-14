@@ -2,11 +2,12 @@
 
 ---
 Erwin:
-TODO: Check minor todo's across files
-TODO: Cronjobs
+TODO: Stresstest buttons:
+* Stop recording when pushing play or next during recording
+* Langere tijd voor ingedrukt houden knopjes
 
-TODO: Stresstest buttons
-TODO: Stresstest everything
+TODO: Check minor todo's across files
+
 TODO: Make it possible to insert mic later (catch exception?)
 
 TODO: Create documentation for users
@@ -16,9 +17,11 @@ TODO: Refactor?
 
 
 Aan David vragen:
-Gek geluid tijdens opname
-Gek statisch geluid altijd
-Gekke piepjes door aansturing klikaanklikuit
+* Gek geluid tijdens opname
+* Gek statisch geluid altijd
+* Gekke piepjes door aansturing klikaanklikuit
+* Kan hij nog harder?
+* Kunnen beide KIKU's werken?
 
 ---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
