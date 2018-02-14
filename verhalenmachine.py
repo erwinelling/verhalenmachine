@@ -520,14 +520,14 @@ class KAKU:
 
 
 class Button:
-    def __init__(self, pin):
+    def __init__(self, pin, bouncetime):
         # Pin Setup:
         self.pin = pin
 
         # Initiate button as input w/ pull-up
         GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=200)
+        GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=bouncetime)
 
 class Uploader:
     # TODO: Maybe implement uploading to several playlists again (settings or ip or wlan name or ...)
@@ -583,7 +583,7 @@ class Uploader:
                         # TODO: Keep list of uploaded tracks
                         # uploaded_track_list.append(uploaded_track.id)
 
-        # TODO: Create or append to playlist
+        # TODO: Create or appenn to playlist
         logger.debug("UPLOADED %s files" % count)
 
     def upload_track(self, path_to_file):
@@ -593,7 +593,7 @@ class Uploader:
         # playlist = client.get("/playlists/"+set_id)
         # logger.debug("Playlist: %s", playlist)
         track_dict = {
-            # TODO: Set more track data, get input somewhere, set better name
+            # TODO: Set more track data, get input somewhere
             'title': unicode(os.path.splitext(path_to_file)[0]),
             'asset_data': open(path_to_file, 'rb'),
             'description': u'Dit verhaal is opgenomen met de verhalenmachine op %s om %s.' % (datetime.datetime.now().__format__("%e-%m-%Y"), datetime.datetime.now().__format__("%T")),
