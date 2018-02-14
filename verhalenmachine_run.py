@@ -20,16 +20,12 @@ try:
     vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu, player=player)
     button1 = Button(37, 200) # Blue
-    button2 = Button(35, 200) # Green
+    button2 = Button(35, 1000) # Green
     button3 = Button(33, 2000) # Red
     led1 = Led(40) # Blue
     led2 = Led(38) # Green
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
-
-
-
-
 
     while True:
     # TODO: Refactor and use callback functions?
