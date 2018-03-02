@@ -8,13 +8,19 @@ from verhalenmachine import VolumioClient, Recorder, Led, Button, KAKU, VU
 
 try:
     player = VolumioClient()
+    # TODO: Set volume for mic and headphones
+    # https://unix.stackexchange.com/questions/32206/set-volume-from-terminal
+
     # client.set_callback(print_state, client)
     # Wait for events from the volumio websocket connection in separate thread
     player.wait()
     player.set_random()
     player.set_repeat()
     player.create_playlist()
+
+
     # TODO: Clear queue?
+    # https://volumio.org/forum/empty-the-play-queue-via-websocket-t9216.html#p45800
     player.enqueue_playlist()
 
     vu = VU(12) # vu meter for recorder
@@ -35,7 +41,7 @@ try:
             if recorder.is_recording():
                 led3.off()
                 recorder.stop()
-                kaku.off()                
+                kaku.off()
             else:
                 # player.add_to_queue("2018-02-12_09:46:19.wav") #plus player path plus prefix
                 if player.is_playing():
