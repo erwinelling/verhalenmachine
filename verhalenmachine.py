@@ -220,6 +220,7 @@ class VolumioClient:
         if name==None:
             name=self.default_playlist
         self._client.emit('playPlaylist', {'name': name})
+        time.sleep(1)
         self.pause()
 
     def set_random(self):
@@ -289,7 +290,7 @@ class Recorder:
             '-c', '5',
             'sset',
             'Mic,0',
-            '91%'
+            '90%'
         ]
         sub = subprocess.Popen(args)
 

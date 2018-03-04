@@ -18,7 +18,6 @@ try:
     player.set_repeat()
     player.create_playlist()
     player.set_volume()
-    # amixer  sset PCM,0 96% 
 
     # TODO: Clear queue?
     # https://volumio.org/forum/empty-the-play-queue-via-websocket-t9216.html#p45800
