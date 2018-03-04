@@ -632,7 +632,6 @@ class Uploader:
                     if os.path.isfile(not_uploaded_file):
                         uploaded_track = self.upload_track(path_to_file)
                         count = count+1
-
                         # TODO: Keep list of uploaded tracks
                         # uploaded_track_list.append(uploaded_track.id)
 
@@ -660,12 +659,18 @@ class Uploader:
         # if os.path.isfile(img_file):
         #     track_dict['artwork_data'] = open(img_file, 'rb')
         #
-        uploaded_track = self.client.post('/tracks', track=track_dict)
-        logger.debug("Uploaded %s to Soundcloud: %s (%s).", path_to_file, uploaded_track.permalink_url, uploaded_track.id)
+        try:
+            uploaded_track = self.client.post('/tracks', track=track_dict)
+            logger.debug("Uploaded %s to Soundcloud: %s (%s).", path_to_file, uploaded_track.permalink_url, uploaded_track.id)
+            not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
+            os.remove(not_uploaded_file)
+            return uploaded_track
+        except:
+            logger.debug("Error uploading to Soundcloud")
+            logger.debug(sys.exc_info()[0])
+            return None
 
         # remove .notuploaded file
-        not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
-        os.remove(not_uploaded_file)
 
         #
         # # add soundcloud id to filename
@@ -680,7 +685,6 @@ class Uploader:
         # UPDATE_TRACKLIST
 
         # count +=1
-        return uploaded_track
 
     def create_playlist(self, name):
         # TODO: Implement
