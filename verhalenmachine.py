@@ -79,6 +79,16 @@ class VolumioClient:
 
 
     def set_volume(self):
+        # amixer -c 0 sset PCM,0 96%
+        # amixer -c 5 sset Mic,0 91%
+        args = [
+            'amixer',
+            '-c', '0',
+            'sset',
+            'PCM,0',
+            '96%'
+        ]
+        sub = subprocess.Popen(args, stderr=output)
         # args = [
         #     'arecord',
         #     '-D', self.SOUND_CARD_MIC,
@@ -272,19 +282,17 @@ class Recorder:
         logger.debug("VU: %s" % self.vu)
 
     def set_volume(self):
-        # args = [
-        #     'arecord',
-        #     '-D', self.SOUND_CARD_MIC,
-        #     '-f', 'S16_LE',
-        #     '-c', '1',
-        #     '-r', '44100',
-        #     '-V', 'mono',
-        #     '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
-        #     self.filepath+".temp",
-        #     # '2>', os.path.join(HOME_DIR, "vumeter.tmp"),
-        # ]
-        # sub = subprocess.Popen(args, stderr=output)
-        #
+        # amixer -c 0 sset PCM,0 96%
+        # amixer -c 5 sset Mic,0 91%
+        args = [
+            'amixer',
+            '-c', '5',
+            'sset',
+            'Mic,0',
+            '91%'
+        ]
+        sub = subprocess.Popen(args, stderr=output)
+
 
         # Gets a list of simple mixer controls
         # $ amixer scontrols
