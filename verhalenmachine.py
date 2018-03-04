@@ -88,7 +88,7 @@ class VolumioClient:
             'PCM,0',
             '96%'
         ]
-        sub = subprocess.Popen(args, stderr=output)
+        sub = subprocess.Popen(args)
         # args = [
         #     'arecord',
         #     '-D', self.SOUND_CARD_MIC,
@@ -291,7 +291,7 @@ class Recorder:
             'Mic,0',
             '91%'
         ]
-        sub = subprocess.Popen(args, stderr=output)
+        sub = subprocess.Popen(args)
 
 
         # Gets a list of simple mixer controls
