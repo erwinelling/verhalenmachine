@@ -155,7 +155,7 @@ sudo systemctl status verhalenmachine
 ```
 chmod a+x /home/volumio/verhalenmachine/cron_upload.py
 chmod a+x /home/volumio/verhalenmachine/cron_recordcheck.py
-crontab -e
+sudo crontab -e
 sudo chown root: cron_*.log
 ```
 

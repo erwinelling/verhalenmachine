@@ -220,7 +220,7 @@ class VolumioClient:
         if name==None:
             name=self.default_playlist
         self._client.emit('playPlaylist', {'name': name})
-        time.sleep(1)
+        time.sleep(2)
         self.pause()
 
     def set_random(self):
