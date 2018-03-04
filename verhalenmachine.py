@@ -77,6 +77,22 @@ class VolumioClient:
         self._client.emit('getState', _on_pushState)
         self._client.wait_for_callbacks(seconds=1)
 
+
+    def set_volume(self):
+        # args = [
+        #     'arecord',
+        #     '-D', self.SOUND_CARD_MIC,
+        #     '-f', 'S16_LE',
+        #     '-c', '1',
+        #     '-r', '44100',
+        #     '-V', 'mono',
+        #     '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
+        #     self.filepath+".temp",
+        #     # '2>', os.path.join(HOME_DIR, "vumeter.tmp"),
+        # ]
+        # sub = subprocess.Popen(args, stderr=output)
+        pass
+
     def set_callback(self, callback_function, *callback_args):
         self._callback_function = callback_function
         self._callback_args = callback_args
@@ -190,6 +206,12 @@ class VolumioClient:
             name=self.default_playlist
         self._client.emit('enqueue', {'name': name})
 
+    def empty_queue_and_enqueue_playlist(self, name=None):
+        if name==None:
+            name=self.default_playlist
+        self._client.emit('playPlaylist', {'name': name})
+        self.pause()
+
     def set_random(self):
         self._client.emit('setRandom', {'value': 'true'})
 
@@ -248,6 +270,28 @@ class Recorder:
         self.vu = vu
         self.player = player
         logger.debug("VU: %s" % self.vu)
+
+    def set_volume(self):
+        # args = [
+        #     'arecord',
+        #     '-D', self.SOUND_CARD_MIC,
+        #     '-f', 'S16_LE',
+        #     '-c', '1',
+        #     '-r', '44100',
+        #     '-V', 'mono',
+        #     '--process-id-file', self.RECORDING_PROCESS_ID_FILE,
+        #     self.filepath+".temp",
+        #     # '2>', os.path.join(HOME_DIR, "vumeter.tmp"),
+        # ]
+        # sub = subprocess.Popen(args, stderr=output)
+        #
+
+        # Gets a list of simple mixer controls
+        # $ amixer scontrols
+        # Then set it to the desired volume, as an example
+        #
+        # $ amixer sset 'Master' 50%
+        pass
 
     def get_pid(self):
         try:

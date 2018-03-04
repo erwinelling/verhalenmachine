@@ -17,14 +17,18 @@ try:
     player.set_random()
     player.set_repeat()
     player.create_playlist()
-
+    player.set_volume()
 
     # TODO: Clear queue?
     # https://volumio.org/forum/empty-the-play-queue-via-websocket-t9216.html#p45800
-    player.enqueue_playlist()
+    # player.enqueue_playlist()
+    # TODO: TEST whether queue is cleared
+    player.empty_queue_and_enqueue_playlist()
 
     vu = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu, player=player)
+    recorder.set_volume()
+    
     button1 = Button(37, 200) # Blue
     button2 = Button(35, 1000) # Green
     button3 = Button(33, 2000) # Red
