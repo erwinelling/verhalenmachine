@@ -610,6 +610,8 @@ class Uploader:
                         path_to_file = os.path.join(root, filename)
                         logger.debug("REMOVING %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
                         os.remove(path_to_file)
+                        not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
+                        os.remove(not_uploaded_file)
 
     def upload_directory(self, directory=""):
         if directory == "":
