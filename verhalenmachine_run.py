@@ -25,13 +25,15 @@ try:
     # TODO: TEST whether queue is cleared
     player.empty_queue_and_enqueue_playlist()
 
-    vu = VU(12) # vu meter for recorder
-    recorder = Recorder(vu=vu, player=player)
+    vu_rec = VU(12) # vu meter for recorder
+    recorder = Recorder(vu=vu_rec, player=player)
     recorder.set_volume()
+
+    vu_play = VU(33) # vu meter for player
 
     button1 = Button(37, 200) # Blue
     button2 = Button(35, 1000) # Green
-    button3 = Button(33, 2000) # Red
+    button3 = Button(31, 2000) # Red
     led1 = Led(40) # Blue
     led2 = Led(38) # Green
     led3 = Led(36) # Red
@@ -65,18 +67,18 @@ try:
             else:
                 if recorder.is_recording():
                     logging.debug("Opnemen en play")
+                    recorder.stop()
                     led3.off()
                     kaku.off()
-                    recorder.stop()
                 led2.on()
                 player.play()
 
         # Check GPIO for next button events
         if GPIO.event_detected(button1.pin):
             if recorder.is_recording():
+                recorder.stop()
                 led3.off()
                 kaku.off()
-                recorder.stop()
             else:
                 led1.blink()
                 # if player.is_playing():
