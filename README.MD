@@ -5,19 +5,12 @@ Erwin:
 TODO: Check minor todo's across files
 TODO: Make it possible to insert mic later (catch exception?)
 TODO: Better Soundcloud handling (sets, info, etc.)
+TODO; First light then recording (because of noise)
 
 TODO: Create documentation for users
 TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
 
 TODO: Refactor?
-
-
-Aan David vragen:
-* Gek geluid tijdens opname
-* Gek statisch geluid altijd
-* Gekke piepjes door aansturing klikaanklikuit
-* Kan hij nog harder?
-* Kunnen beide KIKU's werken?
 
 ---
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
