@@ -7,7 +7,8 @@ import datetime
 from verhalenmachine import VolumioClient, Recorder, Led, Button, KAKU, VU
 
 try:
-    player = VolumioClient()
+    vu_play = VU(33) # vu meter for player
+    player = VolumioClient(vu=vu_play)
     # TODO: Set volume for mic and headphones
     # https://unix.stackexchange.com/questions/32206/set-volume-from-terminal
 
@@ -28,8 +29,6 @@ try:
     vu_rec = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu_rec, player=player)
     recorder.set_volume()
-
-    vu_play = VU(33) # vu meter for player
 
     button1 = Button(37, 200) # Blue
     button2 = Button(35, 1000) # Green

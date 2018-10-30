@@ -50,7 +50,7 @@ class VolumioClient:
     """ Class for the websocket client to Volumio """
     """https://github.com/foxey/volumio-buddy/blob/master/volumio_buddy/volumio_buddy.py"""
 
-    def __init__(self):
+    def __init__(self, vu):
         HOSTNAME='localhost'
         PORT=3000
 
@@ -61,6 +61,7 @@ class VolumioClient:
         self.prev_state = dict()
         self.prev_state["status"] = ""
         self.last_update_time = 0
+        self.vu = vu
 
         self.default_playlist = config.get("recorder", "default_playlist")
 
@@ -109,6 +110,9 @@ class VolumioClient:
 
     def play(self):
         self._client.emit('play')
+
+        ### TODO: added stuff for vu meter here for now, refactor later
+
 
     def pause(self):
         self._client.emit('pause')
@@ -437,7 +441,7 @@ class Recorder:
 class VU:
     def __init__(self, pin):
         # Pin Setup:
-        self.pin = pin
+        self.pin = pinf
 
         # Initiate VU
         GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
