@@ -448,6 +448,7 @@ class VU:
         self.current_value = -1
         self.current_percentage = 0
         self.test()
+        self.test()
 
     def test(self):
         self.start()

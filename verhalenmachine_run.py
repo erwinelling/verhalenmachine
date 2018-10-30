@@ -30,7 +30,6 @@ try:
     recorder.set_volume()
 
     vu_play = VU(33) # vu meter for player
-    vu_play.test()
 
     button1 = Button(37, 200) # Blue
     button2 = Button(35, 1000) # Green
