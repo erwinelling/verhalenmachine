@@ -498,7 +498,6 @@ class VU:
         self.current_value = -1
         self.current_percentage = 0
         self.test()
-        self.test()
 
     def test(self):
         self.start()
@@ -523,7 +522,7 @@ class VU:
 
         self.p.ChangeDutyCycle(value)
         self.current_value = value
-        logger.debug("VU current value: %s" % value)
+        logger.debug("VU (pin %s): %s" % (self.pin, value))
 
     def set_percentage(self, percentage):
         new_value = (int(percentage)*self.vumax)/100
@@ -562,12 +561,12 @@ class Led:
     def on(self):
         GPIO.output(self.pin, GPIO.HIGH)
         self.burning = True
-        logger.debug("LED (pin %s) ON." % self.pin)
+        logger.debug("LED (pin %s): ON" % self.pin)
 
     def off(self):
         GPIO.output(self.pin, GPIO.LOW)
         self.burning = False
-        logger.debug("LED (pin %s) OFF." % self.pin)
+        logger.debug("LED (pin %s): OFF" % self.pin)
 
     def blink(self, times=1, sleep=0.1):
         count = 0
@@ -594,7 +593,7 @@ class KAKU:
         GPIO.setup(self.pin1, GPIO.OUT)
         GPIO.setup(self.pin2, GPIO.OUT)
         self.burning = False
-        self.blink(times=1, sleep=2)
+        self.blink(times=1, sleep=0.5)
 
     def on(self):
         GPIO.output(self.pin1, GPIO.HIGH)
