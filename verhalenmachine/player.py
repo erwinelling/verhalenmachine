@@ -55,7 +55,7 @@ class VolumioClient:
         self._client = SocketIO(HOSTNAME, PORT, LoggingNamespace)
         self._client.on('pushState', _on_pushState)
         self._client.emit('getState', _on_pushState)
-        # self._client.wait_for_callbacks(seconds=1)
+        self._client.wait_for_callbacks(seconds=1)
 
 
     def set_volume(self):
