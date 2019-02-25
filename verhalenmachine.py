@@ -621,17 +621,6 @@ class KAKU:
                 time.sleep(sleep)
             count = count+1
 
-
-class Button:
-    def __init__(self, pin, bouncetime):
-        # Pin Setup:
-        self.pin = pin
-
-        # Initiate button as input w/ pull-up
-        GPIO.setmode(GPIO.BOARD)  # Broadcom pin-numbering scheme
-        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.pin, GPIO.FALLING, bouncetime=bouncetime)
-
 class Uploader:
     # TODO: Maybe implement uploading to several playlists again (settings or ip or wlan name or ...)
     # TODO: Upload to playlist

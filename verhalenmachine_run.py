@@ -4,7 +4,8 @@ import logging
 import RPi.GPIO as GPIO
 import time
 import datetime
-from verhalenmachine import VolumioClient, Recorder, Led, Button, KAKU, VU
+from verhalenmachine import VolumioClient, Recorder, Led, KAKU, VU
+from verhalenmachine.button import Button
 GPIO.setwarnings(False)
 
 try:
