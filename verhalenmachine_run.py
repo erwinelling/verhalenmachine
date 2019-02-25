@@ -1,12 +1,21 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
-import logging
 import RPi.GPIO as GPIO
 import time
 import datetime
-from verhalenmachine import VolumioClient, Recorder, Led, KAKU, VU
+import os
+from verhalenmachine.log import setup_custom_logger
+# from verhalenmachine.verhalenmachine import VolumioClient, Recorder
+from verhalenmachine.player import VolumioClient
+from verhalenmachine.recorder import Recorder
 from verhalenmachine.button import Button
+from verhalenmachine.led import Led
+from verhalenmachine.kaku import KAKU
+from verhalenmachine.vu import VU
+
+logger = setup_custom_logger('root')
 GPIO.setwarnings(False)
+# import ConfigParser
 
 try:
     # Check mic
@@ -128,6 +137,4 @@ try:
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO
 except Exception, e:
-    print "ERROR"
-    print e
-    logging.error(e, exc_info=True)
+    logger.error(e, exc_info=True)
