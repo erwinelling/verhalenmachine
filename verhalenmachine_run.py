@@ -7,6 +7,26 @@ import datetime
 from verhalenmachine import VolumioClient, Recorder, Led, Button, KAKU, VU
 
 try:
+    # Check mic
+    mic=0
+    while mic==0:
+        import re
+        import subprocess
+        device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
+        df = subprocess.check_output("lsusb")
+        devices = []
+        for i in df.split('\n'):
+            if i:
+                info = device_re.match(i)
+                if info:
+                    dinfo = info.groupdict()
+                    dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
+                    devices.append(dinfo)
+        print devices
+        # check device mic
+        # blink the record light
+        mic=1
+
     vu_play = VU(33) # vu meter for player
     player = VolumioClient(vu=vu_play)
     # TODO: Set volume for mic and headphones
@@ -37,26 +57,6 @@ try:
     led2 = Led(38) # Green
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
-
-    # Check mic
-    mic=0
-    while mic==0:
-        import re
-        import subprocess
-        device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-        df = subprocess.check_output("lsusb")
-        devices = []
-        for i in df.split('\n'):
-            if i:
-                info = device_re.match(i)
-                if info:
-                    dinfo = info.groupdict()
-                    dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
-                    devices.append(dinfo)
-        print devices
-        # check device mic
-        # blink the record light
-        mic=1
 
     while True:
     # TODO: Refactor and use callback functions?
