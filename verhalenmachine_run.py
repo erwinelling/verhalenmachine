@@ -26,10 +26,10 @@ try:
     # TODO: TEST whether queue is cleared
     player.empty_queue_and_enqueue_playlist()
 
+    # Set input and output
     vu_rec = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu_rec, player=player)
     recorder.set_volume()
-
     button1 = Button(37, 200) # Blue
     button2 = Button(35, 1000) # Green
     button3 = Button(31, 2000) # Red
@@ -37,6 +37,26 @@ try:
     led2 = Led(38) # Green
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
+
+    # Check mic
+    mic=0
+    while mic==0:
+        import re
+        import subprocess
+        device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
+        df = subprocess.check_output("lsusb")
+        devices = []
+        for i in df.split('\n'):
+            if i:
+                info = device_re.match(i)
+                if info:
+                    dinfo = info.groupdict()
+                    dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
+                    devices.append(dinfo)
+        print devices
+        # check device mic
+        # blink the record light
+        mic=1
 
     while True:
     # TODO: Refactor and use callback functions?
