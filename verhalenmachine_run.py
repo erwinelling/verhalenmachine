@@ -40,7 +40,7 @@ try:
     #     mic=1
 
     vu_play = VU(33) # vu meter for player
-    # player = VolumioClient(vu=vu_play)
+    player = VolumioClient(vu=vu_play)
 
     # TODO: Set volume for mic and headphones
     # https://unix.stackexchange.com/questions/32206/set-volume-from-terminal
@@ -51,7 +51,7 @@ try:
     # player.set_random()
     # player.set_repeat()
     # player.create_playlist()
-    # player.set_volume()
+    player.set_volume()
 
     # TODO: Clear queue?
     # https://volumio.org/forum/empty-the-play-queue-via-websocket-t9216.html#p45800

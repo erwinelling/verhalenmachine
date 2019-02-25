@@ -17,6 +17,12 @@ import soundcloud
 from socketIO_client import SocketIO, LoggingNamespace
 from threading import Thread
 
+import logging
+logger = logging.getLogger('root')
+
+HOME_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(HOME_DIR, "verhalenmachine.cfg"))
 # TODO: cleanup imports
 
 class VolumioClient:
@@ -49,7 +55,7 @@ class VolumioClient:
         self._client = SocketIO(HOSTNAME, PORT, LoggingNamespace)
         self._client.on('pushState', _on_pushState)
         self._client.emit('getState', _on_pushState)
-        self._client.wait_for_callbacks(seconds=1)
+        # self._client.wait_for_callbacks(seconds=1)
 
 
     def set_volume(self):

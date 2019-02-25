@@ -2,7 +2,6 @@ import logging, logging.handlers
 import os
 
 HOME_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
-print HOME_DIR
 LOG_FILE = os.path.join(HOME_DIR, "verhalenmachine.log")
 
 def setup_custom_logger(name):

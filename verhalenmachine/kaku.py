@@ -26,7 +26,7 @@ class KAKU:
         time.sleep(0.05)
         GPIO.output(self.pin1, GPIO.LOW)
         self.burning = True
-        logger.debug("KAKU (pins %s and %s) ON" % (self.pin1, self.pin2))
+        logger.debug("KAKU (pins %s and %s): ON" % (self.pin1, self.pin2))
 
     def off(self):
         GPIO.output(self.pin1, GPIO.LOW)
@@ -34,9 +34,9 @@ class KAKU:
         time.sleep(0.05)
         GPIO.output(self.pin2, GPIO.LOW)
         self.burning = False
-        logger.debug("KAKU (pins %s and %s) OFF" % (self.pin1, self.pin2))
+        logger.debug("KAKU (pins %s and %s): OFF" % (self.pin1, self.pin2))
 
-    def blink(self, times=1, sleep=0.2  ):
+    def blink(self, times=1, sleep=0.2):
         count = 0
         while count<times:
             self.on()
