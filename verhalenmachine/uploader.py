@@ -19,6 +19,13 @@ from threading import Thread
 
 # TODO: cleanup imports
 
+import logging
+logger = logging.getLogger('root')
+
+HOME_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(HOME_DIR, "verhalenmachine.cfg"))
+
 class Uploader:
     # TODO: Maybe implement uploading to several playlists again (settings or ip or wlan name or ...)
     # TODO: Upload to playlist
