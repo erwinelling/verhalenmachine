@@ -65,7 +65,7 @@ try:
     # Set input and output
     vu_rec = VU(12) # vu meter for recorder
     recorder = Recorder(vu=vu_rec, player=player)
-    # recorder.set_volume()
+    recorder.set_volume()
     button1 = Button(37, 2000) # Blue
     button2 = Button(35, 2000) # Green
     button3 = Button(31, 2000) # Red
@@ -78,22 +78,22 @@ try:
         # TODO: Refactor and use callback functions?
 
         # Check GPIO for record button events
-        # if GPIO.event_detected(button3.pin):
-        #     if recorder.is_recording():
-        #         led3.off()
-        #         recorder.stop()
-        #         kaku.off()
-        #     else:
-        #         # player.add_to_queue("2018-02-12_09:46:19.wav") #plus player path plus prefix
-        #         if player.is_playing():
-        #             led2.off()
-        #             player.pause()
-        #         led3.on()
-        #         kaku.on()
-        #         current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
-        #         sound_file_name = "%s.wav" % (current_datetime)
-        #         recorder.record(sound_file_name)
-        #
+        if GPIO.event_detected(button3.pin):
+            if recorder.is_recording():
+                led3.off()
+                recorder.stop()
+                kaku.off()
+            else:
+                if player.is_playing():
+                    led2.off()
+                    player.pause()
+                kaku.on()
+                time.sleep(0.5) # to prevent crackling from kaku
+                led3.on()
+                current_datetime = "%s" % (datetime.datetime.now().__format__("%Y-%m-%d_%T"))
+                sound_file_name = "%s.wav" % (current_datetime)
+                recorder.record(sound_file_name)
+
         # Check GPIO for play button events
         if GPIO.event_detected(button2.pin):
             if player.is_playing():
@@ -130,12 +130,12 @@ try:
             if not led2.burning:
                 led2.on()
 
-        # # Control recorder led & VU & KAKU also when recorder has been stopped externally
-        # if not recorder.is_recording():
-        #     if led3.burning:
-        #         led3.off()
-        #         vu.stop()
-        #         kaku.off()
+        # Control recorder led & VU & KAKU also when recorder has been stopped externally
+        if not recorder.is_recording():
+            if led3.burning:
+                led3.off()
+                vu.stop()
+                kaku.off()
         time.sleep(0.5)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:

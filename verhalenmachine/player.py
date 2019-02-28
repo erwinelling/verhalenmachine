@@ -136,8 +136,8 @@ class VolumioClient:
 
                 self.vu.set_percentage(int(out))
                 # time.sleep(0.5)
-            else:
-                self.vu.move_to_percentage(0)
+            # else:
+            #     self.vu.move_to_percentage(0)
             #     # TODO: Test
             #     # Turn meter down when stream stops
             #     # if just_after_stream:
