@@ -1,4 +1,4 @@
-from verhalenmachine import Recorder
+from verhalenmachine.recorder import Recorder
 
 recorder = Recorder()
 recorder.dontrecordfortoolong()
