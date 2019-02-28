@@ -116,7 +116,6 @@ class Uploader:
             logger.debug(sys.exc_info()[0])
             return None
 
-        # remove .notuploaded file
 
         #
         # # add soundcloud id to filename
