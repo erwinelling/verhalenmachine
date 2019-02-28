@@ -15,7 +15,9 @@ import time
 import ConfigParser
 import soundcloud
 from socketIO_client import SocketIO, LoggingNamespace
-from threading import Thread
+import threading
+import audioop
+import math
 
 import logging
 logger = logging.getLogger('root')
@@ -57,7 +59,6 @@ class VolumioClient:
         self._client.emit('getState', _on_pushState)
         self._client.wait_for_callbacks(seconds=1)
 
-
     def set_volume(self):
         # amixer -c 0 sset PCM,0 96%
         # amixer -c 5 sset Mic,0 91%
@@ -87,69 +88,73 @@ class VolumioClient:
         self._callback_function = callback_function
         self._callback_args = callback_args
 
+    def control_vu(self):
+        """
+        Meant to run in a parallel thread.
+        Will send player output to VU meter.
+        """
+        self.vu.start()
+
+        #https://rvalbuena.blogspot.com/2014/04/led-vu-meter-using-mypishop-8x8-pimatrix.html
+        # # This represents the sample (44100:16:2) that MPD is currently "playing"
+        fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
+
+        while True:
+            try:
+                rawStream = os.read(fifo, 4096)
+            except OSError as err:
+                if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
+                    rawStream = None
+                else:
+                    raise
+
+            # just_after_stream = False
+            if rawStream:
+                # TODO: Change to mono signal
+                # TODO: Change dB scale to 0-100 scale
+
+                leftChannel = audioop.tomono(rawStream, 2, 1, 0)
+                rightChannel = audioop.tomono(rawStream, 2, 0, 1)
+                stereoPeak = audioop.max(rawStream, 2)
+                leftPeak = audioop.max(leftChannel, 2)
+                rightPeak = audioop.max(rightChannel, 2)
+                leftDB = 20 * math.log10(leftPeak) -74
+                rightDB = 20 * math.log10(rightPeak) -74
+
+                # logger.debug("RIGHT %s" % rightDB)
+                # print(rightPeak, leftPeak, rightDB, leftDB)
+                # out = 20 * math.log10(stereoPeak) -74
+                # out = stereoPeak/40
+                # if out > 90:
+                #     out = 90
+                # if out < 10:
+                #     out = 0
+
+
+                out = (rightDB + 20) * (70/23)
+                logger.debug("MPD FIFO value %s" % out)
+
+                self.vu.set_percentage(int(out))
+                # time.sleep(0.5)
+            else:
+                self.vu.move_to_percentage(0)
+            #     # TODO: Test
+            #     # Turn meter down when stream stops
+            #     # if just_after_stream:
+            #     self.vu.move_to_percentage(0)
+            #     self.vu.stop()
+            #     # just_after_stream = False
+
+    def start_vu_thread(self):
+        t = threading.Thread(target=self.control_vu, args=())
+        t.start()
+
     def play(self):
         self._client.emit('play')
 
-        ### TODO: added stuff for vu meter here for now, refactor later
-        # See https://github.com/erwinelling/verhalenmachine/blob/e6837b1d92393c15df3c352ad5fc2e09d919adb1/vumeter.py
-        # Open the FIFO that MPD has created for us
-        self.vu.test()
-        # # This represents the sample (44100:16:2) that MPD is currently "playing"
-        # fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
-        # ser = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1.0)
-        #
-        # ser.write(str(1)+"\r")
-        # while True:
-        #     try:
-        #         rawStream = os.read(fifo, 4096)
-        #     except OSError as err:
-        #         if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-        #             rawStream = None
-        #         else:
-        #             raise
-        #
-        #     just_after_stream = False
-        #     if rawStream:
-        #         # TODO: Change to mono signal
-        #         # TODO: Change dB scale to 0-100 scale
-        #
-        #             # leftChannel = audioop.tomono(rawStream, 2, 1, 0)
-        #             # rightChannel = audioop.tomono(rawStream, 2, 0, 1)
-        #             stereoPeak = audioop.max(rawStream, 2)
-        #             # leftPeak = audioop.max(leftChannel, 2)
-        #             # rightPeak = audioop.max(rightChannel, 2)
-        #             # leftDB = 20 * math.log10(leftPeak) -74
-        #             # rightDB = 20 * math.log10(rightPeak) -74
-        #
-        #             # print(rightPeak, leftPeak, rightDB, leftDB)
-        #
-        #             out = stereoPeak/40
-        #             if out > 100:
-        #                 out = 100
-        #             if out < 1:
-        #                 out = 1
-        #             print out
-        #             ser.write(str(out)+"\r")
-        #             just_after_stream = True
-        #             time.sleep(0.05)
-        #     else:
-        #         # TODO: Test
-        #         # Turn meter down when stream stops
-        #         if just_after_stream:
-        #             ser.write("1\r")
-        #             just_after_stream = False
-
     def pause(self):
         self._client.emit('pause')
-
-    def toggle_play(self):
-        try:
-            if self.state["status"] == "play":
-                self._client.emit('pause')
-            else:
-                self._client.emit('play')
-        except KeyError:
-            self._client.emit('play')
+        self.vu.move_to_percentage(0)
 
     def volume_up(self):
         self._client.emit('volume', '+')
@@ -275,7 +280,7 @@ class VolumioClient:
         logger.debug("Updating MPD %s" %uri)
 
     def wait(self, **kwargs):
-        self.wait_thread = Thread(target=self._wait, args=(kwargs))
+        self.wait_thread = threading.Thread(target=self._wait, args=(kwargs))
         self.wait_thread.start()
         print "started websocket wait thread"
         return self.wait_thread

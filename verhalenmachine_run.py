@@ -46,12 +46,15 @@ try:
     # https://unix.stackexchange.com/questions/32206/set-volume-from-terminal
 
     # client.set_callback(print_state, client)
-    # Wait for events from the volumio websocket connection in separate thread
-    # player.wait()
-    # player.set_random()
-    # player.set_repeat()
+    player.set_random()
+    player.set_repeat()
     player.create_playlist()
     player.set_volume()
+
+    # Wait for events from the volumio websocket connection in separate thread
+    player.wait()
+
+    player.start_vu_thread()
 
     # TODO: Clear queue?
     # https://volumio.org/forum/empty-the-play-queue-via-websocket-t9216.html#p45800
@@ -71,7 +74,6 @@ try:
     led3 = Led(36) # Red
     kaku = KAKU(15,16) # Klik Aan Klik Uit
 
-    player.wait()
     while True:
         # TODO: Refactor and use callback functions?
 
@@ -113,7 +115,7 @@ try:
                 led3.off()
                 kaku.off()
             else:
-                led1.blink()
+                led1.blink(times=1, sleep=1)
                 # if player.is_playing():
                 #     player.pause()
                 player.next()
@@ -123,18 +125,18 @@ try:
         if not player.is_playing():
             if led2.burning:
                 led2.off()
+                player.vu.move_to_percentage(0)
         else:
             if not led2.burning:
                 led2.on()
-        #
+
         # # Control recorder led & VU & KAKU also when recorder has been stopped externally
         # if not recorder.is_recording():
         #     if led3.burning:
         #         led3.off()
         #         vu.stop()
         #         kaku.off()
-        print "test"
-        time.sleep(0.6)
+        time.sleep(0.5)
 
 except KeyboardInterrupt:  # If CTRL+C is pressed, exit cleanly:
     GPIO.cleanup()  # cleanup all GPIO

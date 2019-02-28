@@ -35,7 +35,7 @@ class VU:
         Needs to have an open connection to work (vu.start)
         """
         if value > self.vumax:
-            value = vumax
+            value = self.vumax
         if value < 0:
             value = 0
 
@@ -47,6 +47,10 @@ class VU:
         new_value = (int(percentage)*self.vumax)/100
         self.current_percentage = percentage
         self.set_value(new_value)
+
+    def move_percentage(self, change):
+        self.set_value(self.current_percentage + change)
+        self.current_percentage = self.current_percentage + change
 
     def move_to_percentage(self, percentage):
         increase = 5
