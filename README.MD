@@ -1,18 +1,5 @@
 # Verhalenmachine (Story Machine)
 
----
-Erwin:
-TODO: Check minor todo's across files
-TODO: Make it possible to insert mic later (catch exception?)
-TODO: Better Soundcloud handling (sets, info, etc.)
-TODO; First light then recording (because of noise)
-
-TODO: Create documentation for users
-TODO: Make easier setup script (upload everything, (re)move recordings, set name for playlist, ...)
-
-TODO: Refactor?
-
----
 Verhalenmachine (Story Machine) is a RaspberryPi based audio player/ recorder/ Soundcloud uploader.
 
 The player part is implemented on top of Volumio. It controls Volumio via MPD and presumes a custom enclosure outfitted with:
@@ -22,16 +9,13 @@ The player part is implemented on top of Volumio. It controls Volumio via MPD an
 * a VU meter: For display of output volume (controlled via Davids work)
 * ...
 
-The recorder part is implemented ...:
+The recorder part is implemented by:
 
 * 1 button: For record & stop.
 * a VU meter: For display of input volume (controlled via )
 * ...
 
-The Soundcloud uploader ...:
-
-*
-*
+The Soundcloud uploader uploads
 
 
 ## Setup
@@ -215,3 +199,14 @@ http://verhalenmachine.local/
 # Convenient for testing
 
 cd tail -f ~/verhalenmachine/verhalenmachine.log
+
+### Make VU meter for player work:
+
+Add this to /etc/mpd.conf
+
+audio_output {
+    type                    "fifo"
+    name                    "my_fifo"
+    path                    "/tmp/mpd.fifo"
+    format                  "44100:16:2"
+}
