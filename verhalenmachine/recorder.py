@@ -122,7 +122,7 @@ class Recorder:
                     possible_vu_percentage = lines[-3:-1].lstrip("0")
                     if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
                         logger.debug("VU: %s" % possible_vu_percentage)
-                        # TODO: Turn this on again, but now it is bad for the recording
+                        # TODO: This seems to be bad for the recording, fix?
                         self.vu.move_to_percentage(int(possible_vu_percentage))
 
                     # sys.__stdout__.write(lines)

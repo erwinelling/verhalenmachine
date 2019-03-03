@@ -54,13 +54,13 @@ try:
     # Wait for events from the volumio websocket connection in separate thread
     player.wait()
 
-    player.start_vu_thread()
+    # player.start_vu_thread()
 
     # TODO: Clear queue?
     # https://volumio.org/forum/empty-the-play-queue-via-websocket-t9216.html#p45800
     # player.enqueue_playlist()
     # TODO: TEST whether queue is cleared
-    # player.empty_queue_and_enqueue_playlist()
+    player.empty_queue_and_enqueue_playlist()
 
     # Set input and output
     vu_rec = VU(12) # vu meter for recorder
@@ -116,8 +116,6 @@ try:
                 kaku.off()
             else:
                 led1.blink(times=1, sleep=1)
-                # if player.is_playing():
-                #     player.pause()
                 player.next()
 
 

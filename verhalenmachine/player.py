@@ -93,18 +93,18 @@ class VolumioClient:
         Meant to run in a parallel thread.
         Will send player output to VU meter.
         """
-        self.vu.start()
 
         #https://rvalbuena.blogspot.com/2014/04/led-vu-meter-using-mypishop-8x8-pimatrix.html
         # # This represents the sample (44100:16:2) that MPD is currently "playing"
-        fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
-
+        fifo = os.open('/tmp/snapfifo', os.O_RDONLY)
+        # self.vu.set_percentage(100)
         while True:
             try:
                 rawStream = os.read(fifo, 4096)
             except OSError as err:
                 if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                     rawStream = None
+                    logger.debug("no rawStream")
                 else:
                     raise
 
@@ -113,12 +113,12 @@ class VolumioClient:
                 # TODO: Change to mono signal
                 # TODO: Change dB scale to 0-100 scale
 
-                leftChannel = audioop.tomono(rawStream, 2, 1, 0)
+                # leftChannel = audioop.tomono(rawStream, 2, 1, 0)
                 rightChannel = audioop.tomono(rawStream, 2, 0, 1)
-                stereoPeak = audioop.max(rawStream, 2)
-                leftPeak = audioop.max(leftChannel, 2)
+                # stereoPeak = audioop.max(rawStream, 2)
+                # leftPeak = audioop.max(leftChannel, 2)
                 rightPeak = audioop.max(rightChannel, 2)
-                leftDB = 20 * math.log10(leftPeak) -74
+                # leftDB = 20 * math.log10(leftPeak) -74
                 rightDB = 20 * math.log10(rightPeak) -74
 
                 # logger.debug("RIGHT %s" % rightDB)
@@ -133,9 +133,8 @@ class VolumioClient:
 
                 out = (rightDB + 20) * (70/23)
                 logger.debug("MPD FIFO value %s" % out)
-
                 self.vu.set_percentage(int(out))
-                # time.sleep(0.5)
+                time.sleep(0.01)
             # else:
             #     self.vu.move_to_percentage(0)
             #     # TODO: Test
@@ -146,11 +145,13 @@ class VolumioClient:
             #     # just_after_stream = False
 
     def start_vu_thread(self):
+        self.vu.start()
         t = threading.Thread(target=self.control_vu, args=())
         t.start()
 
     def play(self):
         self._client.emit('play')
+        self.start_vu_thread()
 
     def pause(self):
         self._client.emit('pause')
@@ -250,11 +251,16 @@ class VolumioClient:
             name=self.default_playlist
         self._client.emit('enqueue', {'name': name})
 
+    def empty_queue(self):
+        for x in range(100):
+            self._client.emit('removeFromQueue', x)
+
     def empty_queue_and_enqueue_playlist(self, name=None):
+        self.empty_queue()
         if name==None:
             name=self.default_playlist
         self._client.emit('playPlaylist', {'name': name})
-        time.sleep(2)
+        # time.sleep(2)
         self.pause()
 
     def set_random(self):

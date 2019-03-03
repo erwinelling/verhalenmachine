@@ -62,6 +62,7 @@ class VU:
             time.sleep(0.01)
 
     def start(self):
+        logger.debug("VU (pin %s) started" % (self.pin))
         self.p.start(0)
 
     def stop(self):
