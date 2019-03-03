@@ -134,7 +134,7 @@ try:
         if not recorder.is_recording():
             if led3.burning:
                 led3.off()
-                vu.stop()
+                recorder.vu.stop()
                 kaku.off()
         time.sleep(0.5)
 

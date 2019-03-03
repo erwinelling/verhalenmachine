@@ -122,6 +122,7 @@ class Recorder:
                     possible_vu_percentage = lines[-3:-1].lstrip("0")
                     if possible_vu_percentage.isdigit() and possible_vu_percentage!="0":
                         logger.debug("VU: %s" % possible_vu_percentage)
+                        # TODO: Turn this on again, but now it is bad for the recording
                         self.vu.move_to_percentage(int(possible_vu_percentage))
 
                     # sys.__stdout__.write(lines)
@@ -160,6 +161,9 @@ class Recorder:
         for root, dirs, files in os.walk(self.RECORDING_DIR):
             for filename in files:
                 if os.path.splitext(filename)[1] == ".temp":
+                    if os.path.getsize(filename) < 100000:
+                        #if under 100kB probably nonsense
+                        os.remove(filename)
                     path_to_file = os.path.join(root, filename)
                     os.rename(path_to_file, os.path.splitext(path_to_file)[0])
                     logger.debug("Renamed temp file to %s", os.path.splitext(path_to_file)[0])
