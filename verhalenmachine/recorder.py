@@ -161,9 +161,6 @@ class Recorder:
         for root, dirs, files in os.walk(self.RECORDING_DIR):
             for filename in files:
                 if os.path.splitext(filename)[1] == ".temp":
-                    if os.path.getsize(filename) < 100000:
-                        #if under 100kB probably nonsense
-                        os.remove(filename)
                     path_to_file = os.path.join(root, filename)
                     os.rename(path_to_file, os.path.splitext(path_to_file)[0])
                     logger.debug("Renamed temp file to %s", os.path.splitext(path_to_file)[0])

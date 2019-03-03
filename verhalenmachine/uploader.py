@@ -50,12 +50,16 @@ class Uploader:
                 # Remove 0 byte files
                 # TODO: Maybe add max size, i.e. Remove bigger than x GB? (x 1000 000 000 bytes)
                 if filename.lower().endswith(('.aiff', '.wav', '.flac', '.alac', '.ogg', '.mp2', '.mp3', '.aac', '.amr', '.wma')) and not filename.startswith('.'):
-                    if os.path.getsize(os.path.join(root, filename)) <= 50: # or os.path.getsize(filename) > xxxx
-                        path_to_file = os.path.join(root, filename)
+                    if os.path.getsize(os.path.join(root, filename)) <= 100000 or os.path.getsize(os.path.join(root, filename)) > 1000000000:
+                        # path_to_file = os.path.join(root, filename)
                         logger.debug("REMOVING %s %s" % (filename, os.path.getsize(os.path.join(root, filename))))
-                        os.remove(path_to_file)
-                        not_uploaded_file = os.path.splitext(path_to_file)[0]+".notuploaded"
-                        os.remove(not_uploaded_file)
+                        os.remove(os.path.join(root, filename))
+                        try:
+                            not_uploaded_file = os.path.splitext(os.path.join(root, filename))[0]+".notuploaded"
+                            os.remove(not_uploaded_file)
+                        except:
+                            pass
+
 
     def upload_directory(self, directory=""):
         if directory == "":
